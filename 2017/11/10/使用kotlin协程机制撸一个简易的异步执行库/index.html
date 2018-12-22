@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        使用kotlin协程机制撸一个简易的异步执行库 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        使用kotlin协程机制撸一个简易的异步执行库
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2017-11-10 21:43:24</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#kotlin" title="kotlin">kotlin</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#coroutine" title="coroutine">coroutine</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <blockquote>
+<p>由于android限制了只能在UI线程更新视图，而在UI线程中做耗时任务又会导致ANR，因此在平时的开发中，需要将耗时的数据请求工作放到子线程中执行，而视图更新工作放到UI线程中，使用传统的handler或者asyncTask，需要将逻辑分到多个函数内</p>
+</blockquote>
+<p><strong>使用<code>kotlin</code>的协程机制，可以用同步的方式实现异步</strong><br>kotlin的协程机制是基于状态机模型和<code>C-P-S</code>风格实现的。<br>一个协程通过<code>resume</code>启动，当协程内部调用<code>supended</code>函数时，协程会被暂停，通过调用 <code>resume</code>可以再次启动协程。每次暂停都会修改协程的状态，再次启动协程时，会从新的状态处开始执行。</p>
+<p>现在通过kotlin的基础api实现一个简单的异步调用接口，最后的效果如下：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">btn.setOnClickListener &#123;</span><br><span class="line">           runOnUI &#123;  </span><br><span class="line">               //执行在主线程，可以做一些初始化操作                         </span><br><span class="line">               Log.e(&quot;log&quot;, Thread.currentThread().name)</span><br><span class="line">               var used = async &#123;               //从工作线程直接返回数据到主线程</span><br><span class="line">                  //切换到工作线程执行，而且lambda可以直接访问外部变量，构成闭包</span><br><span class="line">                   Log.e(&quot;log&quot;, Thread.currentThread().name)</span><br><span class="line">                   var start = System.currentTimeMillis()</span><br><span class="line">                   Thread.sleep(3000)</span><br><span class="line">                   System.currentTimeMillis() - start</span><br><span class="line">               &#125;</span><br><span class="line">               //继续执行在主线程</span><br><span class="line">               Log.e(&quot;log&quot;, Thread.currentThread().name)</span><br><span class="line">               Toast.makeText(this@MainActivity, &quot;后台线程用时$&#123;used&#125;ms&quot;, Toast.LENGTH_SHORT).show()</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在后续的内容中，我将在实现的过程中逐步分析kotlin协程机制的基本原理</p>
+</blockquote>
+<p>首先声明一个创建协程的函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//该函数接收一个 suspend类型的lambda</span><br><span class="line">inline fun runOnUI(noinline block: suspend () -&gt; Unit) &#123;</span><br><span class="line">    var continuation = object : Continuation&lt;Unit&gt; &#123;</span><br><span class="line">      //ThreadSwitcher是ContinuationInterceptor的子类，用于在协程resume时切换到主线程执行</span><br><span class="line">        override val context: CoroutineContext</span><br><span class="line">            get() = ThreadSwitcher()  </span><br><span class="line"></span><br><span class="line">        override inline fun resume(value: Unit) = Unit</span><br><span class="line"></span><br><span class="line">        override inline fun resumeWithException(exception: Throwable) = Unit</span><br><span class="line">    &#125;</span><br><span class="line">        //使用suspend类型的lambda创建一个协程并启动</span><br><span class="line">        block.createCoroutine(continuation).resume(Unit)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>createCoroutine</code>是官方提供的一个基础api，该函数如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public fun &lt;T&gt; (suspend () -&gt; T).createCoroutine(</span><br><span class="line">        completion: Continuation&lt;T&gt;</span><br><span class="line">): Continuation&lt;Unit&gt; = SafeContinuation(createCoroutineUnchecked(completion), COROUTINE_SUSPENDED)</span><br></pre></td></tr></table></figure></p>
+<p>可以看到调用了<code>createCoroutineUnchecked</code>创建一个<code>Coroutine</code>，继续查看该方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@SinceKotlin(&quot;1.1&quot;)</span><br><span class="line">@kotlin.jvm.JvmVersion</span><br><span class="line">public fun &lt;T&gt; (suspend () -&gt; T).createCoroutineUnchecked(</span><br><span class="line">        completion: Continuation&lt;T&gt;</span><br><span class="line">): Continuation&lt;Unit&gt; =</span><br><span class="line">//这里的this是执行createCoroutine函数的block</span><br><span class="line">        if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)</span><br><span class="line">            buildContinuationByInvokeCall(completion) &#123;</span><br><span class="line">                @Suppress(&quot;UNCHECKED_CAST&quot;)</span><br><span class="line">                (this as Function1&lt;Continuation&lt;T&gt;, Any?&gt;).invoke(completion)</span><br><span class="line">            &#125;</span><br><span class="line">        else</span><br><span class="line">//编译时，block会被编译成一个CoroutineImpl的子类，所以走这个分支</span><br><span class="line">            (this.create(completion) as kotlin.coroutines.experimental.jvm.internal.CoroutineImpl).facade</span><br></pre></td></tr></table></figure></p>
+<p>查看编译之后生成的<code>block</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//查看在Activity#onCreate调用runOnUI处传入的lambda的编译类</span><br><span class="line">final class ymc/demo/com/asyncframe/MainActivity$onCreate$1$1 </span><br><span class="line">          extends kotlin/coroutines/experimental/jvm/internal/CoroutineImpl   </span><br><span class="line">          implements kotlin/jvm/functions/Function1  &#123;      //lambda编译类都实现FunctionN函数</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到传入<code>runOnUI</code>的<code>lambda</code>确实被编译成了一个<code>CoroutineImpl</code>，这是因为编译器推断出了这个<code>lambda</code>是<code>suspend</code>类型的。</p>
+<p>继续上面的分析，创建协程所涉及到的两个方法中都出现了 <code>Continuation</code>这个类，那么这个类是干嘛的呢？<br>首先，先看看<code>completion</code>，这个是我们调用<code>createCoroutine</code>手动传入的，当协程结束时，他的<code>resume</code>会被调用，当协程异常结束时，他的<code>resumeWithException</code>会被调用。<br>再看看<code>createCoroutineUnchecked</code>，这个函数也返回了一个<code>Continuation</code>，那么这个又是什么呢？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(this.create(completion) as kotlin.coroutines.experimental.jvm.internal.CoroutineImpl).facade</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，返回的是<code>CoroutineImpl</code>的<code>facade</code>，那这个又是什么呢？<br>我们进入<code>CoroutineImpl</code>，可以看到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">abstract class CoroutineImpl(</span><br><span class="line">        arity: Int,</span><br><span class="line">        @JvmField</span><br><span class="line">        protected var completion: Continuation&lt;Any?&gt;?</span><br><span class="line">) : Lambda(arity), Continuation&lt;Any?&gt; &#123;     //Coroutine本身是一个Continuation</span><br><span class="line"></span><br><span class="line">  override val context: CoroutineContext</span><br><span class="line">          get() = _context!!</span><br><span class="line"></span><br><span class="line">  private var _facade: Continuation&lt;Any?&gt;? = null</span><br><span class="line"> </span><br><span class="line">  val facade: Continuation&lt;Any?&gt; get() &#123;</span><br><span class="line">          if (_facade == null) _facade = interceptContinuationIfNeeded(_context!!, this)</span><br><span class="line">          return _facade!!</span><br><span class="line">      &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>原来这是一个代理属性，接着查看<code>interceptContinuationIfNeeded</code>，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">internal fun &lt;T&gt; interceptContinuationIfNeeded(</span><br><span class="line">        context: CoroutineContext,</span><br><span class="line">        continuation: Continuation&lt;T&gt;</span><br><span class="line">) = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation</span><br></pre></td></tr></table></figure></p>
+<p>这个函数从<code>Coroutine</code>的上下文中查找<code>ContinuationInterceptor</code>，如果有就调用他的<code>interceptContinuation</code>对传入的<code>continuation</code>进行包装，否则直接返回传入的<code>continuation</code></p>
+<p><strong><code>Continuation</code></strong>是一个可<strong>继续执行</strong>体的抽象，每个<code>Coroutine</code>都是一个可继续执行体，<code>Continuation</code>是一个协程对外的接口，启动/恢复协程的<code>resume</code>就是在该接口中定义的。<br>协程可以是链式连接的，一个协程可以有子协程，子协程持有父协程的引用，当子协程执行时，父协程暂停，子协程结束时，内部通过调用父协程的<code>resume</code>返回父协程。</p>
+<p>还记得我们前面用到的<code>ThreadSwitcher</code>吗，他就是一个<code>ContinuationInterceptor</code><br>我们来看看来看<code>ThreadSwitcher</code>的实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">Interceptor用于用于拦截并包装Continuation，让我们有机会在协程resume前做一些额外的操作，比如线程切换</span><br><span class="line">**/</span><br><span class="line">class ThreadSwitcher : ContinuationInterceptor, AbstractCoroutineContextElement(ContinuationInterceptor.Key) &#123;</span><br><span class="line"></span><br><span class="line">    override fun &lt;T&gt; interceptContinuation(continuation: Continuation&lt;T&gt;): Continuation&lt;T&gt;</span><br><span class="line">            = object : Continuation&lt;T&gt; by continuation &#123;</span><br><span class="line"></span><br><span class="line">        override fun resume(value: T) &#123;</span><br><span class="line">          //如果在主线程，直接执行</span><br><span class="line">            if (Looper.getMainLooper() === Looper.myLooper()) &#123;</span><br><span class="line">                continuation.resume(value)</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">            //否则，使用handler机制post到主线程执行</span><br><span class="line">                postman.post &#123;</span><br><span class="line">                    resume(value)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        override fun resumeWithException(exception: Throwable) &#123;</span><br><span class="line">            if (Looper.getMainLooper() === Looper.myLooper()) &#123;</span><br><span class="line">                continuation.resumeWithException(exception)</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                postman.post &#123;</span><br><span class="line">                    resumeWithException(exception)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从上面的分析中，我们可以想象，我们创建的协程会被<code>ThreadSwitcher</code>包装，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">block.createCoroutine(continuation).resume(Unit)</span><br></pre></td></tr></table></figure></p>
+<p><code>createCoroutine</code>返回的实际是<code>ThreadSwitcher</code>返回的<code>Continuation</code>，所以当我们执行<code>resume</code>启动协程时，会先切换到主线程执行。</p>
+<p>紧接着，我们来实现<code>async</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">suspend inline fun &lt;T&gt; async(crossinline block: () -&gt; T): T</span><br><span class="line">        = suspendCoroutine &#123;</span><br><span class="line">//dispatcher是一个对线程池的封装，将任务分发到子线程中</span><br><span class="line">    dispatcher.dispatch &#123;</span><br><span class="line">        it.resume(block())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>suspend</code>修饰的方法只可以在协程内部调用，而<code>suspendCoroutine</code>方法是<code>kotlin</code>提供的一个基础api,用于实现暂停协程。<br>我们接着来分析<code>suspendCoroutine</code>，查看他的实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public inline suspend fun &lt;T&gt; suspendCoroutine(crossinline block: (Continuation&lt;T&gt;) -&gt; Unit): T =</span><br><span class="line">        suspendCoroutineOrReturn &#123; c: Continuation&lt;T&gt; -&gt;</span><br><span class="line">            val safe = SafeContinuation(c)</span><br><span class="line">            block(safe)</span><br><span class="line">            safe.getResult()</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到这个方法接收的<code>block</code>是带<code>Continuation</code>参数的<br>真正实现功能的是<code>suspendCoroutineOrReturn</code>，当我们继续跟进时，发现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public inline suspend fun &lt;T&gt; suspendCoroutineOrReturn(crossinline block: (Continuation&lt;T&gt;) -&gt; Any?): T =</span><br><span class="line">        throw NotImplementedError(&quot;Implementation is intrinsic&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>what!直接抛出异常了???<br>这是因为这是一个特殊的函数，需要编译器特殊处理，他需要将当前协程内的<code>_facade</code>属性，包装成<code>SafeContinuation</code>，再作为我们传入的<code>block</code>的参数，而且这个<code>_facade</code>是经过<code>ContinuationInterceptor</code>处理过的，也就是说当我们调用<code>resume</code>恢复线程时，会先切换到主线程。<br>为了验证上面的分析，我们查看<code>async</code>编译之后的字节码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">//可以看到编译之后，我们的async多了一个Continuation类型的参数</span><br><span class="line"> private final static async(Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 70 L0</span><br><span class="line">    NOP</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 77 L1</span><br><span class="line">    ICONST_0</span><br><span class="line">    INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark (I)V</span><br><span class="line">    ALOAD 1  //将第二个参数，也就是Continuation入栈</span><br><span class="line">//调用CoroutineIntrinsics.normalizeContinuation </span><br><span class="line">    INVOKESTATIC kotlin/coroutines/experimental/jvm/internal/CoroutineIntrinsics.normalizeContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;  </span><br><span class="line">//将返回值存到slot3</span><br><span class="line">    ASTORE 3</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 78 L2</span><br><span class="line">//new 一个SafeContinuation</span><br><span class="line">    NEW kotlin/coroutines/experimental/SafeContinuation</span><br><span class="line">    DUP  </span><br><span class="line">  //将刚刚normalizeContinuation返回的continuation传入SafeContinuation的构造函数</span><br><span class="line">    ALOAD 3</span><br><span class="line">    INVOKESPECIAL kotlin/coroutines/experimental/SafeContinuation.&lt;init&gt; (Lkotlin/coroutines/experimental/Continuation;)V</span><br><span class="line">    ASTORE 4</span><br><span class="line">   L3</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure></p>
+<p>我们可以看到，编译之后的字节码已经没有了<code>suspendCoroutine</code>和<code>suspendCoroutineOrReturn</code>的身影，因为这两个函数都是<code>inline</code>函数。<br>我们接着来看<code>CoroutineIntrinsics.normalizeContinuation</code>的实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fun &lt;T&gt; normalizeContinuation(continuation: Continuation&lt;T&gt;): Continuation&lt;T&gt; =</span><br><span class="line">        (continuation as? CoroutineImpl)?.facade ?: continuation</span><br></pre></td></tr></table></figure></p>
+<p> 还记得我们刚刚分析过<code>facade</code>这个属性吗？他是对<code>_facade</code>的代理，这个函数返回的是经过拦截器处理过的<code>Continuation</code><br>根据刚刚的字节码，我们可以发现<code>suspend</code>类型的函数，都会<strong>隐式</strong>额外接受一个当前协程的引用，但是又不能在函数中直接访问。</p>
+<p>最后，还有两个上文出现过的线程切换处理类，<code>postman</code>和<code>dispatcher</code>，使用的是单例模式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">object postman : Handler(Looper.getMainLooper()) &#123;</span><br><span class="line">    override fun handleMessage(msg: Message?) &#123;</span><br><span class="line">        msg?.callback?.run()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">object dispatcher &#123;</span><br><span class="line">    val mCachedThreads = Executors.newCachedThreadPool()</span><br><span class="line">    inline fun dispatch(noinline block: () -&gt; Unit) &#123;</span><br><span class="line">        mCachedThreads.execute(block)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>到此，我们实现了一个简易的异步调用库！</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

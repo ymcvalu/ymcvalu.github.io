@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        goland 中获取 goid - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#introduce"><span class="toc-text">introduce</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#code"><span class="toc-text">code</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#方法一："><span class="toc-text">方法一：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#方法二："><span class="toc-text">方法二：</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        goland 中获取 goid
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2018-08-18 17:28:15</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#goid" title="goid">goid</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="introduce"><a href="#introduce" class="headerlink" title="introduce"></a>introduce</h3><p>目前网上有很多获取goroutine id的方法，主要分为两种：</p>
+<ul>
+<li>通过runtime.Stack方法获取栈的信息，而栈信息以<code>goroutine {goid}</code> 开头，再通过字符串处理就可以提取出goid</li>
+<li>go中通过g来表示goroutine，而在tls中保存了当前执行的g的地址。可以通过汇编获取到g的地址，然后加上goid在g中的偏移量就可以获取到goid的值了</li>
+</ul>
+<p>第一种方法实现方便，只要通过简单的字符串处理就可以获取到goid，但是性能开销较大；</p>
+<p>第二种方法，需要结合汇编来获取当前执行的g的地址，而且需要获取到goid在g中的偏移量；而不同的版本中g的结构都不一样，因此该方法需要为每个版本都提供一种实现</p>
+<h3 id="code"><a href="#code" class="headerlink" title="code"></a>code</h3><p>下面将基于go1.10实现上面两种获取goid的方案。</p>
+<h5 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">stack := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">20</span>) <span class="comment">//读取前二十个字节</span></span><br><span class="line">runtime.Stack(stack, <span class="literal">false</span>)</span><br><span class="line">goid,_ :=strconv.Atoi(strings.Split(<span class="keyword">string</span>(stack),<span class="string">" "</span>)[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<p>在上面的实现中，读取栈的前20个字节，其内容为<code>goroutine 6 ...</code>，我们这里只需要关注goid在字符串数组第二的位置，然后通过简单的字符串切割和类型转换就可以获取到goid了</p>
+<h5 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a>方法二：</h5><p>因为g的定义在runtime.runtime2.go中，我们需要将其拷贝出来</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> g <span class="keyword">struct</span> &#123;</span><br><span class="line">	stack       stack</span><br><span class="line">	stackguard0 <span class="keyword">uintptr</span></span><br><span class="line">    _defer      <span class="keyword">uintptr</span></span><br><span class="line">	...</span><br><span class="line">	goid           <span class="keyword">int64</span></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stack <span class="keyword">struct</span> &#123;</span><br><span class="line">	lo <span class="keyword">uintptr</span></span><br><span class="line">	hi <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> gobuf <span class="keyword">struct</span> &#123;</span><br><span class="line">	sp   <span class="keyword">uintptr</span></span><br><span class="line">	pc   <span class="keyword">uintptr</span></span><br><span class="line">	g    <span class="keyword">uintptr</span></span><br><span class="line">	ctxt unsafe.Pointer</span><br><span class="line">	ret  <span class="keyword">uint64</span></span><br><span class="line">	lr   <span class="keyword">uintptr</span></span><br><span class="line">	bp   <span class="keyword">uintptr</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>拷贝的时候，因为g中还引用了其他类型，也需要一起拷贝出来。这里有个小技巧，因为我们只是需要使用g来计算goid的偏移量，因此如果有的字段是指针类型的，那么可以将其换成<code>uintptr</code>类型。比如说<code>_defer</code>是<code>*_defer</code>类型，那么可以将其换成<code>uintptr</code>类型，这样我们就不需要在自己的代码中声明<code>_defer</code>结构了。</p>
+<p>然后，声明全局变量<code>offset</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> offset =unsafe.Offsetof((*g)(<span class="literal">nil</span>).goid)</span><br></pre></td></tr></table></figure>
+<p>我们通过<code>unsafe.Offsetof</code>方法来计算goid在g中的偏移。</p>
+<p>接着，在go文件中声明Goid方法的stub</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Goid</span><span class="params">()</span><span class="title">int64</span></span></span><br></pre></td></tr></table></figure>
+<p>并在goid.s中实现该函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">TEXT ·Goid(SB),NOSPLIT,$0-8</span><br><span class="line">    MOVQ ·offset(SB),AX	//获取到全局变量offset</span><br><span class="line">    MOVQ (TLS),BX		//获取当前g的地址</span><br><span class="line">    ADDQ BX,AX			//计算goid的地址</span><br><span class="line">    MOVQ (AX),BX		//获取goid的值</span><br><span class="line">    MOVQ BX,ret+0(FP)</span><br><span class="line">    RET</span><br><span class="line">	//最后的空行必须保留，否则编译报错</span><br></pre></td></tr></table></figure>
+<p>在上述实现中，我直接在汇编中计算goid在内存中的地址。还有一种实现是在汇编中获取g的地址，然后将其转换成*g类型并获取goid的值，这样就不需要计算offset的值了，但是在实际测试中，前者的执行速度是后者的两倍。</p>
+<p>以上代码可以在<a href="https://github.com/ymcvalu/goid" target="_blank" rel="noopener">github</a>上查看</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

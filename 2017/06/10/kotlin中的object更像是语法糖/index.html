@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        kotlin中的object更像是语法糖 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#单例声明"><span class="toc-text">单例声明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-text">实现</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        kotlin中的object更像是语法糖
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2017-06-10 19:59:44</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#kotlin" title="kotlin">kotlin</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="单例声明"><a href="#单例声明" class="headerlink" title="单例声明"></a>单例声明</h3><p>kotlin中，声明一个单例的语法很简单：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">object obj</span><br></pre></td></tr></table></figure></p>
+<p>我们使用<code>object</code>关键字替代<code>class</code>关键字就可以声明一个单例对象<br><code>object</code>一样可以继承其他类，或者实现其他接口：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IObj</span></span></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractObj</span></span></span><br><span class="line"><span class="keyword">object</span> obj : AbstractObj(),IObj</span><br></pre></td></tr></table></figure></p>
+<p>在这里，我们让<code>obj</code>这个单例继承了<code>AbstractObj</code>，并且实现了<code>IObj</code>接口<br>声明一个单例对象，和声明一个<code>class</code>很类似<br>但是，<code>object</code>声明的单例对象<strong>不能声明构造函数</strong>，因为单例对象只有一个实例，无需我们手动将它创建出来，因此自然不需要构造函数。</p>
+<blockquote>
+<p>如果需要对单例对象做初始化操作，可以在<code>init</code>初始化块内进行</p>
+</blockquote>
+<p>那么<code>object</code>是什么时候被创建的呢？</p>
+<blockquote>
+<p>官方文档的解释是，<code>object</code>是<code>lazy-init</code>，即在第一次使用时被创造出来的</p>
+</blockquote>
+<p><code>object</code>单例基本的使用就像上面这样了，基本的用法参照官方的文档说明就好了</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>在java中，我们要使用一个单例模式时，一般使用双重检查锁：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Obj</span> </span>&#123;</span><br><span class="line">      <span class="function"><span class="keyword">private</span> <span class="title">Obj</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Obj INSTANCE;		<span class="comment">//volatile防止指令重排</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Obj <span class="title">getObj</span><span class="params">()</span></span>&#123;</span><br><span class="line">          <span class="keyword">if</span>(INSTANCE==<span class="keyword">null</span>)&#123;</span><br><span class="line">              <span class="keyword">synchronized</span>(Obj.class)&#123;</span><br><span class="line">                  <span class="keyword">if</span> (INSTANCE==<span class="keyword">null</span>)&#123;</span><br><span class="line">                      INSTANCE=<span class="keyword">new</span> Obj();</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">return</span> INSTANCE;</span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而相同的功能，在kotlin只要<code>object Obj</code>就搞定了，这样的黑魔法是怎么实现的呢？<br>为了探究一二，我们先来看看编译之后的字节码:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//源代码:</span></span><br><span class="line"><span class="keyword">object</span> Obj&#123;</span><br><span class="line">    <span class="keyword">init</span>&#123;</span><br><span class="line">        println(<span class="string">"object init..."</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//对应的字节码：</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Obj</span> </span>&#123;   <span class="comment">//可以看到生成了一个class，而类名就是object name</span></span><br><span class="line">  <span class="comment">// access flags 0x2</span></span><br><span class="line">  <span class="keyword">private</span> &lt;init&gt;()V     <span class="comment">//注意看，&lt;init&gt;的可见性是`private`</span></span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER <span class="number">8</span> L0</span><br><span class="line">    ALOAD <span class="number">0</span>  <span class="comment">//将局部变量表slot 0处的引用入栈，即this引用</span></span><br><span class="line">    INVOKESPECIAL java/lang/Object.&lt;init&gt; ()V   <span class="comment">//调用父类的&lt;init&gt;</span></span><br><span class="line">    ALOAD <span class="number">0</span>  <span class="comment">//和上面一样，将局部变量表slot 0处的引用入栈，即this引用</span></span><br><span class="line">    CHECKCAST Obj    <span class="comment">//类型检查</span></span><br><span class="line">    PUTSTATIC Obj.INSTANCE : LObj;     <span class="comment">//保存this引用到`INSTANCE`这个静态域</span></span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER <span class="number">10</span> L1</span><br><span class="line">    LDC <span class="string">"object init..."</span>    <span class="comment">//从常量池将字符串引用送至栈顶</span></span><br><span class="line">    ASTORE <span class="number">1</span>    <span class="comment">//将栈顶的引用保存到局部遍历表第一个slot处</span></span><br><span class="line">   L2</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;    <span class="comment">//获取out实例</span></span><br><span class="line">    ALOAD <span class="number">1</span>    <span class="comment">//从局部变量表第一个slot处加载引用到栈顶</span></span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/Object;)V   <span class="comment">//输出</span></span><br><span class="line">   L3</span><br><span class="line">   L4</span><br><span class="line">   L5</span><br><span class="line">    RETURN  <span class="comment">//返回</span></span><br><span class="line">   L6</span><br><span class="line">    LOCALVARIABLE <span class="keyword">this</span> LObj; L0 L6 <span class="number">0</span></span><br><span class="line">    MAXSTACK = <span class="number">2</span>    <span class="comment">//操作数栈深度为2</span></span><br><span class="line">    MAXLOCALS = <span class="number">2</span>    <span class="comment">//局部变量表为2个slot</span></span><br><span class="line">  <span class="comment">// access flags 0x19</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> LObj; INSTANCE    <span class="comment">//**静态域**，类型为Obj</span></span><br><span class="line">  <span class="comment">// access flags 0x8</span></span><br><span class="line">  <span class="keyword">static</span> &lt;clinit&gt;()V    <span class="comment">//静态初始化块，类初始化时执行</span></span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER <span class="number">8</span> L0</span><br><span class="line">    NEW Obj     <span class="comment">//创建一个Obj实例，引用保存在栈顶</span></span><br><span class="line">    INVOKESPECIAL Obj.&lt;init&gt; ()V   <span class="comment">//调用其&lt;init&gt;，初始化对象，此时会把栈顶引用作为this引用传入</span></span><br><span class="line">    RETURN</span><br><span class="line">    MAXSTACK = <span class="number">1</span></span><br><span class="line">    MAXLOCALS = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的字节码中，我们可以看到，声明一个<code>object</code>，实际上就是创建了一个<code>class</code>，在类静态初始化时，会创建一个该类的实例，保存到其静态域<code>INSTANCE</code>中<br>进而可以猜想，源码中对单例的引用会被编译器替换为对<code>INSTANCE</code>这个静态域的引用<br>为了验证我们的分析，现在来看看使用单例时，对应的字节码<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">源码：</span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args:<span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span>&#123;</span><br><span class="line">    Obj <span class="keyword">is</span> Any</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">对应的字节码：</span><br><span class="line">public final static main([Ljava/lang/String;)V</span><br><span class="line">    @Lorg/jetbrains/annotations/NotNull;() // invisible, parameter 0</span><br><span class="line">   L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    LDC &quot;args&quot;</span><br><span class="line">    INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull (Ljava/lang/Object;Ljava/lang/String;)V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 5 L1</span><br><span class="line">    GETSTATIC Obj.INSTANCE : LObj;    //获取Obj的静态域`INSTANCE`</span><br><span class="line">    INSTANCEOF java/lang/Object        //判断是否是`Object`类型</span><br><span class="line">    POP</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 6 L2</span><br><span class="line">    RETURN</span><br><span class="line">   L3</span><br><span class="line">    LOCALVARIABLE args [Ljava/lang/String; L0 L3 0</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 1</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们在源码中直接使用<code>object name</code>访问单例对象，而编译器帮我们做了翻译，实际使用的是内部的静态域<code>INSTANCE</code><br>而且，从对上面<code>Obj</code>这个生成的类的分析，我们可以发现，<code>object</code>在java中的对应的实现是类型这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span>  <span class="title">Obj</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Obj</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Obj INSTANCE=<span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        INSTANCE=<span class="keyword">new</span> Obj();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是最简单的单例实现方法，在类加载器加载class后执行静态初始化时就创建单例对象。</p>
+<p>而<code>object</code>单例初始化的时机，准确来说，应该是这个类被加载时，静态初始化的时候。<br>做个小实验：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">object</span> Obj&#123;</span><br><span class="line">    <span class="keyword">init</span>&#123;</span><br><span class="line">        println(<span class="string">"object init..."</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args:<span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span>&#123;</span><br><span class="line">         Class.forName(<span class="string">"Obj"</span>)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>控制台输出：object init…</p>
+</blockquote>
+<p>可见，当我们加载这个类的时候，单例就被创建了。<br>而单例名就是类名。</p>
+<p>那么，<code>object</code>真的就是单例吗？<br>一般情况下是的，因为字节码中<code>&lt;init&gt;</code>方法被声明为<code>private</code>，虽然不太准确但是我们可以认为对应了类的一个<code>private</code>的无参构造函数，这就使得我们无法创建出一个新的对象出来。<br>但是，我们完全可以使用反射机制，从一个<code>private</code>的构造函数中创建一个对象出来：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args:<span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span>&#123;</span><br><span class="line">    println(Obj)</span><br><span class="line">    <span class="keyword">var</span> clazz=Class.forName(<span class="string">"Obj"</span>)</span><br><span class="line">    <span class="keyword">var</span> constrouctor=clazz.getDeclaredConstructor()</span><br><span class="line">    constrouctor.setAccessible(<span class="literal">true</span>)</span><br><span class="line">    <span class="keyword">var</span> instance=constrouctor.newInstance()</span><br><span class="line">    constrouctor.setAccessible(<span class="literal">false</span>)</span><br><span class="line">    println(instance)</span><br><span class="line">&#125;</span><br><span class="line">输出：</span><br><span class="line"><span class="keyword">object</span> <span class="keyword">init</span>...</span><br><span class="line"><span class="symbol">Obj@</span><span class="number">511</span>d50c0</span><br><span class="line"><span class="keyword">object</span> <span class="keyword">init</span>...</span><br><span class="line"><span class="symbol">Obj@</span><span class="number">60e53</span>b93</span><br></pre></td></tr></table></figure></p>
+<p>可见，两次输出的对象引用是不一样的。</p>
+<p>那么，这就说明kotlin的单例是不安全的吗？这到未必<br>我们在原先的基础上，加上几个属性声明：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">object Obj&#123;</span><br><span class="line">    var name=&quot;name&quot;</span><br><span class="line">    var age=&quot;10&quot;</span><br><span class="line">    init&#123;</span><br><span class="line">        println(&quot;object init...&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>观察对应的字节码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public final class Obj &#123;</span><br><span class="line">  private static Ljava/lang/String; name</span><br><span class="line">   ...</span><br><span class="line">  private static Ljava/lang/String; age</span><br><span class="line">  ....</span><br><span class="line">  public final static LObj; INSTANCE</span><br><span class="line">  ...  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这些属性的<code>field</code>都被声明为<code>static</code>了，尽管可以通过反射手段创建多个<code>object</code>的实例，但是它们的状态都是共享的<br>总结：</p>
+<ul>
+<li><code>object</code>实际上还是生成一个<code>class</code>，但是这个<code>class</code>在<code>kotlin</code>中是透明的，无法直接访问，比如<code>Obj.INSTANCE</code>在kotlin中是不允许的，只能通过<code>Obj</code>来引用这个单例</li>
+<li><code>object name</code>本质上是类名，只是编译器在编译时自动将<code>object name</code>换成了 <code>object</code>的<code>INSTANCE</code></li>
+<li><code>object</code>更像是语法糖</li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

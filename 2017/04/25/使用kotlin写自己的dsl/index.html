@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        使用kotlin写自己的dsl - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        使用kotlin写自己的dsl
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2017-04-25 00:29:05</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#kotlin" title="kotlin">kotlin</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#dsl" title="dsl">dsl</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>相比于java，kotlin对<strong>FP</strong>更加友好，支持扩展函数和操作符重载，这就为定义dsl提供了支持。<br>什么是dsl呢？就是一种面向特定问题的语言。gradle就是是一种用groovy定义的dsl。而kotlin一样对定义dsl提供了友好的支持。<br>本篇文章就来定义一个简单用于配置hibernate框架的dsl，写起来就像：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> conf= buildConfiguration&#123;</span><br><span class="line">                connection &#123;</span><br><span class="line">                    username = <span class="string">"***"</span></span><br><span class="line">                    password = <span class="string">"******"</span></span><br><span class="line">                    url = <span class="string">"jdbc:mysql://localhost:3306/******"</span></span><br><span class="line">                    driver = Driver::<span class="class"><span class="keyword">class</span>.<span class="title">java</span></span></span><br><span class="line">                &#125;</span><br><span class="line">                c3p0 &#123;</span><br><span class="line">                    max_size = <span class="number">30</span></span><br><span class="line">                    min_size = <span class="number">10</span></span><br><span class="line">                    timeout=<span class="number">5000</span></span><br><span class="line">                    max_statements=<span class="number">100</span></span><br><span class="line">                    idle_test_period=<span class="number">300</span></span><br><span class="line">                    acquire_increment=<span class="number">2</span></span><br><span class="line">                    validate=<span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">                entity &#123;</span><br><span class="line">                    mapping = Client::<span class="class"><span class="keyword">class</span>.<span class="title">java</span></span></span><br><span class="line">                    mapping = Financial_account::<span class="class"><span class="keyword">class</span>.<span class="title">java</span></span></span><br><span class="line">                    mapping = FundHolding::<span class="class"><span class="keyword">class</span>.<span class="title">java</span></span></span><br><span class="line">                    mapping=Fund::<span class="class"><span class="keyword">class</span>.<span class="title">java</span></span></span><br><span class="line">                &#125;</span><br><span class="line">                dialect=<span class="string">"org.hibernate.dialect.MySQL5InnoDBDialect"</span></span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<p>上面是一个对hibernate的简单配置，最后获取一个configuration实例。通过使用dsl，可以避免在运行时解析xml文件，同时又比使用java代码配置简洁，兼具xml的结构化和java的高效。<br>那么，这样一个dsl是如何实现的呢？</p>
+<blockquote>
+<p>先介绍一下预备知识：<br>扩展函数：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> Type.<span class="title">foo</span><span class="params">()</span></span>:<span class="built_in">Unit</span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>这样就为<code>Type</code>对象创建了一个扩展函数，假如<code>t</code>是<code>Type</code>的一个实例，就可以：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">`Type`称作`reciver`，而在`foo`函数体内，可以使用`this`访问其`public`成员，甚至可以省略`this`，仿佛`foo`函数是定义在`class Type`内</span><br><span class="line">而声明一个函数的参数是扩展函数，一般的语法：</span><br><span class="line">`fun funName(block:Type.(params...)-&gt;ReturnType):ReturnType&#123;...&#125;`</span><br><span class="line">关于扩展函数更多的用法，可以参考官方的文档</span><br><span class="line"></span><br><span class="line">首先先声明一个方法：</span><br><span class="line">```kotlin</span><br><span class="line">fun buildConfiguration(block:ConfigurationBuilder.()-&gt;Unit):Configuration&#123;</span><br><span class="line">    var cfg=ConfigurationBuilder()</span><br><span class="line">    cfg.block()</span><br><span class="line">    return cfg.cfg</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个方法接收一个有receiver的lambda表达式，因为这样在block的内部就可以直接访问receiver的公共成员了，这一点很重要<br>紧接着对这个Configuration这个类进行定义<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConfigurationBuilder</span></span>&#123;</span><br><span class="line">     <span class="keyword">val</span> TAG=<span class="string">"hibernate"</span></span><br><span class="line">     <span class="keyword">val</span> cfg=Configuration()</span><br><span class="line">     <span class="keyword">var</span> dialect:String? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(value)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.dialect"</span>,value!!)</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="title">connection</span><span class="params">(block:<span class="type">ConnectionBuilder</span>.()</span></span>-&gt;<span class="built_in">Unit</span>)=ConnectionBuilder(cfg).block()</span><br><span class="line">     <span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="title">c3p0</span><span class="params">(block:<span class="type">C3p0Builder</span>.()</span></span>-&gt;<span class="built_in">Unit</span>)=C3p0Builder(cfg).block()</span><br><span class="line">     <span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="title">entity</span><span class="params">(block:<span class="type">Entity</span>.()</span></span>-&gt;<span class="built_in">Unit</span>)=Entity(cfg).block()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在里面我定义了三个成员函数，分别对应前面示例中的<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> conf= buildConfiguration&#123;</span><br><span class="line">                connection &#123;</span><br><span class="line">                    ...</span><br><span class="line">                &#125;</span><br><span class="line">                c3p0 &#123;</span><br><span class="line">                    ...</span><br><span class="line">                &#125;</span><br><span class="line">                entity &#123;</span><br><span class="line">                    ...</span><br><span class="line">                &#125;</span><br><span class="line">               ...</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这个lambda里面，我就直接调用了buildConfiguration的成员函数，那么对象引用呢？还记得我前面说过的吗？buildConfiguration这个方法的参数是一个有receiver的lambda，而在buildConfiguration中声明了一个ConfigurationBuilder对象并通过这个对象调用了这个lambda。那么这个lambda就会在这个对象的上下文中，我们可以直接访问它的公共成员，甚至可以使用this引用这个对象。<br>后续的步骤都差不多,我这里为了省事直接就声明了一个Configuration对象，并传到了其他对象里面<br>后面的源码<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConnectionBuilder</span></span>(<span class="keyword">val</span> cfg:Configuration)&#123;<span class="comment">//直接接受了一个configuration对象</span></span><br><span class="line">     <span class="keyword">val</span> TAG=<span class="string">"hibernate.connection"</span></span><br><span class="line">     <span class="keyword">var</span> username:String? <span class="keyword">get</span>() = <span class="literal">null</span>  <span class="comment">//重写了setter和getter，防止属性有field</span></span><br><span class="line">        <span class="keyword">set</span>(name)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.username"</span>,name!!)  <span class="comment">//直接硬编码设置属性</span></span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">var</span> password:String?  <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(password) &#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.password"</span>, password!!)</span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">var</span> url:String? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(url)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.url"</span>,url!!)</span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">var</span> driver:Class&lt;*&gt;? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(driver)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.driver_class"</span>,driver!!.name)</span><br><span class="line">        &#125;</span><br><span class="line">      <span class="keyword">var</span> pool_size:<span class="built_in">Int</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(size)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.pool_size"</span>,size!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//后面的都差不多。。。</span></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">C3p0Builder</span></span>(<span class="keyword">val</span> cfg:Configuration)&#123;</span><br><span class="line">     <span class="keyword">val</span> TAG=<span class="string">"hibernate.c3p0"</span></span><br><span class="line">     <span class="keyword">var</span> max_size:<span class="built_in">Int</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(max_size)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.max_size"</span>,max_size!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">var</span> min_size:<span class="built_in">Int</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(min_size)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.min_size"</span>,min_size!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">var</span> timeout:<span class="built_in">Int</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(timeout)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.timeout"</span>,timeout!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">var</span> max_statements:<span class="built_in">Int</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(max_stmt)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.max_statements"</span>,max_stmt!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">var</span> idle_test_period:<span class="built_in">Int</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(idle_test_period)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.idle_test_period"</span>,idle_test_period!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">var</span> acquire_increment:<span class="built_in">Int</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(acquire)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.acquire_increment"</span>,acquire!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">     <span class="keyword">var</span> validate:<span class="built_in">Boolean</span>? <span class="keyword">get</span>() = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(validate)&#123;</span><br><span class="line">            cfg.setProperty(<span class="string">"<span class="variable">$TAG</span>.validate"</span>,validate!!.toString())</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Entity</span></span>(<span class="keyword">val</span> cfg:Configuration)&#123;</span><br><span class="line">     <span class="keyword">var</span> mapping:Class&lt;*&gt;?</span><br><span class="line">        <span class="keyword">get</span>()=<span class="literal">null</span></span><br><span class="line">        <span class="keyword">set</span>(clazz)&#123;</span><br><span class="line">            cfg.addAnnotatedClass(clazz!!)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>至此，一个简单的dsl就完成了<br>总体来说，定义一个dsl的过程基本是一个递归下去的过程，每个步骤都很类似</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

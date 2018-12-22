@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        golang中的defer实现 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        golang中的defer实现
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2018-04-15 23:50:04</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#defer" title="defer">defer</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p><code>defer</code>是go独有的关键字，可以说是go的一大特色。</p>
+<p>被<code>defer</code>修饰的函数调用，会在函数返回时被执行，因此常常被用于执行锁或者资源释放等。</p>
+<p>在每次获得资源时，都紧接<code>defer</code>语句对其进行释放，可以防止在后续的操作中忘记释放资源。</p>
+<p>在享受其便捷之后，你有没有想过defer机制是如何实现的呢？</p>
+<p>首先编写简单的main函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"exit"</span>)</span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>go tool compile -N -S main.go &gt; main.s</code>命令编译查看输出的汇编代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;.main STEXT size=96 args=0x0 locals=0x18</span><br><span class="line">	TEXT	&quot;&quot;.main(SB), $24-0</span><br><span class="line">	...</span><br><span class="line">	MOVL	$0, (SP)	;deferproc第一个参数0</span><br><span class="line">	LEAQ	&quot;&quot;.main.func1·f(SB), AX ;匿名函数被编译成main.func1，保存函数地址到AX</span><br><span class="line">	MOVQ	AX, 8(SP) ;deferproc第二个参数为匿名函数地址</span><br><span class="line">	PCDATA	$0, $0</span><br><span class="line">	CALL	runtime.deferproc(SB) ;调用defer函数</span><br><span class="line">	...</span><br><span class="line">	CALL	runtime.deferreturn(SB) ;返回之前执行deferreturn函数</span><br><span class="line">	MOVQ	16(SP), BP</span><br><span class="line">	ADDQ	$24, SP</span><br><span class="line">	RET</span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+<p>根据输出的汇编代码，可以看到defer语句被替换成了调用<code>runtime.deferproc</code>方法，查看具体的实现，而在函数返回时执行<code>runtime.deferreturn</code>方法</p>
+<p>首先分析<code>runtime.deferproc</code>方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create a new deferred function fn with siz bytes of arguments.</span></span><br><span class="line"><span class="comment">// The compiler turns a defer statement into a call to this.</span></span><br><span class="line"><span class="comment">//go:nosplit</span></span><br><span class="line"><span class="comment">//siz表示fn函数的参数总大小</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">deferproc</span><span class="params">(siz <span class="keyword">int32</span>, fn *funcval)</span></span> &#123; <span class="comment">// arguments of fn follow fn</span></span><br><span class="line">    <span class="comment">//deferproc不允许在系统栈执行</span></span><br><span class="line">	<span class="keyword">if</span> getg().m.curg != getg() &#123;</span><br><span class="line">		<span class="comment">// go code on the system stack can't defer</span></span><br><span class="line">		throw(<span class="string">"defer on system stack"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// the arguments of fn are in a perilous state. The stack map</span></span><br><span class="line">	<span class="comment">// for deferproc does not describe them. So we can't let garbage</span></span><br><span class="line">	<span class="comment">// collection or stack copying trigger until we've copied them out</span></span><br><span class="line">	<span class="comment">// to somewhere safe. The memmove below does that.</span></span><br><span class="line">	<span class="comment">// Until the copy completes, we can only call nosplit routines.</span></span><br><span class="line">	sp := getcallersp(unsafe.Pointer(&amp;siz))</span><br><span class="line">    <span class="comment">//fn的参数紧跟在fn之后,因此通过简单的指针运算可以获取fn的参数起始地址</span></span><br><span class="line">	argp := <span class="keyword">uintptr</span>(unsafe.Pointer(&amp;fn)) + unsafe.Sizeof(fn)</span><br><span class="line">    <span class="comment">//获取defer语句的pc</span></span><br><span class="line">	callerpc := getcallerpc()</span><br><span class="line">	<span class="comment">//获取一个_defer</span></span><br><span class="line">	d := newdefer(siz)</span><br><span class="line">	<span class="keyword">if</span> d._panic != <span class="literal">nil</span> &#123;</span><br><span class="line">		throw(<span class="string">"deferproc: d.panic != nil after newdefer"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	d.fn = fn</span><br><span class="line">	d.pc = callerpc</span><br><span class="line">	d.sp = sp</span><br><span class="line">	<span class="keyword">switch</span> siz &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">		<span class="comment">// Do nothing.</span></span><br><span class="line">	<span class="keyword">case</span> sys.PtrSize:</span><br><span class="line">		*(*<span class="keyword">uintptr</span>)(deferArgs(d)) = *(*<span class="keyword">uintptr</span>)(unsafe.Pointer(argp))</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">//deferArgs:分配_defer时,连同参数存储空间一起分配,参数紧跟_defer之后存储,该函数进行指针运算,返回参数的起始地址：</span></span><br><span class="line">        <span class="comment">//拷贝参数,因此在执行defer语句语义之前,需要先准备好接收者和参数</span></span><br><span class="line">		memmove(deferArgs(d), unsafe.Pointer(argp), <span class="keyword">uintptr</span>(siz))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// deferproc returns 0 normally.</span></span><br><span class="line">	<span class="comment">// a deferred func that stops a panic</span></span><br><span class="line">	<span class="comment">// makes the deferproc return 1.</span></span><br><span class="line">	<span class="comment">// the code the compiler generates always</span></span><br><span class="line">	<span class="comment">// checks the return value and jumps to the</span></span><br><span class="line">	<span class="comment">// end of the function if deferproc returns != 0.</span></span><br><span class="line">	return0()</span><br><span class="line">	<span class="comment">// No code can go here - the C return register has</span></span><br><span class="line">	<span class="comment">// been set and must not be clobbered.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体的逻辑已经很清楚了，这里要说明的是：<code>runtime.deferproc</code>接受两个参数，需要延时执行的函数fn的地址以及fn的参数总大小，而fn的参数需要紧跟着分配在<code>&amp;fn</code>后面。</p>
+<p>在函数中我们看到了<code>_defer</code>这个类型，该类型是实现<code>defer</code>机制的关键，其声明如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A _defer holds an entry on the list of deferred calls.</span></span><br><span class="line"><span class="comment">// If you add a field here, add code to clear it in freedefer.</span></span><br><span class="line"><span class="keyword">type</span> _defer <span class="keyword">struct</span> &#123;</span><br><span class="line">	siz     <span class="keyword">int32</span>	<span class="comment">//参数size</span></span><br><span class="line">	started <span class="keyword">bool</span>	<span class="comment">//是否执行过</span></span><br><span class="line">	sp      <span class="keyword">uintptr</span> <span class="comment">// sp at time of defer</span></span><br><span class="line">	pc      <span class="keyword">uintptr</span></span><br><span class="line">	fn      *funcval <span class="comment">//需要延时执行的函数地址</span></span><br><span class="line">	_panic  *_panic <span class="comment">// panic that is running defer</span></span><br><span class="line">	link    *_defer <span class="comment">//每个goroutine中的_defer以链表组织</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>runtime.newdefer</code>方法中，会获取一个_defer结构，<strong>并将其加入当前goroutine的<code>_defer</code>队列头部</strong>。</p>
+<p>接着看一下<code>runtime.deferreturn</code>方法实现</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run a deferred function if there is one.</span></span><br><span class="line"><span class="comment">// The compiler inserts a call to this at the end of any</span></span><br><span class="line"><span class="comment">// function which calls defer.</span></span><br><span class="line"><span class="comment">// If there is a deferred function, this will call runtime·jmpdefer,</span></span><br><span class="line"><span class="comment">// which will jump to the deferred function such that it appears</span></span><br><span class="line"><span class="comment">// to have been called by the caller of deferreturn at the point</span></span><br><span class="line"><span class="comment">// just before deferreturn was called. The effect is that deferreturn</span></span><br><span class="line"><span class="comment">// is called again and again until there are no more deferred functions.</span></span><br><span class="line"><span class="comment">// Cannot split the stack because we reuse the caller's frame to</span></span><br><span class="line"><span class="comment">// call the deferred function.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// The single argument isn't actually used - it just has its address</span></span><br><span class="line"><span class="comment">// taken so it can be matched against pending defers.</span></span><br><span class="line"><span class="comment">//go:nosplit</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">deferreturn</span><span class="params">(arg0 <span class="keyword">uintptr</span>)</span></span> &#123; <span class="comment">//这边的arg0只是为了获取当前的sp</span></span><br><span class="line">	gp := getg()</span><br><span class="line">	d := gp._defer	<span class="comment">//获取_defer链表头部</span></span><br><span class="line">    <span class="comment">//如果没有_defer,则返回,详见上面注释</span></span><br><span class="line">	<span class="keyword">if</span> d == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//确保sp前后一致</span></span><br><span class="line">	sp := getcallersp(unsafe.Pointer(&amp;arg0))</span><br><span class="line">	<span class="keyword">if</span> d.sp != sp &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Moving arguments around.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// Everything called after this point must be recursively</span></span><br><span class="line">	<span class="comment">// nosplit because the garbage collector won't know the form</span></span><br><span class="line">	<span class="comment">// of the arguments until the jmpdefer can flip the PC over to</span></span><br><span class="line">	<span class="comment">// fn.</span></span><br><span class="line">    <span class="comment">//拷贝参数到sp中</span></span><br><span class="line">	<span class="keyword">switch</span> d.siz &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">		<span class="comment">// Do nothing.</span></span><br><span class="line">	<span class="keyword">case</span> sys.PtrSize:</span><br><span class="line">		*(*<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;arg0)) = *(*<span class="keyword">uintptr</span>)(deferArgs(d))</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		memmove(unsafe.Pointer(&amp;arg0), deferArgs(d), <span class="keyword">uintptr</span>(d.siz))</span><br><span class="line">	&#125;</span><br><span class="line">	fn := d.fn</span><br><span class="line">	d.fn = <span class="literal">nil</span></span><br><span class="line">	gp._defer = d.link <span class="comment">//从链表中移除</span></span><br><span class="line">	freedefer(d) <span class="comment">//释放当前_defer</span></span><br><span class="line">    <span class="comment">//call runtime·jmpdefer,</span></span><br><span class="line">    <span class="comment">// which will jump to the deferred function such that it appears</span></span><br><span class="line">    <span class="comment">// to have been called by the caller of deferreturn at the point</span></span><br><span class="line">    <span class="comment">// just before deferreturn was called. The effect is that deferreturn</span></span><br><span class="line">    <span class="comment">// is called again and again until there are no more deferred fns.</span></span><br><span class="line">    <span class="comment">//执行fn,并修改pc为 `CALL	runtime.deferreturn(SB)`,下一条指令再次进入该函数,如果gp.defer为nil或者sp不一致,则返回,否则继续执行defer</span></span><br><span class="line">    <span class="comment">//每次添加defer时,总是添加到head,处理时则是从head开始处理,因此defer的处理顺序是FILO</span></span><br><span class="line">	jmpdefer(fn, <span class="keyword">uintptr</span>(unsafe.Pointer(&amp;arg0)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此，defer语句的运行机制分析完成了，主要理了大概的执行流程，其中还有一些细节由于篇幅有限并没有细说，可以自行分析。</p>
+<p>go中还有一个比较独特的地方，如果程序发生异常，会保证先执行所有defer声明的延时函数，然后才退出程序；而我们可以在延时函数中获取到当前整个堆栈的信息，比如说：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">函数A执行defer语句，调用函数B</span><br><span class="line">函数B函数B发生panic</span><br><span class="line">执行函数A的延时函数，这时候是可以获取到函数B的栈帧数据的</span><br></pre></td></tr></table></figure>
+<p>按照上面的执行流程，在执行函数A的延时函数时，实际上这时候函数B的栈帧还没有弹出，神奇吧？这是因为执行panic时，就会去遍历当前goroutine的<code>_defer</code>链表，并依次执行这些延时函数，而不是返回函数A之后再执行函数A的延时函数。</p>
+<p>实际的执行流程是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">函数A执行defer语句，调用函数B</span><br><span class="line">函数B函数B发生panic</span><br><span class="line">在panic内部，遍历_defer链表，并依次执行延时函数</span><br><span class="line">如果有延时函数执行了recover，则在延时函数返回后，直接跳转到_defer.pc，而不会执行后续的延时函数</span><br></pre></td></tr></table></figure>
+<p>最后，<code>defer</code>函数虽然方便，但是需要有额外的运行开销，在使用时需要进行取舍，尤其是具有多个参数的时候，会发生多次内存拷贝：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">runtime.deferproc执行之前：移动到栈中</span><br><span class="line">runtime.deferproc执行过程中，拷贝_defer之后</span><br><span class="line">runtime.deferreturn执行时，移动到栈中</span><br></pre></td></tr></table></figure>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

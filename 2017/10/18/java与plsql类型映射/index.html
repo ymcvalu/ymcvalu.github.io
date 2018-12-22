@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        java与plsql类型映射 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java类型与数据库类型"><span class="toc-text">java类型与数据库类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#场景"><span class="toc-text">场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java"><span class="toc-text">java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#plsql"><span class="toc-text">plsql</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#object和array"><span class="toc-text">object和array</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#procedure"><span class="toc-text">procedure</span></a></li></ol></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        java与plsql类型映射
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2017-10-18 21:18:51</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#java" title="java">java</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#plsql" title="plsql">plsql</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="java类型与数据库类型"><a href="#java类型与数据库类型" class="headerlink" title="java类型与数据库类型"></a>java类型与数据库类型</h1><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>需要将<code>JAVA</code>中的复杂数据类型作为plsql存储过程参数传递</p>
+<ul>
+<li>将参数转换为<code>json</code>格式的字符串：<code>json</code>的转换和解析都需要时间，影响效率，而且需要为schema导入一套<code>json</code>处理的<code>object</code>，不利于迁移</li>
+<li>使用<code>Struct</code>和<code>Array</code>等，将<code>java</code>的类型映射成数据库的<code>object</code>和<code>Array</code></li>
+</ul>
+<h3 id="java"><a href="#java" class="headerlink" title="java"></a>java</h3><p>首先，定义<code>java bean</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TechnicalInfo</span> </span>&#123;</span><br><span class="line">    <span class="comment">//定时/实时</span></span><br><span class="line">    <span class="keyword">public</span> String timingType;</span><br><span class="line">    <span class="comment">//全量/增量</span></span><br><span class="line">    <span class="keyword">public</span> String amountType;</span><br><span class="line">    <span class="comment">//同步/异步</span></span><br><span class="line">    <span class="keyword">public</span> String syncType;</span><br><span class="line">    <span class="comment">//传输逻辑</span></span><br><span class="line">    <span class="keyword">public</span> String transferLogic;</span><br><span class="line">    <span class="comment">//服务地址</span></span><br><span class="line">    <span class="keyword">public</span> String serviceAddress;</span><br><span class="line">    <span class="comment">//技术场景</span></span><br><span class="line">    <span class="keyword">public</span> String techScene;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Fields</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> oracle.sql.STRUCT;</span><br><span class="line"><span class="keyword">import</span> oracle.sql.StructDescriptor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Fields</span> </span>&#123;</span><br><span class="line">    <span class="comment">//字段名称</span></span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="comment">//类型</span></span><br><span class="line">    <span class="keyword">public</span> String type;</span><br><span class="line">    <span class="comment">//长度</span></span><br><span class="line">    <span class="keyword">public</span> String length;</span><br><span class="line">    <span class="comment">//位置</span></span><br><span class="line">    <span class="keyword">public</span> String position;</span><br><span class="line">    <span class="comment">//层级</span></span><br><span class="line">    <span class="keyword">public</span> String level;</span><br><span class="line">    <span class="comment">//描述</span></span><br><span class="line">    <span class="keyword">public</span> String desc;</span><br><span class="line">    <span class="comment">//备注</span></span><br><span class="line">    <span class="keyword">public</span> String remarks;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> STRUCT <span class="title">toStruct</span><span class="params">(Connection conn)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">     	<span class="comment">//使用oracle的数据库接口，类型描述符，对应一个object类型</span></span><br><span class="line">        StructDescriptor sd = <span class="keyword">new</span> StructDescriptor(<span class="string">"SERVICE_FIELDS"</span>,conn);</span><br><span class="line">         </span><br><span class="line">        List&lt;Object&gt; objs = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">        Field[] fs = Fields.class.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span> (Field f : fs)&#123;</span><br><span class="line">            <span class="keyword">if</span> (f.getType() == String.class)&#123;</span><br><span class="line">                objs.add(f.get(<span class="keyword">this</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//创建一个对应plsql中object对象的struct</span></span><br><span class="line">        <span class="comment">//objs内的数据与object中声明顺序一致，一一对应</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> STRUCT(sd,conn,objs.toArray());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * ServiceInfo</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.sql.Clob;</span><br><span class="line"><span class="keyword">import</span> java.sql.Struct;</span><br><span class="line"><span class="keyword">import</span> oracle.sql.ARRAY;</span><br><span class="line"><span class="keyword">import</span> oracle.sql.ArrayDescriptor;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceInfo</span> </span>&#123;</span><br><span class="line">    <span class="comment">//服务编号</span></span><br><span class="line">    <span class="keyword">public</span> String serviceNo;</span><br><span class="line">    <span class="comment">//接口名称</span></span><br><span class="line">    <span class="keyword">public</span> String serviceName;</span><br><span class="line">    <span class="comment">//服务版本</span></span><br><span class="line">    <span class="keyword">public</span> String serviceVersion;</span><br><span class="line">    <span class="comment">//服务提供方</span></span><br><span class="line">    <span class="keyword">public</span> String serviceProvider;</span><br><span class="line">    <span class="comment">//联系人</span></span><br><span class="line">    <span class="keyword">public</span> String contact;</span><br><span class="line">    <span class="comment">//一级分类</span></span><br><span class="line">    <span class="keyword">public</span> String AClass;</span><br><span class="line">    <span class="comment">//二级分类</span></span><br><span class="line">    <span class="keyword">public</span> String BClass;</span><br><span class="line">    <span class="comment">//三级分类</span></span><br><span class="line">    <span class="keyword">public</span> String CClass;</span><br><span class="line">    <span class="comment">//服务描述</span></span><br><span class="line">    <span class="keyword">public</span> String serviceDesc;</span><br><span class="line">    <span class="comment">//业务场景</span></span><br><span class="line">    <span class="keyword">public</span> String businessScene;</span><br><span class="line">    <span class="comment">//备注</span></span><br><span class="line">    <span class="keyword">public</span> String remarks;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//触发系统报文</span></span><br><span class="line">    <span class="keyword">public</span> String triggeredMsg;</span><br><span class="line">    <span class="comment">//接收系统报文</span></span><br><span class="line">    <span class="keyword">public</span> String receiveMsg;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//技术信息</span></span><br><span class="line">    <span class="keyword">public</span> TechnicalInfor technicalInfor;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//字段</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;Fields&gt; fieldses;</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">ServiceInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ServiceInfo <span class="title">build</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ServiceInfo si = <span class="keyword">new</span> ServiceInfo();</span><br><span class="line">        si.technicalInfor = <span class="keyword">new</span> TechnicalInfor();</span><br><span class="line">        si.fieldses = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">        <span class="keyword">return</span> si;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Struct <span class="title">toStruct</span><span class="params">(Connection conn)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">      List&lt;Object&gt; objs = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">     </span><br><span class="line">        Class clazz = <span class="keyword">this</span>.getClass();</span><br><span class="line">        Field[] fs = clazz.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span> (Field f : fs) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"receiveMsg"</span>.equals(f.getName()) || <span class="string">"triggeredMsg"</span>.equals(f.getName())) &#123;</span><br><span class="line">                Clob c = conn.createClob();</span><br><span class="line">                </span><br><span class="line">                c.setString(<span class="number">1</span>, (String)f.get(<span class="keyword">this</span>));</span><br><span class="line">                objs.add(c);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (f.getType() == String.class) &#123;</span><br><span class="line">              objs.add(f.get(<span class="keyword">this</span>));</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span> (f.getType() == TechnicalInfo.class)&#123;</span><br><span class="line">                Field[] ffs = TechnicalInfor.class.getDeclaredFields();</span><br><span class="line">                <span class="keyword">for</span> (Field ff: ffs)&#123;</span><br><span class="line">                    <span class="keyword">if</span> (ff.getType()==String.class)&#123;</span><br><span class="line">                          objs.add(ff.get(<span class="keyword">this</span>.technicalInfor));</span><br><span class="line">                    &#125;</span><br><span class="line">                  </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">else</span>  <span class="keyword">if</span> (<span class="string">"fieldses"</span>.equals(f.getName()) )&#123;</span><br><span class="line">                Struct[] paramses = <span class="keyword">new</span> Struct[fieldses.size()];</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;fieldses.size();i++)&#123;</span><br><span class="line">                    paramses[i]=fieldses.get(i).toStruct(conn);</span><br><span class="line">                &#125;</span><br><span class="line">               ArrayDescriptor ad = <span class="keyword">new</span> ArrayDescriptor(<span class="string">"ARRAY_OF_FIELDS"</span>,conn);</span><br><span class="line">                </span><br><span class="line">                objs.add(<span class="keyword">new</span> ARRAY(ad,conn,paramses));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//使用java标准接口创建struct，对应一个plsql的object</span></span><br><span class="line">       <span class="keyword">return</span>     conn.createStruct(<span class="string">"SERVICE_INFO"</span>,objs.toArray());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">stmt = am.getDBTransaction().createCallableStatement(<span class="string">"begin import_service_from_excel.import(:1,:2);    end;"</span>, <span class="number">1</span>);</span><br><span class="line">stmt.registerOutParameter(<span class="number">2</span>, Types.VARCHAR);</span><br><span class="line">Struct  serviceStruct =si.toStruct(stmt.getConnection());</span><br><span class="line">stmt.setObject(<span class="number">1</span>, serviceStruct);</span><br><span class="line">stmt.execute();</span><br><span class="line">String msg = stmt.getString(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="plsql"><a href="#plsql" class="headerlink" title="plsql"></a>plsql</h3><h5 id="object和array"><a href="#object和array" class="headerlink" title="object和array"></a>object和array</h5><blockquote>
+<p><code>object</code>中的字段需要和<code>java bean</code>中的声明字段顺序保持一致</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">create or replace type service_fields as object</span><br><span class="line">(</span><br><span class="line">--字段名称</span><br><span class="line">  field_name varchar2(200),</span><br><span class="line">--类型</span><br><span class="line">  field_type varchar2(100),</span><br><span class="line">--长度</span><br><span class="line">  field_length varchar2(20),</span><br><span class="line">--位置</span><br><span class="line">  field_position varchar2(100),</span><br><span class="line">--层级</span><br><span class="line">  field_level varchar2(10),</span><br><span class="line">--描述</span><br><span class="line">  field_desc varchar2(100),</span><br><span class="line">--备注</span><br><span class="line">  field_remarks varchar2(200)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">create or replace type array_of_fields as array(1000000) of service_fields not null</span><br><span class="line"></span><br><span class="line">create or replace type service_info as object</span><br><span class="line">(</span><br><span class="line">--服务号</span><br><span class="line">  service_no varchar2(100),</span><br><span class="line">--服务名</span><br><span class="line">  service_name varchar2(100),</span><br><span class="line"></span><br><span class="line">--服务版本</span><br><span class="line">  serviceversion varchar2(50),</span><br><span class="line">--服务提供方</span><br><span class="line">  serviceprovider varchar2(50),</span><br><span class="line">--联系人</span><br><span class="line">  contact varchar2(50),</span><br><span class="line">--一级分类</span><br><span class="line">  aclass varchar2(50),</span><br><span class="line">--二级分类</span><br><span class="line">  bclass varchar2(50),</span><br><span class="line">--三级分类</span><br><span class="line">  cclass varchar2(50),</span><br><span class="line">--服务描述</span><br><span class="line">  servicedesc varchar2(150),</span><br><span class="line">--业务场景</span><br><span class="line">  businessscene varchar2(1000),</span><br><span class="line">--备注</span><br><span class="line">  remarks varchar2(200),</span><br><span class="line">--触发系统报文</span><br><span class="line">  triggeredmsg clob,</span><br><span class="line">--接收系统报文</span><br><span class="line">  receivemsg clob,</span><br><span class="line">--定时/实时</span><br><span class="line">  timingtype varchar2(20),</span><br><span class="line">--全量/增量</span><br><span class="line">  amounttype varchar2(20),</span><br><span class="line">--同步/异步</span><br><span class="line">  synctype varchar2(20),</span><br><span class="line">--传输逻辑</span><br><span class="line">  transferlogic varchar2(50),</span><br><span class="line">--服务地址</span><br><span class="line">  serviceaddress varchar2(1000),</span><br><span class="line">--技术场景</span><br><span class="line">  techscene varchar2(1000),</span><br><span class="line">--参数字段</span><br><span class="line">  fieldses array_of_fields</span><br><span class="line"></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h5 id="procedure"><a href="#procedure" class="headerlink" title="procedure"></a>procedure</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">procedure import(si  in service_info,</span><br><span class="line">                   msg out varchar2) is</span><br><span class="line">    l_cnt number;</span><br><span class="line">  begin</span><br><span class="line">   ...</span><br><span class="line">    </span><br><span class="line">  end import;</span><br></pre></td></tr></table></figure>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

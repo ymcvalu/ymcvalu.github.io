@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go编译共享库给c调用 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#introduce"><span class="toc-text">introduce</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#code-by-go"><span class="toc-text">code by go</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#code"><span class="toc-text">code</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#compile"><span class="toc-text">compile</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#use-in-c"><span class="toc-text">use in c</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#code-1"><span class="toc-text">code</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#compile-1"><span class="toc-text">compile</span></a></li></ol></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        go编译共享库给c调用
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2018-12-19 13:26:16</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="introduce"><a href="#introduce" class="headerlink" title="introduce"></a>introduce</h3><p>使用<code>golang</code>开发<code>httpServer</code>非常方便，如果我们需要在<code>c</code>程序中内嵌<code>httpServer</code>，可以考虑使用<code>go</code>来开发服务模块，然后编译成共享库供<code>c</code>调用</p>
+<h3 id="code-by-go"><a href="#code-by-go" class="headerlink" title="code by go"></a>code by go</h3><h5 id="code"><a href="#code" class="headerlink" title="code"></a>code</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"C"</span> <span class="comment">// 需要导入`C`才可以生成`.h`文件</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用`export`导出函数</span></span><br><span class="line"><span class="comment">//export ServerRun</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServerRun</span><span class="params">(addr <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	mux := http.NewServeMux()</span><br><span class="line">	mux.HandleFunc(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">(resp http.ResponseWriter, req *http.Request)</span></span> &#123;</span><br><span class="line">		resp.Write([]<span class="keyword">byte</span>&#123;<span class="string">'H'</span>, <span class="string">'i'</span>, <span class="string">'!'</span>&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">if</span> err := http.ListenAndServe(addr, mux); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err.Error())</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 内部函数也可以导出</span></span><br><span class="line"><span class="comment">//export wait</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">wait</span><span class="params">()</span></span> &#123;</span><br><span class="line">	time.Sleep(time.Hour * <span class="number">1</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>注意点：</p>
+<ul>
+<li>需要引入<code>C</code>包</li>
+<li>需要导出的函数，需要使用<code>//export funcName</code>标识</li>
+<li>包内函数也可以导出</li>
+</ul>
+<h5 id="compile"><a href="#compile" class="headerlink" title="compile"></a>compile</h5><ul>
+<li><p>动态共享库：运行时动态加载；如果运行时加载失败则报错</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go build -buildmode=c-shared -o libtest.so main.go</span><br></pre></td></tr></table></figure>
+<p>编译完成之后将生成<code>libtest.so</code>和<code>libtest.h</code>文件</p>
+</li>
+<li><p>静态共享库：编译时静态链接到程序中；生成二进制文件较大</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go build -buildmode=c-archive -o test.a main.go</span><br></pre></td></tr></table></figure>
+<p>编译完成之后将生成<code>test.h</code>和<code>test.a</code>文件</p>
+</li>
+</ul>
+<h3 id="use-in-c"><a href="#use-in-c" class="headerlink" title="use in c"></a>use in c</h3><h5 id="code-1"><a href="#code-1" class="headerlink" title="code"></a>code</h5><p>在开始写代码之前，我们要先看一下生成的<code>test.h</code>里面的内容：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="keyword">const</span> <span class="keyword">char</span> *p; <span class="keyword">ptrdiff_t</span> n; &#125; _GoString_;</span><br><span class="line"><span class="keyword">typedef</span> _GoString_ GoString;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> GoInt64;</span><br><span class="line"><span class="keyword">typedef</span> GoInt64 GoInt;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">extern</span> GoInt <span class="title">ServerRun</span><span class="params">(GoString p0)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>go</code>中的<code>string</code>类型是一个结构体：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> <span class="keyword">string</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    data []<span class="keyword">byte</span></span><br><span class="line">    <span class="built_in">len</span> <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而<code>c</code>中的<code>string</code>实际上是<code>byte[]</code>，两者的内存布局本身就不一样，因此在<code>c</code>中调用<code>go</code>的代码时，需要先按照<code>go</code>的类型结构构造参数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"test.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 构造字符串类型</span></span><br><span class="line">    <span class="keyword">char</span> str[<span class="number">5</span>] = &#123;<span class="string">':'</span>,<span class="string">'8'</span>,<span class="string">'0'</span>,<span class="string">'8'</span>,<span class="string">'0'</span>&#125;;</span><br><span class="line">    GoString addr = &#123;</span><br><span class="line">        p: str,</span><br><span class="line">        n: <span class="number">5</span></span><br><span class="line">    &#125;;</span><br><span class="line">	<span class="comment">// 执行 ServerRun</span></span><br><span class="line">    <span class="keyword">if</span> (ServerRun(addr) != <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"failed to start server!"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="compile-1"><a href="#compile-1" class="headerlink" title="compile"></a>compile</h5><ul>
+<li><p>静态共享库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -pthread -o <span class="built_in">test</span> main.c test.a</span><br></pre></td></tr></table></figure>
+<p>使用静态链接时，需要指定<code>-pthread</code>选项 </p>
+<blockquote>
+<p>Link with the POSIX threads library.  This option is supported on GNU/Linux targets, most other Unix derivatives, and also on x86 Cygwin and MinGW targets.  On some targets this option also sets flags for the preprocessor, so it should be used consistently for both compilation and linking.</p>
+</blockquote>
+<p>也可以动态加载<code>pthread</code>库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -lpthread -o <span class="built_in">test</span> main.c test.a</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动态共享库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc main.c -ltest -L. -o <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>-l</code>：声明使用到的动态共享库，比如<code>libtest.so</code>，则这里传入<code>test</code></li>
+<li><code>-L</code>：在指定路径中查找共享库；也可以将<code>.so</code>文件拷贝到默认共享库目录下</li>
+</ul>
+</li>
+</ul>
+<p>编译之后生成<code>test</code>文件，执行<code>./test</code>，然后在访问<code>http://localhost:8080</code>可以看到返回了<code>Hi!</code>内容。</p>
+<p>如果使用动态加载，运行前需要先将<code>libtest.so</code>文件拷贝到动态加载库默认的加载路径中，或者将当前路径加到<code>LD_LIBRARY_PATH</code>环境变量中。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        kotlin函数初级入门 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#普通函数声明"><span class="toc-text">普通函数声明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可变参数"><span class="toc-text">可变参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用lambda"><span class="toc-text">使用lambda</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高阶函数"><span class="toc-text">高阶函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#扩展函数"><span class="toc-text">扩展函数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#结合泛型的扩展函数"><span class="toc-text">结合泛型的扩展函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#函数参数使用扩展函数"><span class="toc-text">函数参数使用扩展函数</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        kotlin函数初级入门
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2017-12-11 23:36:59</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#kotlin" title="kotlin">kotlin</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="普通函数声明"><a href="#普通函数声明" class="headerlink" title="普通函数声明"></a>普通函数声明</h3><p>使用 <code>func</code> 关键字声明一个函数，像这样</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(a:<span class="type">Int</span>,b:<span class="type">Int</span>)</span></span>:<span class="built_in">Int</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>在<code>kotlin</code>中，所有函数的参数都是<code>val</code>的，即不可变参数</strong><br>如果函数体只有一行代码，可以简洁点：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(a: <span class="type">Int</span>, b: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> = a + b</span><br></pre></td></tr></table></figure></p>
+<p>更简单点，返回值自动推断：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(a: <span class="type">Int</span>, b: <span class="type">Int</span>)</span></span> = a + b</span><br></pre></td></tr></table></figure></p>
+<p>###带默认值的函数<br>可以在声明函数参数的时候，直接指定默认值，如果调用时没有传入，将使用默认值，带有默认值的参数可以在任何位置<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(a: <span class="type">Int</span>=<span class="number">1</span>, b: <span class="type">Int</span>)</span></span> = a + b</span><br></pre></td></tr></table></figure></p>
+<p>调用的时候，可以使用<code>参数名=值</code>的形式给出参数<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add(b=<span class="number">1</span>)</span><br></pre></td></tr></table></figure></p>
+<p>换个位置声明默认值：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(a: <span class="type">Int</span> , b: <span class="type">Int</span>=<span class="number">1</span>)</span></span> = a + b</span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">adds</span> <span class="params">(a:<span class="type">Int</span>,b:<span class="type">Int</span>=<span class="number">1</span>,c:<span class="type">Int</span>)</span></span>= a+b+c</span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(<span class="keyword">vararg</span> args:<span class="type">String</span>)</span></span>&#123;</span><br><span class="line">    add(<span class="number">1</span>)    <span class="comment">//自动匹配第一个参数</span></span><br><span class="line">    adds (<span class="number">1</span>,c=<span class="number">2</span>)    <span class="comment">//默认值之后的参数需要显示指出参数名</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>函数匹配优先级：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(a:<span class="type">Int</span>)</span></span> = a*a</span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(a: <span class="type">Int</span> , b: <span class="type">Int</span>=<span class="number">1</span>)</span></span> = a + b</span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(<span class="keyword">vararg</span> args:<span class="type">String</span>)</span></span>&#123;</span><br><span class="line">   println(add(<span class="number">3</span>))  <span class="comment">//输出 9 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当有多个函数匹配时，带默认值参数个数少的优先级越高，不带默认值的优先级最高</p>
+<h3 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h3><p>在<code>kotlin</code>中，使用 <code>vararg</code> 关键字来标识可变参数<br>和<code>java</code>一样，多个参数会被封装成数组赋值给a</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">add</span><span class="params">(<span class="keyword">vararg</span> a: <span class="type">Int</span>, b: <span class="type">Int</span>)</span></span>:<span class="built_in">Int</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum :<span class="built_in">Int</span> = <span class="number">0</span></span><br><span class="line">    a.forEach &#123; </span><br><span class="line">        sum+=it</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum+b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和<code>java</code>不同的是，在java中我们可以直接将一个数组赋值给可变参数，这有时候会引起混淆，因此在kotlin中，我们需要显示使用运算符<code>*</code>将数组解构成元素<br>比如我们可以这样调用上面的方法：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(<span class="keyword">vararg</span> args: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> arr = IntArray(<span class="number">10</span>) &#123; it &#125;</span><br><span class="line">    add(*arr, b = <span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>注意，第二个参数我们需要明确指出他的参数名，否则他会被当作可变参数中的一个值</p>
+<h3 id="使用lambda"><a href="#使用lambda" class="headerlink" title="使用lambda"></a>使用lambda</h3><p><code>lambda</code>是一种特殊的函数。和传统函数不同的是，他可以被存储，传递，并且可以捕获外部变量形成闭包。</p>
+<p>#####<code>lambda</code>的类型<br>因为<code>lambda</code>本质上还是对象，因此他是有类型的。<br> <code>lambda</code>的类型格式为：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(参数列表)-&gt;返回值类型</span><br></pre></td></tr></table></figure>
+<p><code>lambda</code>的<code>body</code>结构为：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;形参列表-&gt;</span><br><span class="line">  语句</span><br><span class="line">  ...</span><br><span class="line">  最后一个语句的值为返回值（如果需要返回值）</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>比如：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> max:(<span class="built_in">Int</span>,<span class="built_in">Int</span>)-&gt;<span class="built_in">Int</span> = &#123;a,b -&gt; <span class="keyword">if</span> (a&gt;b) a <span class="keyword">else</span> b&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>max</code>用于比较两个整数，并返回他们中的最大者。因为这边接收了两个参数，因此我们需要在<code>lambda</code>的<code>body</code>中显示的为这两个参数指定一个名字，就像我们需要为函数指定形参名。<br>上面的例子也可以这样写：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> max =  &#123; a:<span class="built_in">Int</span>,b:<span class="built_in">Int</span>-&gt; <span class="keyword">if</span> (a&gt;b) a <span class="keyword">else</span> b&#125;  <span class="keyword">as</span> (<span class="built_in">Int</span>,<span class="built_in">Int</span>)-&gt;<span class="built_in">Unit</span></span><br></pre></td></tr></table></figure></p>
+<p>不过这是比较2b的写法了，使用<code>as</code>对<code>lambda</code>进行类型转换，然后<code>max</code>的类型自动推出，这里我只是想说明<code>lambda</code>本质上还是个对象，因此一样可以进行类型转换。</p>
+<h3 id="高阶函数"><a href="#高阶函数" class="headerlink" title="高阶函数"></a>高阶函数</h3><p><code>lambda</code>可以作为函数的参数或者返回值，举个例子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">forEach</span><span class="params">(list:<span class="type">List</span>&lt;<span class="type">T</span>&gt;,block:(<span class="type">t</span>:<span class="type">T</span>)</span></span>-&gt;<span class="built_in">Unit</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span> (t <span class="keyword">in</span> list)&#123;</span><br><span class="line">        block(t)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(<span class="keyword">vararg</span> args:<span class="type">String</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = listOf(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line">    forEach(list)&#123;</span><br><span class="line">        println(it)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，我们声明了一个<code>forEach</code>的函数，他的功能是遍历一个列表，并对列表中的每个元素调用指定的<code>lambda</code>，然后我们在<code>main</code>函数中调用它。<br>值得注意的是，这里当我们的<code>lambda</code>是函数的最后一个参数时，我们可以将其写在<code>()</code>外面，当函数参数只有一个<code>lambda</code>时，可以直接省略<code>()</code>；<br>还有第二个要注意的是，我们使用了匿名参数，当<code>lambda</code>只有一个参数时，我们可以不用显示的指定一个参数名，而是使用默认的<code>it</code>来引用。</p>
+<h3 id="扩展函数"><a href="#扩展函数" class="headerlink" title="扩展函数"></a>扩展函数</h3><p>在<code>kotlin</code>中，我们可以很方便的扩展某个类，为其增加方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="built_in">Int</span>.<span class="title">compareWith</span><span class="params">(a: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">when</span> &#123;</span><br><span class="line">        <span class="keyword">this</span> &gt; a -&gt; <span class="number">1</span></span><br><span class="line">        <span class="keyword">this</span> &lt; a -&gt; -<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span> -&gt; <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(<span class="keyword">vararg</span> args: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">    println(<span class="number">10</span>.compareWith(<span class="number">4</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如上所示，声明一个扩展函数的语法很简单，只需要在方法名前面加上<code>类名.</code>，在方法中我们可以使用<code>this</code>来引用他，但是只能访问<code>public</code>的成员。这个<code>类名</code>我们使用<code>receiver</code>来描述它。<br>扩展函数只是<code>kotlin</code>中众多语法糖中的一个，他并没有真正的扩展这个类，只是将方法的一个参数提到了方法名前面作为<code>receiver</code>：<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="built_in">Int</span>.<span class="title">compareWith</span><span class="params">(a:<span class="type">Int</span>)</span></span>:<span class="built_in">Int</span></span><br><span class="line">===&gt;</span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">compareWith</span><span class="params">(this:<span class="type">Int</span>,a:<span class="type">Int</span>)</span></span>:<span class="built_in">Int</span></span><br></pre></td></tr></table></figure></p>
+<p>所以调用扩展函数和普通的函数调用没有区别，函数的<code>receiver</code>本质上还是这个函数的参数，而不是这个方法的所有者，因此在调用时使用的是静态分派，并不支持多态。<br>而且当扩展函数与类的方法冲突时，默认使用的是类的方法。</p>
+<h5 id="结合泛型的扩展函数"><a href="#结合泛型的扩展函数" class="headerlink" title="结合泛型的扩展函数"></a>结合泛型的扩展函数</h5><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T:Any&gt;</span> T?.<span class="title">toStr</span><span class="params">()</span></span>&#123;</span><br><span class="line">    println(<span class="keyword">this</span>?.toString()?:<span class="string">"this is a null ref"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(<span class="keyword">vararg</span> args:<span class="type">String</span>)</span></span>&#123;</span><br><span class="line">    <span class="literal">null</span>.toStr()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正如上面的例子中所看到的，我们可以使用泛型参数作为函数的<code>receiver</code>，而且我们使用了<code>T?</code>，说明支持<code>null</code></p>
+<h5 id="函数参数使用扩展函数"><a href="#函数参数使用扩展函数" class="headerlink" title="函数参数使用扩展函数"></a>函数参数使用扩展函数</h5><p>对刚刚的<code>forEach</code>函数稍加改造：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">forEach</span><span class="params">(list:<span class="type">List</span>&lt;<span class="type">T</span>&gt;,block:<span class="type">T</span>.()</span></span>-&gt;<span class="built_in">Unit</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span> (t <span class="keyword">in</span> list)&#123;</span><br><span class="line">       t.block()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(<span class="keyword">vararg</span> args:<span class="type">String</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> list = listOf(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line">    forEach(list)&#123;</span><br><span class="line">        println(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意在声明函数参数时，我们使用了<code>T.()-&gt;Unit</code>，也就是声明了一个具有<code>receiver</code>的<code>lambda</code></p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go自定义类型的序列化过程 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题引入"><span class="toc-text">问题引入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义序列化"><span class="toc-text">自定义序列化</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        go自定义类型的序列化过程
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2018-08-13 22:22:31</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h3><p>当某个struct存在某个字段为string或者[]byte类型但是实际上保存的内容是json格式的数据时，对其进行json序列化，比如<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Message <span class="keyword">struct</span> &#123;</span><br><span class="line">	From <span class="keyword">string</span>     <span class="string">`json:"from"`</span></span><br><span class="line">	To   <span class="keyword">string</span>     <span class="string">`json:"to"`</span></span><br><span class="line">	Data <span class="keyword">string</span> <span class="string">`json:"data"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	msg := Message&#123;</span><br><span class="line">		From: <span class="string">"XiaoMing"</span>,</span><br><span class="line">		To:   <span class="string">"LiGang"</span>,</span><br><span class="line">		Data: <span class="string">`&#123;"title":"test","body":"something"&#125;`</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	jsonData, err := json.Marshal(msg)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(jsonData))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上面的例子中，Data字段是string类型，但是保存的内容是json格式的数据，这个时候，程序输出：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">"from"</span>:<span class="string">"XiaoMing"</span>,<span class="attr">"to"</span>:<span class="string">"LiGang"</span>,<span class="attr">"data"</span>:<span class="string">"&#123;\"title\":\"test\",\"body\":\"something\"&#125;"</span>&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，序列化之后的data是一个字符串。<br>如果Message对应的是数据库中的一张表，而data字段在数据库中是json类型，当我们需要一个接口，查询Message表中的记录返回给客户端。如果直接执行序列化，那么客户端获取到的Data实际上是一个字符串，客户端还需要自行对这个字符串进行json反序列化。</p>
+<blockquote>
+<p>这时候我们就会想，有没有什么办法能够在服务端序列化Message时，将data字段序列化成json对象而不是字符串呢？</p>
+</blockquote>
+<h3 id="自定义序列化"><a href="#自定义序列化" class="headerlink" title="自定义序列化"></a>自定义序列化</h3><p>因为data字段的值本身就是json类型，为什么不能在序列化时直接使用呢？<br>查看json包的官方文档，我们可以发现关于 <a href="https://godoc.org/encoding/json#ex-package--CustomMarshalJSON" target="_blank" rel="noopener">自定义序列化</a>的例子<br>当执行json序列化时，如果对应的类型实现了<code>Marshaler</code>接口：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Marshaler <span class="keyword">interface</span> &#123;</span><br><span class="line">	MarshalJSON() ([]<span class="keyword">byte</span>, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么就会执行其<code>MarshalJSON</code>方法，并将返回的字节数组作为该值的序列化值。<br>那么回到上面的例子，我们就很容易实现目标：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> JsonString <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(j JsonString)</span> <span class="title">MarshalJSON</span><span class="params">()</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"marshal..."</span>)</span><br><span class="line">	<span class="keyword">return</span> []<span class="keyword">byte</span>(j), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Message <span class="keyword">struct</span> &#123;</span><br><span class="line">	From <span class="keyword">string</span>     <span class="string">`json:"from"`</span></span><br><span class="line">	To   <span class="keyword">string</span>     <span class="string">`json:"to"`</span></span><br><span class="line">	Data JsonString <span class="string">`json:"data"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上面的代码中基于<code>string</code>类型声明了<code>JsonString</code>，代表json格式的字符串，并实现了Marshaler接口。因为JsonString代表的就是json字符串，直接将其转换成字节数组返回。<br>然后将Message中的Data字段换成JsonString类型。<br>再次执行程序，可以看到：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">"from"</span>:<span class="string">"XiaoMing"</span>,<span class="attr">"to"</span>:<span class="string">"LiGang"</span>,<span class="attr">"data"</span>:&#123;<span class="attr">"title"</span>:<span class="string">"test"</span>,<span class="attr">"body"</span>:<span class="string">"something"</span>&#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>Perfect!</strong></p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
