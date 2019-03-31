@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        golang执行command - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#在golang中使用cmd"><span class="toc-text">在golang中使用cmd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#demo"><span class="toc-text">demo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cmd不是Shell"><span class="toc-text">Cmd不是Shell</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        golang执行command
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2018-12-27 17:51:05</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="在golang中使用cmd"><a href="#在golang中使用cmd" class="headerlink" title="在golang中使用cmd"></a>在golang中使用cmd</h3><p>在日常开发中，我们有时候需要在程序中调用系统的其他指令来完成任务，比如通过调用<code>mysqldump</code>来执行数据库备份。</p>
+<p><code>golang</code>提供了<code>Cmd</code>，可以很方便的帮助我们来完成这些内容。</p>
+<blockquote>
+<p>Package exec runs external commands. It wraps os.StartProcess to make it<br>easier to remap stdin and stdout, connect I/O with pipes, and do other<br>adjustments.</p>
+<p>Unlike the “system” library call from C and other languages, the<br>os/exec package intentionally does not invoke the system shell and<br>does not expand any glob patterns or handle other expansions,<br>pipelines, or redirections typically done by shells. The package<br>behaves more like C’s “exec” family of functions. To expand glob<br>patterns, either call the shell directly, taking care to escape any<br>dangerous input, or use the path/filepath package’s Glob function.<br>To expand environment variables, use package os’s ExpandEnv.</p>
+</blockquote>
+<h3 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Backup</span><span class="params">(p <span class="keyword">string</span>)</span></span>&#123;</span><br><span class="line">    cmd := exec.Cmd&#123;&#125;</span><br><span class="line">	cmd.Path = <span class="string">"/usr/bin/mysqldump"</span></span><br><span class="line">    cmd.Args = []<span class="keyword">string</span>&#123;<span class="string">"-uuname"</span>, <span class="string">"-ppasswd"</span>, <span class="string">`db_name`</span>&#125;</span><br><span class="line">	fd, err := os.OpenFile(p, os.O_CREATE|os.O_TRUNC|os.O_RDWR, <span class="number">0666</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> fd.Close()</span><br><span class="line">	cmd.Stderr = os.Stderr <span class="comment">// 重定向错误输出，可以在控制台中看到子进程的错误信息，方便排查</span></span><br><span class="line">	cmd.Stdout = fd <span class="comment">// 重定向cmd的输出，保存到目标文件中</span></span><br><span class="line">	err = cmd.Run() <span class="comment">// Run实际上就是Start和Wait的组合，会等待子进程结束才返回，如果需要异步直接使用Start</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Restore</span><span class="params">(p <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	cmd := exec.Cmd&#123;&#125;</span><br><span class="line">	cmd.Path = <span class="string">"/usr/bin/mysql"</span></span><br><span class="line">    cmd.Args = []<span class="keyword">string</span>&#123;<span class="string">"-uuname"</span>, <span class="string">"-ppasswd"</span>, <span class="string">"-Ddb_name"</span>&#125;</span><br><span class="line">	fd, err := os.Open(p)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> fd.Close()</span><br><span class="line">	cmd.Stdin = fd <span class="comment">// 重定向标准输出为打开文件</span></span><br><span class="line">	cmd.Stdout = os.Stdout</span><br><span class="line">	cmd.Stderr = os.Stderr</span><br><span class="line">	<span class="keyword">if</span> err := cmd.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如同上面<code>demo</code>所示，我们可以通过重定向子进程的<code>stdin</code>，<code>stdout</code>，<code>stderr</code>等</p>
+<p>此外，<code>Cmd</code>也提供了<code>Pipe</code>接口，看一下实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Cmd)</span> <span class="title">StdinPipe</span><span class="params">()</span> <span class="params">(io.WriteCloser, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> c.Stdin != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"exec: Stdin already set"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> c.Process != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"exec: StdinPipe after process started"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	pr, pw, err := os.Pipe() <span class="comment">// 创建一条管道</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	c.Stdin = pr <span class="comment">// 重定向标准输出为读取端</span></span><br><span class="line">	c.closeAfterStart = <span class="built_in">append</span>(c.closeAfterStart, pr)</span><br><span class="line">	wc := &amp;closeOnce&#123;File: pw&#125; <span class="comment">// 包装管道的写出端</span></span><br><span class="line">	c.closeAfterWait = <span class="built_in">append</span>(c.closeAfterWait, wc)</span><br><span class="line">	<span class="keyword">return</span> wc, <span class="literal">nil</span> <span class="comment">// 返回</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>管道可以用于两个进程之间单向传输数据，一端用于写入，一端用于读取。</p>
+<h3 id="Cmd不是Shell"><a href="#Cmd不是Shell" class="headerlink" title="Cmd不是Shell"></a>Cmd不是Shell</h3><p><strong>当我们在控制台执行命令的时候，实际上我们输入的命令会先通过<code>shell</code>进行预处理，然后才会被实际的程序执行</strong></p>
+<p>比如，当我们在控制台执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rm -rf *</span><br></pre></td></tr></table></figure>
+<p><code>shell</code>会先将<code>*</code>替换成所有匹配的文件列表，然后再把<code>-rf</code>和待删除的文件列表传给<code>rm</code>命令执行</p>
+<p>而如果通过<code>Cmd</code>进行调用，并不会执行这些预处理。</p>
+<p>比如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    cmd := exec.Cmd&#123;&#125;</span><br><span class="line">	cmd.Path = <span class="string">"/bin/rm"</span></span><br><span class="line">    cmd.Args = []<span class="keyword">string</span>&#123;<span class="string">"-r"</span>, <span class="string">"-f"</span>, <span class="string">"*"</span>&#125;</span><br><span class="line">	cmd.Stdout = os.Stdout</span><br><span class="line">	cmd.Stderr = os.Stderr</span><br><span class="line">	<span class="keyword">if</span> err := cmd.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>*</code>会直接作为参数传递给<code>rm</code>，而<code>rm</code>本身并不会执行模糊匹配，而是把<code>*</code>当做普通的文件名对待，如果当前目录没有存在文件名为<code>*</code>的文件，则会报错：<code>No such file or directory</code></p>
+<p>解决的方法一：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    cmd := exec.Cmd&#123;&#125;</span><br><span class="line">	cmd.Path = <span class="string">"/bin/bash"</span></span><br><span class="line">    cmd.Args = []<span class="keyword">string</span>&#123;<span class="string">"-c"</span>, <span class="string">"rm -rf *"</span>&#125; <span class="comment">// 使用 bash -c "rm -rf *"</span></span><br><span class="line">	cmd.Stdout = os.Stdout</span><br><span class="line">	cmd.Stderr = os.Stderr</span><br><span class="line">	<span class="keyword">if</span> err := cmd.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解决方法二：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    fs, _ := filepath.Glob(<span class="string">"*"</span>) <span class="comment">// 获取匹配`*`的文件列表</span></span><br><span class="line">    cmd := exec.Cmd&#123;&#125;</span><br><span class="line">	cmd.Path = <span class="string">"/bin/rm"</span></span><br><span class="line">    cmd.Args = []<span class="keyword">string</span>&#123;<span class="string">"-r"</span>, <span class="string">"-f"</span>&#125;</span><br><span class="line">    cmd.Args = <span class="built_in">append</span>(cmd.Args, fs...)</span><br><span class="line">	cmd.Stdout = os.Stdout</span><br><span class="line">	cmd.Stderr = os.Stderr</span><br><span class="line">	<span class="keyword">if</span> err := cmd.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
