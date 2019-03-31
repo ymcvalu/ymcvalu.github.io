@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go中的猴子补丁 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数值"><span class="toc-text">函数值</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#闭包实现原理"><span class="toc-text">闭包实现原理</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#实现猴子补丁"><span class="toc-text">实现猴子补丁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#refer"><span class="toc-text">refer</span></a></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        go中的猴子补丁
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2019-03-06 10:05:07</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="函数值"><a href="#函数值" class="headerlink" title="函数值"></a>函数值</h3><p>首先查看下面代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">a</span><span class="params">()</span><span class="title">int</span></span> &#123;<span class="keyword">return</span> <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"%p\n"</span>, a) <span class="comment">// 0x48f950</span></span><br><span class="line">	fn := a</span><br><span class="line">	fmt.Printf(<span class="string">"0x%x\n"</span>,*(*<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;fn))) <span class="comment">// 0x4c8680</span></span><br><span class="line">	fmt.Printf(<span class="string">"0x%x\n"</span>, **(**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;fn))) <span class="comment">// 0x48f950</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据上面的输出我们可以发现，函数值<code>fn</code>并没有直接持有函数<code>a</code>的地址，这是因为<strong><code>Go</code>的函数值可以包含一些额外的上下文信息</strong>，这是实现闭包和绑定实例方法的关键，我们可以在<a href="https://github.com/golang/go/blob/e9d9d0befc634f6e9f906b5ef7476fbd7ebd25e3/src/runtime/runtime2.go#L75-L78" target="_blank" rel="noopener">源码</a>中找到点函数值类型的线索：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> funcval <span class="keyword">struct</span> &#123;</span><br><span class="line">	fn <span class="keyword">uintptr</span></span><br><span class="line">	<span class="comment">// variable-size, fn-specific data here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们代码中的函数变量，实际上应该<code>*funcval</code>类型</p>
+<h5 id="闭包实现原理"><a href="#闭包实现原理" class="headerlink" title="闭包实现原理"></a>闭包实现原理</h5><p>接下来，我们探究一下<code>golang</code>中闭包的实现原理，我们首先写一个简单的闭包demo，然后从编译后的汇编代码来探究其实现</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	f := fn() <span class="comment">// 这里的f是一个函数值</span></span><br><span class="line">	f()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fn</span><span class="params">()</span> <span class="title">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> a = <span class="number">10</span></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		fmt.Println(a) <span class="comment">// 捕获局部变量a</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来将上面代码编译成汇编：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go tool compile -S -N main.go &gt; asm.s</span><br></pre></td></tr></table></figure>
+<p>下面是生成的汇编，只保留主要的内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;.main STEXT size=72 args=0x0 locals=0x18</span><br><span class="line">	0x0000 00000 (demo.go:7)	TEXT	&quot;&quot;.main(SB), $24-0</span><br><span class="line">	0x0024 00036 (demo.go:8)	CALL	&quot;&quot;.fn(SB) # 调用fn函数获取</span><br><span class="line">	0x0029 00041 (demo.go:8)	MOVQ	(SP), DX # 保存返回的函数值指针到DX，这里的DX是关键</span><br><span class="line">	0x002d 00045 (demo.go:8)	MOVQ	DX, &quot;&quot;.f+8(SP) # 把DX的值赋给局部变量f </span><br><span class="line">	0x0032 00050 (demo.go:9)	MOVQ	(DX), AX # 从上面funcval结构可知，(DX)为实际函数地址，也就是下面的&quot;&quot;.fn.func1</span><br><span class="line">	0x0035 00053 (demo.go:9)	CALL	AX # 调用实际的函数</span><br><span class="line">	0x0040 00064 (demo.go:10)	RET</span><br><span class="line"></span><br><span class="line">&quot;&quot;.fn STEXT size=136 args=0x8 locals=0x28</span><br><span class="line">	0x0000 00000 (demo.go:12)	TEXT	&quot;&quot;.fn(SB), $40-8</span><br><span class="line">	0x0036 00054 (demo.go:14)	LEAQ	type.noalg.struct &#123; F uintptr; &quot;&quot;.a int &#125;(SB), AX # 这里表示实际funcval的类型</span><br><span class="line">	0x003d 00061 (demo.go:14)	MOVQ	AX, (SP)</span><br><span class="line">	0x0041 00065 (demo.go:14)	CALL	runtime.newobject(SB) # new一个funcval</span><br><span class="line">	0x0046 00070 (demo.go:14)	MOVQ	8(SP), AX # 返回值</span><br><span class="line">	0x0050 00080 (demo.go:14)	LEAQ	&quot;&quot;.fn.func1(SB), CX # 取实际函数地址</span><br><span class="line">	0x0057 00087 (demo.go:14)	MOVQ	CX, (AX) # 保存实际地址</span><br><span class="line">	0x0061 00097 (demo.go:14)	MOVQ	&quot;&quot;.a+16(SP), CX # 保存变量a到funcval</span><br><span class="line">	0x0066 00102 (demo.go:14)	MOVQ	CX, 8(AX) </span><br><span class="line">	0x006f 00111 (demo.go:14)	MOVQ	AX, &quot;&quot;.~r0+48(SP) # 设置返回值</span><br><span class="line">	0x007d 00125 (demo.go:14)	RET</span><br><span class="line"></span><br><span class="line">&quot;&quot;.fn.func1 STEXT size=258 args=0x0 locals=0x88</span><br><span class="line">	0x0000 00000 (demo.go:14)	TEXT	&quot;&quot;.fn.func1(SB), NEEDCTXT, $136-0</span><br><span class="line">	0x0036 00054 (demo.go:14)	MOVQ	8(DX), AX	# [DX+8]实际上存储的就是闭包引用外部的变量a</span><br><span class="line">	0x003a 00058 (demo.go:14)	MOVQ	AX, &quot;&quot;.a+48(SP) # 将AX赋值给变量a</span><br><span class="line">	0x003f 00063 (demo.go:15)	MOVQ	AX, &quot;&quot;..autotmp_2+56(SP)</span><br><span class="line">	0x0056 00086 (demo.go:15)	LEAQ	type.int(SB), AX # fmt.Println函数实际接收的是[]interface&#123;&#125;，这里需要先将a转换成interface&#123;&#125;类型</span><br><span class="line">	0x005d 00093 (demo.go:15)	MOVQ	AX, (SP)</span><br><span class="line">	0x0061 00097 (demo.go:15)	MOVQ	&quot;&quot;..autotmp_2+56(SP), AX</span><br><span class="line">	0x0066 00102 (demo.go:15)	MOVQ	AX, 8(SP)</span><br><span class="line">	0x006b 00107 (demo.go:15)	CALL	runtime.convT2E64(SB)</span><br></pre></td></tr></table></figure>
+<p>从上面我们可以看到，<code>go</code>的闭包是通过<code>funcval</code>携带额外的上下文信息来实现的。</p>
+<p>当创建闭包函数时，将被闭包捕获的变量的地址保存到<code>funcval</code>，当调用闭包函数时，会将<code>funcval</code>的地址保存到<code>DX</code>寄存器，执行闭包函数时，可以通过<code>DX</code>寄存器来访问这些变量。</p>
+<h3 id="实现猴子补丁"><a href="#实现猴子补丁" class="headerlink" title="实现猴子补丁"></a>实现猴子补丁</h3><p>现在，我们要在<code>go</code>中实现猴子补丁，所想要实现的效果是：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">a</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"run a"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">b</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"run b"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a() <span class="comment">// run a</span></span><br><span class="line">	replace(a, b)</span><br><span class="line">	a() <span class="comment">// run b</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们要在<code>replace</code>方法中，将对函数<code>a</code>的调用替换成对函数<code>b</code>的调用。</p>
+<p>具体实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">replace</span><span class="params">(a, b <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">	replaceFunction(**(**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;a)), *(*<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;b)))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// from is a pointer to the actual function</span></span><br><span class="line"><span class="comment">// to is a pointer to a go funcvalue</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">replaceFunction</span><span class="params">(from, to <span class="keyword">uintptr</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// demo只支持64bit</span></span><br><span class="line">	<span class="keyword">if</span> unsafe.Sizeof(<span class="keyword">uintptr</span>(<span class="number">1</span>)) != <span class="number">8</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"only support amd64"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// jmpToFunctionValue生成跳转到to代表的函数的机器码</span></span><br><span class="line">	jumpData := jmpToFunctionValue(to)</span><br><span class="line">    <span class="comment">// 使用生成的机器码替换from函数</span></span><br><span class="line">	copyToLocation(from, jumpData)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// movabs rdx,to # to是一个*funcval，需要将其存储到DX寄存器，rdx是64bit的DX寄存器</span></span><br><span class="line"><span class="comment">// jmp QWORD PTR [rdx] # 跳转到to对应的实际函数的开始处执行</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">jmpToFunctionValue</span><span class="params">(to <span class="keyword">uintptr</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> []<span class="keyword">byte</span>&#123;</span><br><span class="line">		<span class="number">0x48</span>, <span class="number">0xBA</span>,</span><br><span class="line">		<span class="keyword">byte</span>(to),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">8</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">16</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">24</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">32</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">40</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">48</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">56</span>), <span class="comment">// movabs rdx,to</span></span><br><span class="line">		<span class="number">0xFF</span>, <span class="number">0x22</span>,     <span class="comment">// jmp QWORD PTR [rdx]</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 内存替换，因为code所在的代码段默认是只读的，因此需要使用系统调用mprotect将其更改为可写的</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">copyToLocation</span><span class="params">(location <span class="keyword">uintptr</span>, data []<span class="keyword">byte</span>)</span></span> &#123;</span><br><span class="line">	f := rawMemoryAccess(location, <span class="built_in">len</span>(data))</span><br><span class="line">	mprotectCrossPage(location, <span class="built_in">len</span>(data), syscall.PROT_READ|syscall.PROT_WRITE|syscall.PROT_EXEC)</span><br><span class="line">	<span class="built_in">copy</span>(f, data[:])</span><br><span class="line">	mprotectCrossPage(location, <span class="built_in">len</span>(data), syscall.PROT_READ|syscall.PROT_EXEC)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将指定内存地址转换成一个slice</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">rawMemoryAccess</span><span class="params">(p <span class="keyword">uintptr</span>, length <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> *(*[]<span class="keyword">byte</span>)(unsafe.Pointer(&amp;reflect.SliceHeader&#123;</span><br><span class="line">		Data: p,</span><br><span class="line">		Len:  length,</span><br><span class="line">		Cap:  length,</span><br><span class="line">	&#125;))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用系统调用mprotect修改指定内存的访问权限</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mprotectCrossPage</span><span class="params">(addr <span class="keyword">uintptr</span>, length <span class="keyword">int</span>, prot <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	pageSize := syscall.Getpagesize()</span><br><span class="line">	<span class="keyword">for</span> p := pageStart(addr); p &lt; addr+<span class="keyword">uintptr</span>(length); p += <span class="keyword">uintptr</span>(pageSize) &#123;</span><br><span class="line">		page := rawMemoryAccess(p, pageSize)</span><br><span class="line">		err := syscall.Mprotect(page, prot)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 内存页对齐</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pageStart</span><span class="params">(ptr <span class="keyword">uintptr</span>)</span> <span class="title">uintptr</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> ptr &amp; ^(<span class="keyword">uintptr</span>(syscall.Getpagesize() - <span class="number">1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当执行<code>replace(a,b)</code>时，会动态将函数<code>a</code>的指令替换成<code>movabs rdx,to; jmp QWORD PTR [rdx]</code></p>
+<p>之后调用函数<code>a</code>时，会执行<code>call</code>指令，这时候会把传递给函数<code>a</code>的参数保存到栈上，并且将返回地址保存到指定的寄存器<code>RA</code>中；</p>
+<p>因为函数<code>a</code>被替换成上诉两条指令，因此会跳转到函数<code>b</code>执行，这时候函数<code>b</code>可以直接使用栈上的参数（这就要求两个函数要有相同的函数签名）；</p>
+<p>当函数<code>b</code>执行完成时，会执行<code>ret</code>指令，这时候会把返回值保存到栈上，同时将<code>RA</code>中的返回地址弹出到<code>PC</code>寄存器中；</p>
+<p>对于函数调用者来说，整个过程是透明的。</p>
+<h3 id="refer"><a href="#refer" class="headerlink" title="refer"></a>refer</h3><p><a href="https://bou.ke/blog/monkey-patching-in-go/" target="_blank" rel="noopener">monkey patching in Go</a></p>
+<p><a href="https://github.com/bouk/monkey" target="_blank" rel="noopener">bouk/monkey</a></p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
