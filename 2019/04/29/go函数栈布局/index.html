@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>HOME</span>
+                    <span>主页</span>
                 </a>
             </li>
             <li>
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>TAGS</span>
+                    <span>标签</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>ARCHIVES</span>
+                    <span>存档</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>ABOUT</span>
+                    <span>关于</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>SEARCH</span>
+                    <span>搜索</span>
                 </a>
             </li>
             
@@ -100,7 +100,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">search</span>
+            <span id="begin-search">搜索</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -123,21 +123,21 @@
     </div>
 
     <div class="post-meta">
-        <span class="attr">Post：<span>2019-04-29 23:09:12</span></span>
+        <span class="attr">发布于：<span>2019-04-29 23:09:12</span></span>
         
-        <span class="attr">Tags：/
+        <span class="attr">标签：/
         
         <a class="tag" href="/tags/#go" title="go">go</a>
         <span>/</span>
         
         
         </span>
-        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
 </span>
 
     </div>
     <div class="post-content ">
-        <h1 id="Go函数调用布局"><a href="#Go函数调用布局" class="headerlink" title="Go函数调用布局"></a>Go函数调用布局</h1><h3 id="函数具有局部变量（栈帧大小大于0）"><a href="#函数具有局部变量（栈帧大小大于0）" class="headerlink" title="函数具有局部变量（栈帧大小大于0）"></a>函数具有局部变量（栈帧大小大于0）</h3><p><img src="../img/go-func-statck1.png" alt=""></p>
+        <h1 id="Go函数调用布局"><a href="#Go函数调用布局" class="headerlink" title="Go函数调用布局"></a>Go函数调用布局</h1><h3 id="函数具有局部变量（栈帧大小大于0）"><a href="#函数具有局部变量（栈帧大小大于0）" class="headerlink" title="函数具有局部变量（栈帧大小大于0）"></a>函数具有局部变量（栈帧大小大于0）</h3><p><img src="/img/go-func-statck1.png" alt=""></p>
 <p>从上图我们可以看到，函数调用时，参数和返回值是通过栈来传递的，通过栈来传递函数，能够很好的实现多返回值，而且当发生<code>goroutine</code>的调度时，只需要切换<code>SP/BP</code>等少量寄存器，而不需要对通用寄存器进行切换，而且，当我们使用<strong>命名返回值</strong>时，是直接在对应的栈上进行更新，因此我们可以在<code>defer</code>函数内更新返回值。</p>
 <h5 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">frameInfo</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>,<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(frameInfo(<span class="number">15</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">TEXT ·frameInfo(SB),$8-54 // 这里8表示函数局部栈帧8个字节，参数和返回值共54个字节</span><br><span class="line">    MOVQ SP, AX // 取硬件寄存器SP的内容，作为第一个返回值</span><br><span class="line">    MOVQ AX, ret0+8(FP)</span><br><span class="line">    LEAQ i+0(SP), AX // 取pseudo_sp的值，作为第二个返回值</span><br><span class="line">    MOVQ AX, ret2+16(FP)</span><br><span class="line">    MOVQ BP, AX  // 取硬件寄存器BP的值，作为第三个返回值</span><br><span class="line">    MOVQ AX, ret1+24(FP)</span><br><span class="line">    LEAQ i+0(FP), AX // 取pseudo_fp的值，作为第四个返回值</span><br><span class="line">    MOVQ AX, ret3+32(FP)</span><br><span class="line">    MOVQ i+0(FP), AX // 通过伪寄存器fp获取参数i作为第五个返回值</span><br><span class="line">    MOVQ AX, ret4+40(FP)</span><br><span class="line">    MOVQ i+16(SP), AX // 通过伪寄存器sp获取参数i作为第六给返回值</span><br><span class="line">    MOVQ AX, ret5+48(FP)</span><br><span class="line">    RET</span><br></pre></td></tr></table></figure>
@@ -151,7 +151,7 @@
 <h3 id="函数栈帧大小为0"><a href="#函数栈帧大小为0" class="headerlink" title="函数栈帧大小为0"></a>函数栈帧大小为0</h3><p>当函数栈帧大小为<code>0</code>时，情况就有点不同了。</p>
 <p>因为这个时候，当前函数没有分配栈帧，因此硬件寄存器<code>BP</code>不需要保存当前函数栈的栈底，也就不需要在栈上额外分配一个<code>8</code>字节的空间来保存函数调用者的<code>BP</code>寄存器内容，也就是说当前<code>BP</code>寄存器直接保存的就是函数调用者的<code>BP</code>寄存器信息。</p>
 <p>这时候的栈结构：</p>
-<p><img src="../img/go-func-statck2.png" alt=""></p>
+<p><img src="/img/go-func-statck2.png" alt=""></p>
 <h5 id="测试代码-1"><a href="#测试代码-1" class="headerlink" title="测试代码"></a>测试代码</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getBp</span><span class="params">()</span> <span class="params">(<span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">zeroFrame</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">uintptr</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(getBp())</span><br><span class="line">	fmt.Println(zeroFrame(<span class="number">11</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">TEXT ·getBp(SB),$8-16</span><br><span class="line">    MOVQ 0(BP), AX // 获取调用者函数的栈底地址</span><br><span class="line">    MOVQ AX, ret0+0(FP)</span><br><span class="line">    MOVQ ra+8(SP), AX // 获取当前函数的返回地址</span><br><span class="line">    MOVQ AX, ret0+8(FP)</span><br><span class="line">    RET</span><br><span class="line"></span><br><span class="line">TEXT ·zeroFrame(SB),$0-64</span><br><span class="line">    MOVQ SP, AX // 取硬件寄存器SP的内容，作为第一个返回值</span><br><span class="line">    MOVQ AX, ret0+8(FP)</span><br><span class="line">    LEAQ i+0(SP), AX // 取pseudo_sp的值，作为第二个返回值</span><br><span class="line">    MOVQ AX, ret1+16(FP)</span><br><span class="line">    MOVQ BP, AX  // 取硬件寄存器BP的值，作为第三个返回值</span><br><span class="line">    MOVQ AX, ret2+24(FP)</span><br><span class="line">    LEAQ i+0(FP), AX // 取pseudo_fp的值，作为第四个返回值</span><br><span class="line">    MOVQ AX, ret3+32(FP)</span><br><span class="line">    MOVQ i+0(FP), AX // 通过伪寄存器fp获取参数i作为第五个返回值</span><br><span class="line">    MOVQ AX, ret4+40(FP)</span><br><span class="line">    MOVQ i+8(SP), AX // 通过伪寄存器sp获取参数i作为第六给返回值</span><br><span class="line">    MOVQ AX, ret5+48(FP)</span><br><span class="line">    MOVQ addr+0(SP), AX // 获取当前函数的返回地址</span><br><span class="line">    MOVQ AX, ret6+56(FP)</span><br><span class="line">    RET</span><br></pre></td></tr></table></figure>
 <p>查看输出内容：</p>
