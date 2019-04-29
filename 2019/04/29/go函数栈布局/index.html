@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go函数调用规约 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Go函数调用布局"><span class="toc-text">Go函数调用布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数具有局部变量（栈帧大小大于0）"><span class="toc-text">函数具有局部变量（栈帧大小大于0）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#测试代码"><span class="toc-text">测试代码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数栈帧大小为0"><span class="toc-text">函数栈帧大小为0</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#测试代码-1"><span class="toc-text">测试代码</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        go函数调用规约
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-04-29 23:09:12</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="Go函数调用布局"><a href="#Go函数调用布局" class="headerlink" title="Go函数调用布局"></a>Go函数调用布局</h1><h3 id="函数具有局部变量（栈帧大小大于0）"><a href="#函数具有局部变量（栈帧大小大于0）" class="headerlink" title="函数具有局部变量（栈帧大小大于0）"></a>函数具有局部变量（栈帧大小大于0）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">|---------------|</span><br><span class="line">|	local var   |</span><br><span class="line">|---------------|----------------------------|</span><br><span class="line">|     ret2      |							 |</span><br><span class="line">|---------------|							 |</span><br><span class="line">|     ret1      |							 |</span><br><span class="line">|---------------|							 |</span><br><span class="line">|     arg2      |							 |</span><br><span class="line">|---------------|							 |</span><br><span class="line">|     arg1      |							 |</span><br><span class="line">|---------------| FP (virtual register)		 | 函数的参数和返回值来自于调用者栈帧</span><br><span class="line">|  return addr  | 							 | 局部变量则保存在自己的栈帧中</span><br><span class="line">|---------------|-------------------|		 |</span><br><span class="line">|  caller&apos;s BP  |					|		 |  使用（伪）寄存器：</span><br><span class="line">|---------------| BP/SP (pseudo SP) |currrent|	 arg1: arg1+0(FP)</span><br><span class="line">|  local var1   |					| stack  |   arg1: arg1+16(SP)</span><br><span class="line">|---------------|					|  frame |   local var2: +0(SP)</span><br><span class="line">|  local var2   |					|		 |   pseudo_sp = hardware_sp + frame_size</span><br><span class="line">|---------------| SP (hardware SP)--|--------|   fp = pseudo_sp + 16</span><br><span class="line">|    .......    |</span><br><span class="line">|				|</span><br></pre></td></tr></table></figure>
+<h5 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">frameInfo</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>,<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(frameInfo(<span class="number">15</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">TEXT ·frameInfo(SB),$8-54 // 这里8表示函数局部栈帧8个字节，参数和返回值共54个字节</span><br><span class="line">    MOVQ SP, AX // 取硬件寄存器SP的内容，作为第一个返回值</span><br><span class="line">    MOVQ AX, ret0+8(FP)</span><br><span class="line">    LEAQ i+0(SP), AX // 取pseudo_sp的值，作为第二个返回值</span><br><span class="line">    MOVQ AX, ret2+16(FP)</span><br><span class="line">    MOVQ BP, AX  // 取硬件寄存器BP的值，作为第三个返回值</span><br><span class="line">    MOVQ AX, ret1+24(FP)</span><br><span class="line">    LEAQ i+0(FP), AX // 取pseudo_fp的值，作为第四个返回值</span><br><span class="line">    MOVQ AX, ret3+32(FP)</span><br><span class="line">    MOVQ i+0(FP), AX // 通过伪寄存器fp获取参数i作为第五个返回值</span><br><span class="line">    MOVQ AX, ret4+40(FP)</span><br><span class="line">    MOVQ i+16(SP), AX // 通过伪寄存器sp获取参数i作为第六给返回值</span><br><span class="line">    MOVQ AX, ret5+48(FP)</span><br><span class="line">    RET</span><br></pre></td></tr></table></figure>
+<p>查看输出内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go run .</span><br><span class="line">824634146480 824634146488 824634146488 824634146504 15 15</span><br></pre></td></tr></table></figure>
+<p>可以看到伪寄存器<code>SP</code>和栈底寄存器<code>BP</code>指向的是同一个地址，而伪寄存器<code>FP</code>比伪寄存器<code>SP</code>大<code>16</code>个字节，其中高<code>8</code>个字节保存函数的返回地址，而低<code>8</code>个字节保存函数调用者的<code>BP</code>；而硬件<code>SP</code>和伪寄存器<code>SP</code>之间相差的字节数刚好是函数栈帧（这里的函数栈帧不包含保存调用者<code>BP</code>的<code>8</code>个字节）的大小，可以通过调整函数的局部栈帧大小观察其关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TEXT ·frameInfo(SB),$16-54 // 调整栈帧大小为16字节</span><br></pre></td></tr></table></figure>
+<p>查看输出内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ go run .</span><br><span class="line">824634187432 824634187448 824634187448 824634187464 15 15</span><br></pre></td></tr></table></figure>
+<p>可以看到，新的输出中，硬件<code>SP</code>和伪寄存器<code>SP</code>之间相差为<code>16</code>字节，正好为栈帧大小。</p>
+<h3 id="函数栈帧大小为0"><a href="#函数栈帧大小为0" class="headerlink" title="函数栈帧大小为0"></a>函数栈帧大小为0</h3><p>当函数栈帧大小为<code>0</code>时，情况就有点不同了。</p>
+<p>因为这个时候，当前函数没有分配栈帧，因此硬件寄存器<code>BP</code>不需要保存当前函数栈的栈底，也就不需要在栈上额外分配一个<code>8</code>字节的空间来保存函数调用者的<code>BP</code>寄存器内容，也就是说当前<code>BP</code>寄存器直接保存的就是函数调用者的<code>BP</code>寄存器信息。</p>
+<p>这时候的栈结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">|---------------| BP 这时候BP指向调用者的栈底</span><br><span class="line">|	local var   |</span><br><span class="line">|---------------|</span><br><span class="line">|     ....      |					</span><br><span class="line">|---------------|							</span><br><span class="line">|     ret2      |							</span><br><span class="line">|---------------|							</span><br><span class="line">|     ret1      |							</span><br><span class="line">|---------------|							</span><br><span class="line">|     arg1      |							</span><br><span class="line">|---------------| FP (virtual register)		</span><br><span class="line">|  return addr  | 							</span><br><span class="line">|---------------| pseudo sp == hardware sp</span><br></pre></td></tr></table></figure>
+<h5 id="测试代码-1"><a href="#测试代码-1" class="headerlink" title="测试代码"></a>测试代码</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getBp</span><span class="params">()</span> <span class="params">(<span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">zeroFrame</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">uintptr</span>, <span class="keyword">int</span>, <span class="keyword">int</span>, <span class="keyword">uintptr</span>)</span></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(getBp())</span><br><span class="line">	fmt.Println(zeroFrame(<span class="number">11</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">TEXT ·getBp(SB),$8-16</span><br><span class="line">    MOVQ 0(BP), AX // 获取调用者函数的栈底地址</span><br><span class="line">    MOVQ AX, ret0+0(FP)</span><br><span class="line">    MOVQ ra+8(SP), AX // 获取当前函数的返回地址</span><br><span class="line">    MOVQ AX, ret0+8(FP)</span><br><span class="line">    RET</span><br><span class="line"></span><br><span class="line">TEXT ·zeroFrame(SB),$0-64</span><br><span class="line">    MOVQ SP, AX // 取硬件寄存器SP的内容，作为第一个返回值</span><br><span class="line">    MOVQ AX, ret0+8(FP)</span><br><span class="line">    LEAQ i+0(SP), AX // 取pseudo_sp的值，作为第二个返回值</span><br><span class="line">    MOVQ AX, ret1+16(FP)</span><br><span class="line">    MOVQ BP, AX  // 取硬件寄存器BP的值，作为第三个返回值</span><br><span class="line">    MOVQ AX, ret2+24(FP)</span><br><span class="line">    LEAQ i+0(FP), AX // 取pseudo_fp的值，作为第四个返回值</span><br><span class="line">    MOVQ AX, ret3+32(FP)</span><br><span class="line">    MOVQ i+0(FP), AX // 通过伪寄存器fp获取参数i作为第五个返回值</span><br><span class="line">    MOVQ AX, ret4+40(FP)</span><br><span class="line">    MOVQ i+8(SP), AX // 通过伪寄存器sp获取参数i作为第六给返回值</span><br><span class="line">    MOVQ AX, ret5+48(FP)</span><br><span class="line">    MOVQ addr+0(SP), AX // 获取当前函数的返回地址</span><br><span class="line">    MOVQ AX, ret6+56(FP)</span><br><span class="line">    RET</span><br></pre></td></tr></table></figure>
+<p>查看输出内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go run .</span><br><span class="line">824634187656 4776270</span><br><span class="line">824634187392 824634187392 824634187656 824634187400 11 11 4776438</span><br></pre></td></tr></table></figure>
+<p>函数<code>getBp</code>返回了调用者也即<code>main</code>函数的栈底信息，和当前函数的返回地址</p>
+<p>然后调用函数<code>zeroFrame</code>，该函数栈帧大小为<code>0</code>，可以看到执行该函数时，<code>BP</code>寄存器依然是<code>824634187656</code>，而且硬件寄存器<code>SP</code>和伪寄存器<code>SP</code>指向同一个位置，并且和伪寄存器<code>FP</code>只相差<code>8</code>个字节，而这<code>8</code>个字节保存的是当前函数的返回地址，我们可以看到两个函数的返回地址是在同一个段中的。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
