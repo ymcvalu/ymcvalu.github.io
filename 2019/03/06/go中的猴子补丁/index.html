@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
+                    <span>HOME</span>
                 </a>
             </li>
             <li>
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
+                    <span>TAGS</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
+                    <span>ARCHIVES</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
+                    <span>ABOUT</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
+                    <span>SEARCH</span>
                 </a>
             </li>
             
@@ -100,7 +100,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">搜索</span>
+            <span id="begin-search">search</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -123,16 +123,16 @@
     </div>
 
     <div class="post-meta">
-        <span class="attr">发布于：<span>2019-03-06 10:05:07</span></span>
+        <span class="attr">Post：<span>2019-03-06 10:05:07</span></span>
         
-        <span class="attr">标签：/
+        <span class="attr">Tags：/
         
         <a class="tag" href="/tags/#go" title="go">go</a>
         <span>/</span>
         
         
         </span>
-        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
 </span>
 
     </div>
@@ -157,7 +157,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">replace</span><span class="params">(a, b <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">	replaceFunction(**(**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;a)), *(*<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;b)))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// from is a pointer to the actual function</span></span><br><span class="line"><span class="comment">// to is a pointer to a go funcvalue</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">replaceFunction</span><span class="params">(from, to <span class="keyword">uintptr</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// demo只支持64bit</span></span><br><span class="line">	<span class="keyword">if</span> unsafe.Sizeof(<span class="keyword">uintptr</span>(<span class="number">1</span>)) != <span class="number">8</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"only support amd64"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// jmpToFunctionValue生成跳转到to代表的函数的机器码</span></span><br><span class="line">	jumpData := jmpToFunctionValue(to)</span><br><span class="line">    <span class="comment">// 使用生成的机器码替换from函数</span></span><br><span class="line">	copyToLocation(from, jumpData)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// movabs rdx,to # to是一个*funcval，需要将其存储到DX寄存器，rdx是64bit的DX寄存器</span></span><br><span class="line"><span class="comment">// jmp QWORD PTR [rdx] # 跳转到to对应的实际函数的开始处执行</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">jmpToFunctionValue</span><span class="params">(to <span class="keyword">uintptr</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> []<span class="keyword">byte</span>&#123;</span><br><span class="line">		<span class="number">0x48</span>, <span class="number">0xBA</span>,</span><br><span class="line">		<span class="keyword">byte</span>(to),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">8</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">16</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">24</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">32</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">40</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">48</span>),</span><br><span class="line">		<span class="keyword">byte</span>(to &gt;&gt; <span class="number">56</span>), <span class="comment">// movabs rdx,to</span></span><br><span class="line">		<span class="number">0xFF</span>, <span class="number">0x22</span>,     <span class="comment">// jmp QWORD PTR [rdx]</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 内存替换，因为code所在的代码段默认是只读的，因此需要使用系统调用mprotect将其更改为可写的</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">copyToLocation</span><span class="params">(location <span class="keyword">uintptr</span>, data []<span class="keyword">byte</span>)</span></span> &#123;</span><br><span class="line">	f := rawMemoryAccess(location, <span class="built_in">len</span>(data))</span><br><span class="line">	mprotectCrossPage(location, <span class="built_in">len</span>(data), syscall.PROT_READ|syscall.PROT_WRITE|syscall.PROT_EXEC)</span><br><span class="line">	<span class="built_in">copy</span>(f, data[:])</span><br><span class="line">	mprotectCrossPage(location, <span class="built_in">len</span>(data), syscall.PROT_READ|syscall.PROT_EXEC)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将指定内存地址转换成一个slice</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">rawMemoryAccess</span><span class="params">(p <span class="keyword">uintptr</span>, length <span class="keyword">int</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> *(*[]<span class="keyword">byte</span>)(unsafe.Pointer(&amp;reflect.SliceHeader&#123;</span><br><span class="line">		Data: p,</span><br><span class="line">		Len:  length,</span><br><span class="line">		Cap:  length,</span><br><span class="line">	&#125;))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用系统调用mprotect修改指定内存的访问权限</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mprotectCrossPage</span><span class="params">(addr <span class="keyword">uintptr</span>, length <span class="keyword">int</span>, prot <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	pageSize := syscall.Getpagesize()</span><br><span class="line">	<span class="keyword">for</span> p := pageStart(addr); p &lt; addr+<span class="keyword">uintptr</span>(length); p += <span class="keyword">uintptr</span>(pageSize) &#123;</span><br><span class="line">		page := rawMemoryAccess(p, pageSize)</span><br><span class="line">		err := syscall.Mprotect(page, prot)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 内存页对齐</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pageStart</span><span class="params">(ptr <span class="keyword">uintptr</span>)</span> <span class="title">uintptr</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> ptr &amp; ^(<span class="keyword">uintptr</span>(syscall.Getpagesize() - <span class="number">1</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当执行<code>replace(a,b)</code>时，会动态将函数<code>a</code>的指令替换成<code>movabs rdx,to; jmp QWORD PTR [rdx]</code></p>
 <p>之后调用函数<code>a</code>时，会执行<code>call</code>指令，这时候会把传递给函数<code>a</code>的参数保存到栈上，并且将返回地址保存到指定的寄存器<code>RA</code>中；</p>
-<p>因为函数<code>a</code>被替换成上诉两条指令，因此会跳转到函数<code>b</code>执行，这时候函数<code>b</code>可以直接使用栈上的参数（这就要求两个函数要有相同的函数签名）；</p>
+<p>因为函数<code>a</code>被替换成上诉两条指令，因此会跳转到函数<code>b</code>执行，这时候函数<code>b</code>可以直接使用栈上的参数（这就要求两个函数要有相同的函数签名）；因为<code>morestack</code>操作是在函数开始执行的时候进行检查的，因此不会有栈溢出的问题。</p>
 <p>当函数<code>b</code>执行完成时，会执行<code>ret</code>指令，这时候会把返回值保存到栈上，同时将<code>RA</code>中的返回地址弹出到<code>PC</code>寄存器中；</p>
 <p>对于函数调用者来说，整个过程是透明的。</p>
 <h3 id="refer"><a href="#refer" class="headerlink" title="refer"></a>refer</h3><p><a href="https://bou.ke/blog/monkey-patching-in-go/" target="_blank" rel="noopener">monkey patching in Go</a></p>
