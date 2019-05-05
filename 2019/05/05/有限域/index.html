@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>HOME</span>
+                    <span>主页</span>
                 </a>
             </li>
             <li>
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>TAGS</span>
+                    <span>标签</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>ARCHIVES</span>
+                    <span>存档</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>ABOUT</span>
+                    <span>关于</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>SEARCH</span>
+                    <span>搜索</span>
                 </a>
             </li>
             
@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Finite-fields-有限域"><span class="toc-text">Finite fields - 有限域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#域-field"><span class="toc-text">域 - field</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#有限域-finite-field"><span class="toc-text">有限域 - finite field</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多项式"><span class="toc-text">多项式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GF-2-n"><span class="toc-text">GF(2^n)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#加法操作"><span class="toc-text">加法操作</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#乘法操作"><span class="toc-text">乘法操作</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#Code"><span class="toc-text">Code</span></a></li>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Finite-fields-有限域"><span class="toc-text">Finite fields - 有限域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#域-field"><span class="toc-text">域 - field</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#有限域-finite-field"><span class="toc-text">有限域 - finite field</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多项式"><span class="toc-text">多项式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GF-2-n"><span class="toc-text">GF(2^n)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#加法操作"><span class="toc-text">加法操作</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#乘法操作"><span class="toc-text">乘法操作</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#Code"><span class="toc-text">Code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li>
 </div>
     
 </div>
@@ -100,7 +100,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">search</span>
+            <span id="begin-search">搜索</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -123,16 +123,16 @@
     </div>
 
     <div class="post-meta">
-        <span class="attr">Post：<span>2019-05-05 19:30:33</span></span>
+        <span class="attr">发布于：<span>2019-05-05 19:30:33</span></span>
         
-        <span class="attr">Tags：/
+        <span class="attr">标签：/
         
         <a class="tag" href="/tags/#代数" title="代数">代数</a>
         <span>/</span>
         
         
         </span>
-        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
 </span>
 
     </div>
@@ -156,7 +156,7 @@
 <h3 id="多项式"><a href="#多项式" class="headerlink" title="多项式"></a>多项式</h3><p>早在19世纪初期，数学家最开始提出域的概念就是为了构造多项式。</p>
 <p>我们引入一个符合变量<code>x</code>，那么所有使用域<code>F</code>内的元素作为系数与<code>x</code>构成的多项式的集合，记为<code>F[x]</code>。</p>
 <p>例如，如果我们使用<code>R</code>作为构造多项式的域，那么<code>x^2+1</code>、<code>x+2</code>、<code>3.14x^2-2.72x+1.41</code>等都属于<code>R[x]</code>。同整数一样，多项式也可以有加法和乘法运算，但不总是有除法运算，比如无法得出<code>(x^2+1)/(x+2)</code>的结果，因此<code>R[x]</code>并不是一个域，因为<code>1/(x+2)</code>可以看成是<code>(x+2)</code>的逆元，但是并不属于<code>R[x]</code>中。</p>
-<p>然后，正如整数模上任意一个素数构成的集合可以构成一个域，<strong>多项式模上一个素多项式构成的集合可以构成域</strong></p>
+<p>然而，正如整数模上任意一个素数构成的集合可以构成一个域，<strong>多项式模上一个素多项式构成的集合可以构成域</strong></p>
 <p><strong>素多项式（<code>prime polynomial</code>）：系数为整数并且不能被因式分解成低阶多项式。</strong>比如上面的<code>x^2+1</code>，在实数范围内不可被因式分解。因此，<code>R[x]/(x^2+1)</code>就是一个域，这个域中的多项式中<code>x</code>的最高次幂最大只能是<code>1</code></p>
 <p>对于域<code>Z/p</code>，<code>mod</code>一个<code>n</code>次素多项式<code>f(x)</code>的结果为一个具有<code>p^n</code>个元素的域<code>(Z/p)[x]/f(x)</code>。关于<code>f(x)</code>这个素多项式的选择并不重要，因为任意两个大小为<code>p^n</code>的有限域具有相同的结构，<strong>将大小为<code>p^n</code>的有限域记为<code>GF(p^n)</code>。</strong></p>
 <p>对于多项式，例如<code>x^8+x^4+x^3+x+1</code>，我们可以看作是一个向量<code>[1,0,0,0,1,1,0,1,1]</code>。</p>
@@ -188,6 +188,10 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *Field)</span> <span class="title">Add</span><span class="params">(a, b <span class="keyword">byte</span>)</span> <span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> a ^ b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>求乘法逆元：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *Field)</span> <span class="title">Inv</span><span class="params">(x <span class="keyword">byte</span>)</span> <span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> x == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> f.Exp(<span class="number">255</span> - f.Log(x))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://research.swtch.com/field" target="_blank" rel="noopener">Finite Field Arithmetic and Reed-Solomon Coding</a></li>
+</ul>
+
         
         <div id="comment-container">
         </div>
