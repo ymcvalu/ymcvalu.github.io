@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        有限域 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Finite-fields-有限域"><span class="toc-text">Finite fields - 有限域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#域-field"><span class="toc-text">域 - field</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#有限域-finite-field"><span class="toc-text">有限域 - finite field</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多项式"><span class="toc-text">多项式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GF-2-n"><span class="toc-text">GF(2^n)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#加法操作"><span class="toc-text">加法操作</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#乘法操作"><span class="toc-text">乘法操作</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#Code"><span class="toc-text">Code</span></a></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        有限域
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2019-05-05 19:30:33</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#代数" title="代数">代数</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="Finite-fields-有限域"><a href="#Finite-fields-有限域" class="headerlink" title="Finite fields - 有限域"></a>Finite fields - 有限域</h1><p>有限域（<code>Finite fields</code>）是代数的一个分支，在加密算法、数据压缩算法和纠错算法中都有重要的作用。</p>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><h5 id="域-field"><a href="#域-field" class="headerlink" title="域 - field"></a>域 - <em>field</em></h5><p>如果集合<code>F</code>的所有元素与定义在其上的二元操作符<code>+</code>和<code>·</code>满足下面条件，即构成一个域：</p>
+<ul>
+<li>闭包（<code>Closure</code>）： 对于任意<code>F</code>中的元素<code>x</code>和<code>y</code>，<code>x+y</code>和<code>x·y</code>也都是<code>F</code>中的元素</li>
+<li>结合律（<code>Associative</code>)：对于<code>F</code>中的任意<code>x</code>，<code>y</code>和<code>z</code>，满足<code>(x+y)+z = x+(y+z)</code>和<code>(x·y)·z = x·(y·z)</code></li>
+<li>交换律（<code>Commutative</code>）：对于<code>F</code>中的任意元素<code>x</code>和<code>y</code>，满足<code>x+y = y+x</code>和<code>x·y = y·x</code></li>
+<li>分配率（<code>Distributive</code>）：对于<code>F</code>中的任意元素<code>x</code>，<code>y</code>和<code>z</code>，满足<code>x·(y+z) = (x·y)+(x·z)</code></li>
+<li><code>Identity</code>：<code>F</code>中存在加法单位元，记作<code>0</code>，对<code>F</code>中的任意元素<code>x</code>满足<code>x+0 = x</code>；存在乘法单位元，记作<code>1</code>，对<code>F</code>中的任意元素<code>x</code>满足<code>x·1 = x</code></li>
+<li><code>Inverse</code>：对<code>F</code>中的任意元素<code>x</code>，在<code>F</code>中都能找到对应的<code>y</code>满足<code>x+y = 0</code>，即<code>y = -x</code>，<code>x</code>与<code>y</code>互为负元；对于<code>F</code>中除<code>0</code>外的任意元素<code>x</code>，在<code>F</code>中都能找到对应的<code>y</code>满足<code>x·y = 1</code>，即<code>y = 1/x</code>，<code>x</code>与<code>y</code>互为逆元</li>
+</ul>
+<p>比如，实数集<code>R</code>与定义在其上的加法和乘法运算，就构成了一个域。</p>
+<p>但是整数集<code>Z</code>不是一个域，因为<code>Z</code>中的非零元素并不都有乘法逆元，比如<code>1/2</code>不在<code>Z</code>中。</p>
+<p>虽然<code>Z</code>不是一个域，但是<strong>整数模上任意一个素数的集合可以构成一个域</strong>。比如<code>mod 5</code>的集合是<code>{0, 1, 2, 3, 4}</code>，记为<code>Z/5</code>，对应的<code>+</code>运算为<code>(x+y)%5</code>，<code>·</code>为<code>(x·y)%5</code>，这时候加法单位元是<code>0</code>，乘法单位元是<code>1</code>，可以发现，<code>(2*3)%5 = 1</code>，所以<code>2</code>的乘法逆元为<code>3</code></p>
+<p><strong>对于任意一个素数<code>p</code>，<code>Z/p</code>是一个域，<code>+</code>运算为<code>(x+y) % p</code>，<code>·</code>运算为<code>(x·y) %p</code></strong></p>
+<h5 id="有限域-finite-field"><a href="#有限域-finite-field" class="headerlink" title="有限域 - finite field"></a>有限域 - <em>finite field</em></h5><p>如果一个域的元素个数是有限的，那么这个域称为有限域。</p>
+<p>作为一个程序员，我们接触到最多的有限域是<code>Z/2</code>，只包含<code>0</code>和<code>1</code>两个元素。<code>+</code>运算即为<code>XOR</code>，而<code>·</code>运算为<code>AND</code>。</p>
+<h3 id="多项式"><a href="#多项式" class="headerlink" title="多项式"></a>多项式</h3><p>早在19世纪初期，数学家最开始提出域的概念就是为了构造多项式。</p>
+<p>我们引入一个符合变量<code>x</code>，那么所有使用域<code>F</code>内的元素作为系数与<code>x</code>构成的多项式的集合，记为<code>F[x]</code>。</p>
+<p>例如，如果我们使用<code>R</code>作为构造多项式的域，那么<code>x^2+1</code>、<code>x+2</code>、<code>3.14x^2-2.72x+1.41</code>等都属于<code>R[x]</code>。同整数一样，多项式也可以有加法和乘法运算，但不总是有除法运算，比如无法得出<code>(x^2+1)/(x+2)</code>的结果，因此<code>R[x]</code>并不是一个域，因为<code>1/(x+2)</code>可以看成是<code>(x+2)</code>的逆元，但是并不属于<code>R[x]</code>中。</p>
+<p>然后，正如整数模上任意一个素数构成的集合可以构成一个域，<strong>多项式模上一个素多项式构成的集合可以构成域</strong></p>
+<p><strong>素多项式（<code>prime polynomial</code>）：系数为整数并且不能被因式分解成低阶多项式。</strong>比如上面的<code>x^2+1</code>，在实数范围内不可被因式分解。因此，<code>R[x]/(x^2+1)</code>就是一个域，这个域中的多项式中<code>x</code>的最高次幂最大只能是<code>1</code></p>
+<p>对于域<code>Z/p</code>，<code>mod</code>一个<code>n</code>次素多项式<code>f(x)</code>的结果为一个具有<code>p^n</code>个元素的域<code>(Z/p)[x]/f(x)</code>。关于<code>f(x)</code>这个素多项式的选择并不重要，因为任意两个大小为<code>p^n</code>的有限域具有相同的结构，<strong>将大小为<code>p^n</code>的有限域记为<code>GF(p^n)</code>。</strong></p>
+<p>对于多项式，例如<code>x^8+x^4+x^3+x+1</code>，我们可以看作是一个向量<code>[1,0,0,0,1,1,0,1,1]</code>。</p>
+<h3 id="GF-2-n"><a href="#GF-2-n" class="headerlink" title="GF(2^n)"></a>GF(2^n)</h3><p>作为程序员，对我们来说最有趣的是<code>GF(2^n)</code>，即<code>Z/2</code>的多项式扩展，因为<code>GF(2^n)</code>的元素为长度为<code>n</code>的位向量。</p>
+<p>例如，<code>(Z/2)[x]/(x^8+x^4+x^3+x+1)</code>，这个域共有<code>2^8</code>个元素，每一个元素为一个长度为<code>8</code>的位向量，代表一个单字节：一个字节的二进制形式 <em>b~7~b~6~b~5~b~4~b~3~b~2~b~1~b~0~</em> 代表多项式 <em>b~7~x^7^+b~6~x^6^+b~5~x^5^+b~4~x^4^+b~3~x^3^+b~2~x^2^+b~1~x+b~0~</em>。</p>
+<h5 id="加法操作"><a href="#加法操作" class="headerlink" title="加法操作"></a>加法操作</h5><p>多项式的加法操作，即把相同次数的项系数相加，因为系数是<code>Z/2</code>的元素，因此系数相加意味着<code>XOR</code>操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x^2 + x) + (x + 1) = x^2 + 2x + 1 = x^2 + 1</span><br></pre></td></tr></table></figure>
+<p>换成二进制形式：<em>110~2~+011~2~=101~2~</em></p>
+<h5 id="乘法操作"><a href="#乘法操作" class="headerlink" title="乘法操作"></a>乘法操作</h5><p>多项式的乘法操作比较复杂，需要基于加法的<code>XOR</code>操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(x^2 + x) · (x + 1) = x^3 + x^2 + x^2 + x = x^3 + x</span><br></pre></td></tr></table></figure>
+<p>换成二进制形式，具体的计算过程如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">     110</span><br><span class="line"> x   011</span><br><span class="line">---------</span><br><span class="line">     110</span><br><span class="line">    110</span><br><span class="line"> + 000</span><br><span class="line">---------</span><br><span class="line">   01010</span><br></pre></td></tr></table></figure>
+<p>计算后的结果可能溢出，需要模上对应的素多项式，比如 <em>(Z/2)[x]/(x^8^+x^4^+x^3^+x+1)</em>这个域内的元素的乘法，最后的结果需要模上素多项式式<em>x^8^+x^4^+x^3^+x+1</em>。</p>
+<p>我们可以看到，上面的乘法过程中，需要分别执行<code>n</code>次乘法和加法，这个<code>n</code>为具体位向量的长度。而在实际实现域的乘法时，我们会使用查找表来进行优化。这里的查找表不是说建立例如九九乘法表那样的表格，在介绍具体的优化原理之前，需要先介绍一下<strong>生成元</strong>的概念。</p>
+<p><strong>在一个有限域中，至少存在一个元素α，使得域内任意一个非零元素都可以表示为该元素的方幂</strong>。</p>
+<p><strong>假设一个有限域的非零元素个素为n，并且一个生成元为α，那么 α^n^ = 1</strong>。</p>
+<p>例如，2是 <em>Z/5</em> 的一个生成元，{α, α^2^, α^3^, α^4^} = {2, 4, 3, 1}。对于<code>GF(p^n)</code>计算会更复杂，但是同样生效。</p>
+<p>通过生成元<code>α</code>，域中的任意非零元素都可以表示为<code>α</code>的方幂，我们就可以将元素的乘法转换为幂的加法。因此，<strong>我们在实现乘法时，可以先生成一张<code>exp</code>表和一张<code>log</code>表，其中 <em>exp[i] = α^i^</em>， 而 <em>log[α^i^] = i</em>。通过这两张查找表，针对非零元素a和b的乘法可以转换为：<em>a·b = exp[log[a] + log[b]]</em>，只需要执行1次加法和3次查表操作即可。</strong></p>
+<h3 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h3><p>因为<code>GF(2^8)</code>中一个元素就是一个长度为8的位向量，正好是一个字节大小，因此<code>GF(2^8)</code>在计算机科学中使用最广泛。现在来实现一下<code>GF(2^8)</code>的运算。</p>
+<p>首先定义一个域，包含用来优化乘法运算的<code>exp</code>表和<code>log</code>表和素多项式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Field <span class="keyword">struct</span> &#123;</span><br><span class="line">	poly <span class="keyword">int</span></span><br><span class="line">	exp  [<span class="number">255</span>]<span class="keyword">byte</span></span><br><span class="line">	log  [<span class="number">256</span>]<span class="keyword">byte</span> <span class="comment">// log[0] is unused</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>构造函数的实现，需要传入一个素多项式和生成元，<code>x^8+x^4+x^3+x+1</code>是<code>GF(2^8)</code>最广泛使用的素多项式，对于的二进制为<code>100011011</code>，对于十进制为<code>283</code>，<code>3</code>是<code>GF(2^8)</code>的一个生成元。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewField</span><span class="params">(poly, a <span class="keyword">int</span>)</span> *<span class="title">Field</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> f Field</span><br><span class="line">	x := <span class="number">1</span></span><br><span class="line">    <span class="comment">// 填充exp和log表</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">255</span>; i++ &#123;</span><br><span class="line">		f.exp[i] = <span class="keyword">byte</span>(x)</span><br><span class="line">		f.log[x] = <span class="keyword">byte</span>(i)</span><br><span class="line">		x = mul(x, a, poly)</span><br><span class="line">	&#125;</span><br><span class="line">	f.poly = poly</span><br><span class="line">	<span class="keyword">return</span> &amp;f</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mul</span><span class="params">(x, y, poly <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	z := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> x &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> x&amp;<span class="number">1</span> != <span class="number">0</span> &#123;</span><br><span class="line">			z ^= y</span><br><span class="line">		&#125;</span><br><span class="line">		x &gt;&gt;= <span class="number">1</span></span><br><span class="line">		y &lt;&lt;= <span class="number">1</span></span><br><span class="line">		<span class="keyword">if</span> y&amp;<span class="number">0x100</span> != <span class="number">0</span> &#123;</span><br><span class="line">			y ^= poly</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> z</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两个查表方法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *Field)</span> <span class="title">Exp</span><span class="params">(e <span class="keyword">int</span>)</span> <span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> e &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> f.exp[e%<span class="number">255</span>] <span class="comment">// e^255 = 1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *Field)</span> <span class="title">Log</span><span class="params">(x <span class="keyword">byte</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> x == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">int</span>(f.log[x])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>优化后的乘法运算就是<code>exp[log[a]+log[b]]</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *Field)</span> <span class="title">Mul</span><span class="params">(a, b <span class="keyword">byte</span>)</span> <span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> a == <span class="number">0</span> || b == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> f.Exp(f.Log(a) + f.Log(b))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加法操作就是异或操作：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *Field)</span> <span class="title">Add</span><span class="params">(a, b <span class="keyword">byte</span>)</span> <span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> a ^ b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>求乘法逆元：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *Field)</span> <span class="title">Inv</span><span class="params">(x <span class="keyword">byte</span>)</span> <span class="title">byte</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> x == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> f.Exp(<span class="number">255</span> - f.Log(x))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

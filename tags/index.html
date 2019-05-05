@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
+                    <span>HOME</span>
                 </a>
             </li>
             <li class="active">
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
+                    <span>TAGS</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
+                    <span>ARCHIVES</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
+                    <span>ABOUT</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
+                    <span>SEARCH</span>
                 </a>
             </li>
             
@@ -96,7 +96,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">搜索</span>
+            <span id="begin-search">search</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -116,10 +116,6 @@
     
     <a href="#goid" title="goid" rel="1">goid</a>
     
-    <a href="#channel" title="channel" rel="1">channel</a>
-    
-    <a href="#defer" title="defer" rel="1">defer</a>
-    
     <a href="#java" title="java" rel="2">java</a>
     
     <a href="#plsql" title="plsql" rel="1">plsql</a>
@@ -128,11 +124,17 @@
     
     <a href="#dsl" title="dsl" rel="1">dsl</a>
     
+    <a href="#代数" title="代数" rel="1">代数</a>
+    
     <a href="#coroutine" title="coroutine" rel="2">coroutine</a>
     
     <a href="#generator" title="generator" rel="1">generator</a>
     
     <a href="#classloader" title="classloader" rel="1">classloader</a>
+    
+    <a href="#defer" title="defer" rel="1">defer</a>
+    
+    <a href="#channel" title="channel" rel="1">channel</a>
     
     <a href="#grpc" title="grpc" rel="1">grpc</a>
     
@@ -223,48 +225,6 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2019/01/31/channel源码分析/">
-            <h2 class="post-title">
-                channel源码分析
-            </h2>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
-        <a href="/2018/04/15/golang中的defer实现/">
-            <h2 class="post-title">
-                golang中的defer实现
-            </h2>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
-        <a href="/2019/04/14/go中的锁实现探究/">
-            <h2 class="post-title">
-                mutex解析
-            </h2>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
         <a href="/2018/01/07/go程序启动过程分析/">
             <h2 class="post-title">
                 go程序启动过程分析
@@ -321,6 +281,48 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
+        <a href="/2018/04/15/golang中的defer实现/">
+            <h2 class="post-title">
+                golang中的defer实现
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2019/04/14/go中的锁实现探究/">
+            <h2 class="post-title">
+                mutex解析
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2019/01/31/channel源码分析/">
+            <h2 class="post-title">
+                channel源码分析
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
         <a href="/2018/12/21/grpc上手使用/">
             <h2 class="post-title">
                 grpc上手使用
@@ -349,9 +351,9 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2019/03/30/go-map分析/">
+        <a href="/2019/04/07/go网络io模型分析/">
             <h2 class="post-title">
-                go map分析
+                go网络io模型分析
             </h2>
             
         </a>
@@ -363,9 +365,9 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2019/04/07/go网络io模型分析/">
+        <a href="/2019/03/30/go-map分析/">
             <h2 class="post-title">
-                go网络io模型分析
+                go map分析
             </h2>
             
         </a>
@@ -387,48 +389,6 @@
         <a href="/2018/08/18/goland-中获取-goid/">
             <h2 class="post-title">
                 goland 中获取 goid
-            </h2>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
-    
-</div>
-
-<div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="channel">
-                    <span class="tag-text">channel</span>
-                </span>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
-        <a href="/2019/01/31/channel源码分析/">
-            <h2 class="post-title">
-                channel源码分析
-            </h2>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
-    
-</div>
-
-<div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="defer">
-                    <span class="tag-text">defer</span>
-                </span>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
-        <a href="/2018/04/15/golang中的defer实现/">
-            <h2 class="post-title">
-                golang中的defer实现
             </h2>
             
         </a>
@@ -503,9 +463,9 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2017/06/10/kotlin中的object更像是语法糖/">
+        <a href="/2017/05/16/kotlin之代理属性/">
             <h2 class="post-title">
-                kotlin中的object更像是语法糖
+                kotlin之代理属性
             </h2>
             
         </a>
@@ -517,9 +477,9 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2017/05/16/kotlin之代理属性/">
+        <a href="/2017/06/10/kotlin中的object更像是语法糖/">
             <h2 class="post-title">
-                kotlin之代理属性
+                kotlin中的object更像是语法糖
             </h2>
             
         </a>
@@ -606,6 +566,27 @@
 </div>
 
 <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="代数">
+                    <span class="tag-text">代数</span>
+                </span>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2019/05/05/有限域/">
+            <h2 class="post-title">
+                有限域
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+</div>
+
+<div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="coroutine">
                     <span class="tag-text">coroutine</span>
                 </span>
@@ -674,6 +655,48 @@
         <a href="/2017/10/19/自定义classLoader/">
             <h2 class="post-title">
                 自定义classLoader
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+</div>
+
+<div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="defer">
+                    <span class="tag-text">defer</span>
+                </span>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2018/04/15/golang中的defer实现/">
+            <h2 class="post-title">
+                golang中的defer实现
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+</div>
+
+<div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="channel">
+                    <span class="tag-text">channel</span>
+                </span>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2019/01/31/channel源码分析/">
+            <h2 class="post-title">
+                channel源码分析
             </h2>
             
         </a>
