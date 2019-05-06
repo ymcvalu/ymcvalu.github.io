@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        rs纠删码 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#RS纠删码"><span class="toc-text">RS纠删码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基本原理"><span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vandermonder矩阵"><span class="toc-text">Vandermonder矩阵</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#伽罗华域"><span class="toc-text">伽罗华域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#举个栗子"><span class="toc-text">举个栗子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        rs纠删码
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-05-06 21:27:17</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#rs纠删码" title="rs纠删码">rs纠删码</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="RS纠删码"><a href="#RS纠删码" class="headerlink" title="RS纠删码"></a>RS纠删码</h1><p>在存储系统中，需要采用数据冗余技术来保证数据的可靠性，相比使用多副本复制机制外，使用纠删码能够以更小的数据冗余度获得更高的数据可靠性。<code>Reed Solomon Coding</code>是存储领域常用的一种纠删码。</p>
+<h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>RS纠删码将原始文件分成n个数据块，同时为这<strong>n个数据块</strong>生成<strong>m个校验块</strong>，而能够容忍最多丢失（只保证丢失而不保证数据篡改）这（n+m)个块中的任意m个数据或者校验块。</p>
+<p>RS编码以word为单位进行编码和解码（word字长一般为8或者16），而大的数据块拆分成一个个word进行编解码。</p>
+<p>假如有数据块内容为<code>ABCDEFGHIJKLMNOP</code>，将其分为四个数据块，每个数据块包含四个word（字长为8），我们使用矩阵来表示这四个数据块，对应的数据矩阵如下：</p>
+<p><img src="/img/blog-rs-1.png" alt=""></p>
+<p>接着使用编码矩阵来对数据矩阵进行编码，产生数据块和校验块：</p>
+<p><img src="/img/blog-rs-2.webp" alt=""></p>
+<p>上图左边的矩阵为编码矩阵，该矩阵由上面一个<code>4X4</code>的单位矩阵和下面一个<code>2X4</code>的<code>Vandermonder</code>矩阵组成。这里的<code>2</code>对应上面的<code>m</code>，表明需要生成2个校验块，<code>4</code>是因为原数据分成了4个数据块。我们可以看到右边经过编码矩阵处理后的结果，比原来的数据矩阵多了两行，即对应两个校验块。</p>
+<p>因为<code>m</code>取的是2，因此最多允许丢失2个块，这里我们假设<code>IJKL</code>和<code>MNOP</code>两个块被丢失了：</p>
+<p><img src="/img/blog-rs-3.webp" alt=""></p>
+<p>我们在编码矩阵和结果矩阵将对应的第3，4行删除，等式两边仍然成立：</p>
+<p><img src="/img/RS-post-pic-4.png" alt=""></p>
+<p>现在的编码矩阵是原来的一部分，我们将其记为<code>C1</code>，接着我们分别在两边乘以编码矩阵的逆矩阵：</p>
+<p><img src="/img/RS-post-pic-5.png" alt=""></p>
+<p><img src="/img/RS-post-pic-5-5.webp" alt=""></p>
+<p><img src="/img/blog-rs-7.png" alt=""></p>
+<p>我们可以看到，我们可以从编码产生的6个块中的任意4个块中恢复原数据。</p>
+<h3 id="Vandermonder矩阵"><a href="#Vandermonder矩阵" class="headerlink" title="Vandermonder矩阵"></a>Vandermonder矩阵</h3><p><img src="/img/Vandermonder.svg" alt=""></p>
+<p>在上面中，为了恢复原数据，需要计算编码矩阵（这里指的是<code>C1</code>）的逆矩阵，这也是为什么上面编码矩阵是由一个单位矩阵和一个<code>Vandermonder</code>矩阵组成的，因为<code>Vandermonder</code>矩阵任意两行之间都线性无关，可以求解出逆矩阵。</p>
+<h3 id="伽罗华域"><a href="#伽罗华域" class="headerlink" title="伽罗华域"></a>伽罗华域</h3><p>RS纠删码是按照word为单位对数据进行编解码，这也就要求对一个字进行编码后，产生的结果仍然是一个字，因此RS纠删码基于伽罗华域<a href="http://mcll.top/2019/05/05/%E6%9C%89%E9%99%90%E5%9F%9F/" target="_blank" rel="noopener">GF(2^n)</a>及其四则运算来进行编解码。</p>
+<h3 id="举个栗子"><a href="#举个栗子" class="headerlink" title="举个栗子"></a>举个栗子</h3><p>这里使用<code>GF(2^4)</code>，并且取<code>n</code>和<code>m</code>都为3来举个例子。</p>
+<p>首先，<code>GF(2^4)</code>共有0~15这16个元素，首先构造<code>exp</code>表和<code>log</code>表：</p>
+<table>
+<thead>
+<tr>
+<th>i</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+<th>10</th>
+<th>11</th>
+<th>12</th>
+<th>13</th>
+<th>14</th>
+<th>15</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>log</td>
+<td>-</td>
+<td>0</td>
+<td>1</td>
+<td>4</td>
+<td>2</td>
+<td>8</td>
+<td>5</td>
+<td>10</td>
+<td>3</td>
+<td>14</td>
+<td>9</td>
+<td>7</td>
+<td>6</td>
+<td>13</td>
+<td>11</td>
+<td>12</td>
+</tr>
+<tr>
+<td>exp</td>
+<td>1</td>
+<td>2</td>
+<td>4</td>
+<td>8</td>
+<td>3</td>
+<td>6</td>
+<td>12</td>
+<td>11</td>
+<td>5</td>
+<td>10</td>
+<td>7</td>
+<td>14</td>
+<td>15</td>
+<td>13</td>
+<td>9</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>假设原始数据 D, Vandermonde 矩阵 F, 冗余数据 C，则：</p>
+<p><img src="/img/blog-rs-demo1.png" alt=""></p>
+<p>上面计算矩阵F时，根据<code>GF(2^4)</code>的计算规则，3^2^ = 3*3 = exp(log(3)+log(3)) = 5</p>
+<p>将矩阵F与3*3的单位矩阵E集合，可得：</p>
+<p><img src="/img/blog-rs-demo2.png" alt=""></p>
+<p>根据上面的定义，任意丢失3份数据，都可以恢复原来的数据，这里假设丢失了D2，D3和C3，则恢复过程：</p>
+<p><img src="/img/blog-rs-demo3.png" alt=""></p>
+<p>可以看到，成功恢复原来的数据。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://github.com/RobinLiew/RobinLiew.github.io/blob/master/%E7%AE%97%E6%B3%95/RS%E7%BA%A0%E5%88%A0%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E4%B8%8E%E9%A1%B9%E7%9B%AE%E6%BA%90%E7%A0%81.md" target="_blank" rel="noopener">RS纠删算法原理</a></li>
+<li><a href="https://www.gaccob.com/publish/2017-08-27-reed-solomon.html" target="_blank" rel="noopener">Reed-Solomon 编码算法</a></li>
+<li><a href="https://www.backblaze.com/blog/reed-solomon/" target="_blank" rel="noopener">reed-solomon</a></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
