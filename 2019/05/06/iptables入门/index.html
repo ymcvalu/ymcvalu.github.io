@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        iptables入门 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iptables"><span class="toc-text">iptables</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Doc"><span class="toc-text">Doc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tables-amp-Chains"><span class="toc-text">Tables &amp; Chains</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Traversing-Chains"><span class="toc-text">Traversing Chains</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Command"><span class="toc-text">Command</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#规则管理命令"><span class="toc-text">规则管理命令</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#链管理命令"><span class="toc-text">链管理命令</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#规则参数"><span class="toc-text">规则参数</span></a></li></ol></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#DNAT-amp-SNAT"><span class="toc-text">DNAT &amp; SNAT</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#SNAT"><span class="toc-text">SNAT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#DNAT"><span class="toc-text">DNAT</span></a></li></ol></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        iptables入门
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-05-06 23:38:41</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#linux" title="linux">linux</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#iptables" title="iptables">iptables</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="iptables"><a href="#iptables" class="headerlink" title="iptables"></a>iptables</h1><h3 id="Doc"><a href="#Doc" class="headerlink" title="Doc"></a>Doc</h3><ul>
+<li><a href="https://www.frozentux.net/iptables-tutorial/iptables-tutorial.html" target="_blank" rel="noopener">iptables tutorial</a></li>
+<li><code>iptables -h</code></li>
+<li><code>man iptables</code></li>
+</ul>
+<h3 id="Tables-amp-Chains"><a href="#Tables-amp-Chains" class="headerlink" title="Tables &amp; Chains"></a>Tables &amp; Chains</h3><p>表由链组成，链是一些按顺序排列的规则的列表。比如，默认的 <code>filter</code> 表包含 <code>INPUT</code>， <code>OUTPUT</code> 和 <code>FORWARD</code> 3条内建的链，这3条链作用于数据包过滤过程中的不同时间点。</p>
+<p>各个表和包含的链关系如下：</p>
+<table>
+<thead>
+<tr>
+<th>table</th>
+<th>chain</th>
+<th>desc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>raw</code></td>
+<td><code>PREROUTING</code>、<code>OUTPUT</code></td>
+<td>关闭nat表上使用的连接追踪机制；内核模块：<code>iptable_raw</code></td>
+</tr>
+<tr>
+<td><code>filter</code></td>
+<td><code>INPUT</code>、<code>OUTPUT</code>、<code>FORWARD</code></td>
+<td>负责过滤功能，防火墙；内核模块：<code>iptable_filter</code></td>
+</tr>
+<tr>
+<td><code>nat</code></td>
+<td><code>PREROUTING</code>、 <code>POSTROUTING</code>、 <code>OUTPUT</code>、 <code>INPUT(部分支持)</code></td>
+<td>网络地址转换；内核模块：<code>iptable_nat</code></td>
+</tr>
+<tr>
+<td><code>mangle</code></td>
+<td><code>PREROUTING</code>、 <code>INPUT</code>、 <code>FORWARD</code>、 <code>OUTPUT</code>、<code>POSTROUTING</code></td>
+<td>拆解、修改、重封装报文；内核模块：<code>iptable_mangle</code></td>
+</tr>
+<tr>
+<td><code>security</code></td>
+<td></td>
+<td>用于强制<a href="http://lwn.net/Articles/267140/" target="_blank" rel="noopener">访问控制网络</a>规则</td>
+</tr>
+</tbody>
+</table>
+<p>默认情况下，任何链中都没有规则。可以向链中添加自己想用的规则。链的默认规则通常设置为 <code>ACCEPT</code>，如果想确保任何包都不能通过规则集，那么可以重置为 <code>DROP</code>。默认的规则总是在一条链的最后生效，所以在默认规则生效前数据包需要通过所有存在的规则。用户可以加入自己定义的链，从而使规则集更方便管理，自定义链需要被内置的链引用才能生效。每个链下面可以设置一组规则，执行链时就是执行这组规则。</p>
+<h3 id="Traversing-Chains"><a href="#Traversing-Chains" class="headerlink" title="Traversing Chains"></a>Traversing Chains</h3><p><img src="/img/iptables_traverse.jpg" alt="图1"></p>
+<p>上图描述链了在任何接口上收到的网络数据包是按照怎样的顺序穿过表的交通管制链。第一个路由策略包括决定数据包的目的地是本地主机（这种情况下，数据包穿过 <code>INPUT</code> 链），还是其他主机（数据包穿过 <code>FORWARD</code> 链）；中间的路由策略包括决定给传出的数据包使用那个源地址、分配哪个接口；最后一个路由策略存在是因为先前的<code>mangle</code> 与 <code>nat</code> 链可能会改变数据包的路由信息。数据包通过路径上的每一条链时，链中的每一条规则按顺序匹配；无论何时匹配了一条规则，相应的<code>target</code> 动作将会执行。内置的链有默认的策略，但是用户自定义的链没有默认的策略。在<code>jump</code> 到的自定义链中，若每一条规则都不能提供完全匹配，那么数据包像下图描述的一样返回到调用链。在任何时候，若 <code>DROP</code> 的规则实现完全匹配，那么被匹配的数据包会被丢弃，不会进行进一步处理。如果一个数据包在链中被 <code>ACCEPT</code>，那么这个包就会被<code>ACCEPT</code>，不会再遍历后面的规则。</p>
+<p>然而，要注意的是，数据包还会以正常的方式继续遍历其他表中的其他链。</p>
+<p><img src="/img/iptable_subtraverse.jpg" alt="图2"></p>
+<h3 id="Command"><a href="#Command" class="headerlink" title="Command"></a>Command</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -t 表名 &lt;-A/I/D/R&gt; 规则链名 [规则号] &lt;-i/o 网卡名&gt; -p 协议名 &lt;-s 源IP/源子网&gt; --sport 源端口 &lt;-d 目标IP/目标子网&gt; --dport 目标端口 -j 动作</span><br></pre></td></tr></table></figure>
+<h6 id="规则管理命令"><a href="#规则管理命令" class="headerlink" title="规则管理命令"></a>规则管理命令</h6><ul>
+<li><p><code>-A</code> or <code>--append</code> ：将规则加到<code>chain</code>末尾</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -t filter -A INPUT -i lo -j DROP <span class="comment">#在INPUT链末尾添加规则，拒绝掉来自lo网卡的包</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>-I</code> or <code>--insert</code> ：在指定位置添加规则，原来位置的规则后移</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -t filter -I INPUT 1 -i lo -j DROP <span class="comment">#在INPUT链头部添加规则，插入位置从1开始计算</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>-R</code> or <code>--replace</code> ：替换指定位置规则</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -t filter -R INPUT 1 -i lo -j ACCEPT <span class="comment">#修改INPUT链头部规则</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>-D</code> or <code>--delete</code>：删除指定位置规则</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -t filter -D INPUT 2 <span class="comment">#删除INPUT链第二条规则</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h6 id="链管理命令"><a href="#链管理命令" class="headerlink" title="链管理命令"></a>链管理命令</h6><ul>
+<li><p><code>-P</code> or <code>--policy</code>：改变指定链的默认策略，只有内置的链才有默认策略，自定义链没有默认策略</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -P INPUT ACCEPT</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>-F</code> or <code>--flush</code> ：清空规则链的所有规则，如果省略规则链，则清空表上所有链的规则</p>
+</li>
+<li><p><code>-N</code> or <code>--new</code>：创建自定义链</p>
+</li>
+<li><p><code>-X</code> or <code>--delete-chain</code>：删除指定的链，这个链必须没有被其它任何规则引用，而且这条上必须没有任何规则。如果没有指定链名，则会删除该表中所有非内置的链。</p>
+</li>
+<li><p><code>-E</code> or <code>--rename-chain</code>：用指定的新名字去重命名指定的链。这并不会对链内部照成任何影响。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -E oldName newName</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>-Z</code> or <code>--zero</code>：把指定链，或者表中的所有链上的所有计数器清零，计数器是规则命中计数。</p>
+</li>
+<li><p><code>-L</code> or <code>--list</code>：查看指定链或者指定表上的所有规则</p>
+</li>
+</ul>
+<h6 id="规则参数"><a href="#规则参数" class="headerlink" title="规则参数"></a>规则参数</h6><ul>
+<li><p><code>-t</code> or <code>--table</code>：指定操作的表，<strong>如果不指定此选项，默认操作的是 <code>filter</code> 表</strong></p>
+</li>
+<li><p><code>-p</code> or <code>--protocol</code>：指定协议</p>
+</li>
+<li><p><code>-i</code> or <code>--in-interface</code>：network interface name，匹配流量流入的网络接口，只对<code>PREROUTING</code>、<code>INPUT</code>或者<code>FORWARD</code>生效；这里的网络接口不一定是网卡，比如<code>docker0</code>等虚拟网桥也可以；前缀<code>!</code>表示非，比如<code>! -i 127.0.0.1</code>表示非本机发送过来的数据包。</p>
+</li>
+<li><p><code>-o</code> or <code>--out-interface</code>：network interface name，匹配流量输出的网络接口，只对<code>OUTPUT</code>、<code>FORWARD</code>或<code>POSTROUTING</code>生效</p>
+</li>
+<li><p><code>-s</code> or <code>--source</code>：源地址，<code>ip</code>地址或者<code>CIDR</code>表示指定范围地址</p>
+</li>
+<li><p><code>--sport</code>：匹配来源端口</p>
+</li>
+<li><p><code>-d</code> or <code>--destination</code>：目标地址，<code>ip</code>地址或者<code>CIDR</code>表示指定范围地址</p>
+</li>
+<li><p><code>--dport</code>：匹配目标端口</p>
+</li>
+<li><p><code>-j</code> or <code>--jump</code>：规则目标，即满足规则时应该执行什么样的动作。目标可以是内置目标，也可以是用户自定义的链，内置的目标有：</p>
+<ul>
+<li><code>ACCEPT</code>：接收数据包，如果当前规则匹配成功则结束当前链及父链（如果当前是自定义子链）</li>
+<li><code>DROP</code>：丢弃数据包，不做任何响应。</li>
+<li><code>REJECT</code>：拒绝当前包，会返回拒绝数据包。</li>
+<li><code>REDIRECT</code>：重定向、映射、透明代理。</li>
+<li><code>SNAT</code>：源地址转换。</li>
+<li><code>DNAT</code>：目标地址转换。</li>
+<li><code>MASQUERADE</code>：<code>IP</code>伪装（<code>NAT</code>），用于<code>ADSL</code>。</li>
+<li><code>LOG</code>：日志记录，继续匹配下一个规则，不会结束当前链。</li>
+</ul>
+</li>
+<li><p><code>-m</code> or <code>--match</code>：使用扩展包匹配模块，可以使用<code>man iptables-extensions</code>命令查看扩展模块</p>
+<blockquote>
+<p>iptables can use extended packet matching modules. <strong>These are loaded in two ways: implicitly, when -p or –protocol is specified, or with the -m or –match options, followed by the matching module name</strong>; after these, various extra command line options become available, depending on the specific module. You can specify multiple extended match modules in one line, and you can use the -h or –help options after the module has been specified to receive help specific to that module.</p>
+</blockquote>
+<ul>
+<li><p><code>statistic</code>：基于一些统计条件匹配</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -A INPUT -m statistic --mode random --probability 0.5 -s 127.0.0.1 -p icmp -j DROP <span class="comment"># 来自本机的ping包，有50%的几率被丢弃</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>comment</code>：允许添加注释（最多256给字符）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -A INPUT -m comment --comment <span class="string">"a comment demo"</span> -j ACCEPT</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="DNAT-amp-SNAT"><a href="#DNAT-amp-SNAT" class="headerlink" title="DNAT &amp; SNAT"></a>DNAT &amp; SNAT</h3><h5 id="SNAT"><a href="#SNAT" class="headerlink" title="SNAT"></a>SNAT</h5><p><code>SNAT</code>: Source Network Address Translation，修改网络包源ip地址。</p>
+<p>比如内网机器只有私有ip，无法正常访问外网，可以在网关进行SNAT，将ip包的源地址替换为网关的公网ip，等请求返回的时候，网关再把返回的ip包的目标地址还原为原来的内网ip，然后由网关转发给具体的机器。</p>
+<p><code>SNAT</code>是多对一的映射，比如多个内网机器同时映射同一个网关的公网ip，不同内网机器可能使用同一个源端口，系统是通过源IP，源端口，目标ip和目标端口和协议等5元组来区分不同的连接的，因此执行<code>SNAT</code>时，除了修改源ip，还需要重新分配源端口号。</p>
+<p>系统需要通过<code>SNAT</code>表来保存原来的ip/端口与转换后的ip/端口之间的映射关系，以便能够在数据流入流出时进行跟踪。</p>
+<p>在容器网络中，当容器内部主动向外部发起网络请求时，需要使用<code>SNAT</code>将容器ip替换成主机的ip。</p>
+<h5 id="DNAT"><a href="#DNAT" class="headerlink" title="DNAT"></a>DNAT</h5><p><code>DNAT</code>用于将内网机器的端口映射到外网。当网关接收到数据包时，通过DNAT将目标ip和端口替换成内网机器的ip和端口，然后进行转发。</p>
+<p>在容器网络中，容器的端口映射就是使用<code>DNAT</code>实现的。通过将容器的端口映射到主机端口上，当由数据包发送到该主机端口时，<code>netfilter</code>会将其替换成容器的ip和端口。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
