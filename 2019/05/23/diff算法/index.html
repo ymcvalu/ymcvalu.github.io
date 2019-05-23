@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        一种diff算法：Myers - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>HOME</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>TAGS</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>ARCHIVES</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>ABOUT</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>SEARCH</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一种diff算法：Myers"><span class="toc-text">一种diff算法：Myers</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#diff"><span class="toc-text">diff</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Myers算法"><span class="toc-text">Myers算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code"><span class="toc-text">Code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">search</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        一种diff算法：Myers
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">Post：<span>2019-05-23 21:41:55</span></span>
+        
+        <span class="attr">Tags：/
+        
+        <a class="tag" href="/tags/#diff" title="diff">diff</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#myers" title="myers">myers</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="一种diff算法：Myers"><a href="#一种diff算法：Myers" class="headerlink" title="一种diff算法：Myers"></a>一种diff算法：Myers</h1><h3 id="diff"><a href="#diff" class="headerlink" title="diff"></a>diff</h3><p><code>git</code>是我们日常工作中最经常使用到的工具，而其中<code>diff</code>又是最常用到的功能，我们使用这个功能去查看代码的变更信息，今天我们就来学习一下<code>diff</code>算法的实现。</p>
+<p><code>diff</code>算法可以对一个文件编辑前后的状态进行比较，计算出其中删除和新增的内容，这样我们就能够直观看出该文件的变更情况。</p>
+<p>我们首先来看一个例子：</p>
+<ul>
+<li>a = ABCABBA</li>
+<li>b = CBABAC</li>
+</ul>
+<p>假设我们对文本<code>a</code>进行一系列编辑操作之后，得到了文本<code>b</code>，而<code>diff</code>操作就是要计算出这些编辑操作。</p>
+<p>一种可能的编辑序列是先把原来的内容全部删除，然后插入新的内容，使用通用的<code>diff</code>表示符号如下：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">- A</span></span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line"><span class="deletion">- C</span></span><br><span class="line"><span class="deletion">- A</span></span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line"><span class="deletion">- A</span></span><br><span class="line"><span class="addition">+ C</span></span><br><span class="line"><span class="addition">+ B</span></span><br><span class="line"><span class="addition">+ A</span></span><br><span class="line"><span class="addition">+ B</span></span><br><span class="line"><span class="addition">+ A</span></span><br><span class="line"><span class="addition">+ C</span></span><br></pre></td></tr></table></figure>
+<p>然而，上面的信息无法有效展示<code>a</code>是如何一步步变更到<code>b</code>的，因此上面的<code>diff</code>并没有什么实际意义。通常源代码的变更，会保留原来的大部分内容，而只对其中部分内容做删除和添加，我们通过<code>diff</code>操作是希望看到其中被删除或者插入的代码段，而不是像上面这样，全部删除然后替换成新的内容。</p>
+<p>我们更希望看到是<code>diff</code>是下面这种：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">- A</span></span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line">  C</span><br><span class="line"><span class="addition">+ B</span></span><br><span class="line">  A</span><br><span class="line">  B</span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line">  A</span><br><span class="line"><span class="addition">+ C</span></span><br></pre></td></tr></table></figure>
+<p>这种使用最少的变更把<code>a</code>转换成<code>b</code>，我们可以很明显的看出<code>a</code>是如何一步步转变到<code>b</code>的。然后这并不是唯一：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1.  - A       2.  - A       3.  + C</span><br><span class="line">    - B           + C           - A</span><br><span class="line">      C             B             B</span><br><span class="line">    - A           - C           - C</span><br><span class="line">      B             A             A</span><br><span class="line">    + A             B             B</span><br><span class="line">      B           - B           - B</span><br><span class="line">      A             A             A</span><br><span class="line">    + C           + C           + C</span><br></pre></td></tr></table></figure>
+<p>上面几种都是经过最少的变更。我看可以看到，一段文本从<code>a</code>变更到<code>b</code>的编辑过程并不是唯一的。</p>
+<p><code>diff</code>算法的目的是提供一种在某些方法比较理想的<code>diff</code>生成策略。然而，我们除了希望<code>diff</code>的变更尽量少之外，也有其他方面的考量，我们希望生成的<code>diff</code>更够尽量直观，符合我们的操作逻辑。</p>
+<p>比如，当我们修改文件的时候，我们总是先删除一些旧的内容，然后再添加一些新的内容，因此在上面的例子中，我们会觉得第2种会比第3种更加直观</p>
+<p>而当我们更新一个代码块的时候，总数先全部删掉然后再插入新的内容，而不是删插交替。</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Good:   - one         Bad:    - one</span><br><span class="line">        - two                 + four</span><br><span class="line">        - three               - two</span><br><span class="line">        + four                + five</span><br><span class="line">        + five                + six</span><br><span class="line">        + six                 - three</span><br></pre></td></tr></table></figure>
+<p>我们可以看到上面的例子中，第一种会比第二种更加直观。</p>
+<p>而如果对于代码的变更，我们也更希望能够符合代码的结构逻辑：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Good:   class Foo                   Bad:    class Foo</span><br><span class="line">          def initialize(name)                def initialize(name)</span><br><span class="line">            @name = name                        @name = name</span><br><span class="line">          end                             +   end</span><br><span class="line">      +                                   +</span><br><span class="line">      +   def inspect                     +   def inspect</span><br><span class="line">      +     @name                         +     @name</span><br><span class="line">      +   end                                 end</span><br><span class="line">        end                                 end</span><br></pre></td></tr></table></figure>
+<p>比如上面的例子种，我们新增了一个方法，我们希望新增的<code>end</code>是属于新增函数的一部分，而不是原来函数的一部分，这样我们就能够很直观的看出这里是新增了一个方法。</p>
+<p>而<code>Myers</code>算法就是一个能够符合这些考量的生成策略。</p>
+<h3 id="Myers算法"><a href="#Myers算法" class="headerlink" title="Myers算法"></a>Myers算法</h3><p><code>myers</code>通过贪心策略，在发现一个文本差异之前尽可能多的消费相同的内容，因此在上面新增<code>inspect</code>方法的例子中，第一次出现的<code>end</code>不会被识别为新增，这能有效防止第二种<code>diff</code>情况的发生。并且，删除操作总是优于插入操作，因此生成的diff中，删除操作总数能够先出现（除非没有内容被删除）。</p>
+<p><code>Myers</code>算法是基于查找最短编辑脚本（<em>shortest edit script</em>, SES）的思想提出的。</p>
+<p>最短编辑脚本查找问题可以被建模成图搜索问题。</p>
+<p>我们继续拿上面的文本<code>a = ABCABBA</code>和文本<code>b = CBABAC</code>来说明。</p>
+<p>首先我们构建这样一个图：</p>
+<p><img src="/img/ses_graph.jpg" alt=""></p>
+<p>在上面的坐标系中，当我们位于原点<code>(0,0)</code>时，表示我们现在有一个字符串<code>a</code>；</p>
+<p>当我们向右走，也就是增加<code>x</code>坐标的时候，对应的从<code>a</code>中删除一个字符，比如我们从<code>(0,0) - &gt; (1,0)</code>时，我们从<code>a</code>中删除字符<code>A</code>，这时候我们当前的文本就变成了<code>BCABBA</code>； </p>
+<p>而当我们向下走，也就是增加<code>y</code>坐标的时候，对应的从<code>b</code>中插入一个字符，比如我们从<code>(1,0) -&gt; (1,1)</code>的时候，对应的插入<code>b</code>中的字符<code>C</code>，这时候的文本变成了<code>CBCABBA</code>；</p>
+<p>在上面的某些位置上面还有斜向下的虚线，比如从<code>(1,1) -&gt; (2,2)</code>，这时候表示<code>a[1]==b[1]</code>，这时候保留该字符，并且同时增加<code>x</code>坐标和<code>y</code>坐标；</p>
+<p>而当我们沿某一条路线从<code>(0,0)</code>走到<code>(7,6)</code>，就代表字符串<code>a</code>经过一系列编辑操作之后转换成了字符串<code>b</code>。</p>
+<p>我们把上面的向右走记作<code>del</code>操作，向下走记为<code>ins</code>操作，沿虚线走记为<code>mov</code>操作，只有执行<code>del</code>操作和<code>ins</code>操作才会让字符串发生变更。我们可以看到，从<code>(0,0)</code>到<code>(7,6)</code>有很多条路径可达，最多需要<code>7+6</code>次<code>del</code>和<code>ins</code>操作，也就是执行全删全增操作。</p>
+<p><code>myers</code>算法的思想很简单，就是要找出一条从<code>(0,0)</code>到<code>(7,6)</code>的路径，让这条路径中的<code>del</code>和<code>ins</code>操作尽量的少，这就要求要尽量执行<code>mov</code>操作，并且当出现分支选择的时候，<code>del</code>操作能够优先于<code>ins</code>操作。</p>
+<p>我们对上面的图，从<code>(0,0)</code>开始，按照次序进行遍历，最终可以可到下面的遍历结果：</p>
+<p><img src="/img/ses_graph_s.jpg" alt=""></p>
+<p>首先执行第一次编辑操作，我们可以从<code>(0,0) -&gt; (1,0)</code>，或者从<code>(0,0) - &gt; (0,1)</code></p>
+<p>接着执行第二次编辑操作，我们要在第一次操作的基础上进行，因为<code>del</code>操作优先于<code>ins</code>操作，因此我们要优先扩展<code>(1,0)</code>这个点，从<code>(1,0)</code>可以走到<code>(1,1)</code>和<code>(2,0)</code>，又因为<code>(1,1)</code>到<code>(2,2)</code>以及<code>(2,0)</code>到<code>(3,1)</code>存在虚线，<code>mov</code>操作不会令文本内容发生变更，并不是编辑操作，还记得上面说的贪心策略吗？<code>myers</code>尽可能的消费相同文本内容，因此从<code>(1,0)</code>最终走到了<code>(2,2)</code>和<code>(3,1)</code>；接着扩展<code>(0,1)</code>这个点，<code>(0,1)</code>可以走到<code>(2,2)</code>和<code>(2,4)</code></p>
+<p>接着执行第三次、第四次…操作，直到第一次达到<code>(7,6)</code>这个坐标，第一次到达说明这时候的编辑次数是最少的，最终的遍历结果如上图所示。</p>
+<p>我们可以看到，每一次的编辑都是基于上次的编辑结果进行的，我们在每次编辑中，都基于上次的结果选择向右或者向下走一步，然后再执行<code>0</code>次或者多次<code>mov</code>操作，从而达到当前编辑结果。</p>
+<p>为了更直观的发现算法的规律，我们把上图逆时针旋装45°：</p>
+<p><img src="/img/ses_graph_d.jpg" alt=""></p>
+<p>在上图中，横坐标<code>d</code>表示编辑次数，也就是目前为止已经执行了多少次<code>del</code>或者<code>ins</code>编辑操作，也即图的搜索深度；而纵坐标<code>k = x - y</code>，当我们向由移动时，<code>k</code>值会加1，当向下移动时，<code>k</code>值会减1，而当沿着虚线移动时，<code>k</code>值并不会变化。我们需要记录指定<code>d</code>时，每个<code>k</code>值可以达到的最远记录，只需要记录当前给定<code>d</code>和<code>k</code>时，对应的<code>x</code>就行了，因为<code>y = x - k</code>。</p>
+<p>现在我们可以来看一下<code>myers</code>算法的执行过程：</p>
+<ol>
+<li>我们首先从<code>0</code>到<code>(len(a)+len(b))</code>遍历<code>d</code></li>
+<li>每次迭代<code>b</code>时，我们以步长为<code>2</code>从<code>-d</code>到<code>d</code>遍历<code>k</code>；这里为什么步长是<code>2</code>呢？仔细观察上图，当前<code>d</code>的节点都是从<code>d-1</code>的节点扩展而来，<code>d-1</code>的节点要么向右走，<code>k</code>加<code>1</code>，要么向下走，<code>k</code>减<code>1</code>，这时候同一个<code>d</code>的相邻的两个<code>k</code>之间差值就是<code>2</code>。</li>
+<li>对于给定的<code>d</code>和<code>k</code>值，我们根据上一轮遍历的结果，决定当前的最佳位置，这里的最佳位置意味着取<code>x</code>值最大的点，因为这就意味着优先执行<code>del</code>操作。当前<code>(d,k)</code>的点可以从<code>(d-1,k-1)</code>向右走一步，也可以从<code>(d-1,k+1)</code>向下走一步。当<code>(d-1,k+1)</code>的<code>x</code>值比<code>(d-1,k-1)</code>的大，则其优先级更高，因为它已经执行了更多的删除操作，而当具有相同的<code>x</code>值时，应该选择<code>(d-1,k-1)</code>，这时候向右走执行<code>del</code>操作。</li>
+</ol>
+<h3 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Diffable <span class="keyword">interface</span> &#123;</span><br><span class="line">	LenA() <span class="keyword">int</span>           <span class="comment">// length of src</span></span><br><span class="line">	LenB() <span class="keyword">int</span>           <span class="comment">// length of dest</span></span><br><span class="line">	Equal(<span class="keyword">int</span>, <span class="keyword">int</span>) <span class="keyword">bool</span> <span class="comment">// compare src[ai] and dest[bi]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Myers</span><span class="params">(ab Diffable)</span> <span class="title">EditScript</span></span> &#123;</span><br><span class="line">	aLen := ab.LenA() <span class="comment">// 获取原文本a的长度</span></span><br><span class="line">	bLen := ab.LenB() <span class="comment">// 目标文本b的长度</span></span><br><span class="line">	max := aLen + bLen <span class="comment">// 最大的编辑次数是aLen+bLen，即完全替换内容</span></span><br><span class="line">    <span class="comment">// 这里v是一个稀疏数组，并且这里空间分配实际上也过大，可以进一步优化</span></span><br><span class="line">    v := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">2</span>*max+<span class="number">1</span>) <span class="comment">// 保存指定d时，对应k的x值，因为k可能是负数，这里实际使用max作为0</span></span><br><span class="line">	trace := <span class="built_in">make</span>([][]<span class="keyword">int</span>, <span class="number">0</span>) <span class="comment">// 保存每个d的v</span></span><br><span class="line">search:</span><br><span class="line">	<span class="comment">// myers</span></span><br><span class="line">    <span class="comment">// 从0到max遍历d</span></span><br><span class="line">	<span class="keyword">for</span> d := <span class="number">0</span>; d &lt;= max; d++ &#123;</span><br><span class="line">        <span class="comment">// 保存上一轮迭代的v，第一次迭代时对应的d=0,k=0,x=0</span></span><br><span class="line">		vc := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">2</span>*max+<span class="number">1</span>)</span><br><span class="line">		<span class="built_in">copy</span>(vc, v)</span><br><span class="line">        <span class="comment">// trace[d]保存的是d-1轮的v</span></span><br><span class="line">		trace = <span class="built_in">append</span>(trace, vc)</span><br><span class="line">		<span class="comment">// 按照步长为2从-d到d迭代k</span></span><br><span class="line">		<span class="keyword">for</span> k := -d; k &lt;= d; k += <span class="number">2</span> &#123;</span><br><span class="line">            <span class="comment">// 很容易发现，k最小是-bLen,最大是aLen，因此这里可以有一个判断，跳过无效的k值</span></span><br><span class="line">			<span class="keyword">if</span> k &lt; -bLen || k &gt; aLen &#123;</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">var</span> x <span class="keyword">int</span></span><br><span class="line">            <span class="comment">// 如果k==-d，这时候只能由(d-1,k+1)向下走</span></span><br><span class="line">            <span class="comment">// 如果k==d，这时候只能由(d-1,k-1)向右走</span></span><br><span class="line">            <span class="comment">// 如果 (d-1,k+1)的x值大于(d-1,k-1)，则说明优先级大，往下走</span></span><br><span class="line">            <span class="comment">// 否在 (d-1,k-1)往右走</span></span><br><span class="line">			<span class="keyword">if</span> k == -d || (k != d &amp;&amp; v[max+k<span class="number">-1</span>] &lt; v[max+k+<span class="number">1</span>]) &#123;</span><br><span class="line">				x = v[max+k+<span class="number">1</span>]</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				x = v[max+k<span class="number">-1</span>] + <span class="number">1</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// k=x-y，因此y=x-k</span></span><br><span class="line">			y := x - k</span><br><span class="line">            <span class="comment">// 判断是否可以执行MOV操作</span></span><br><span class="line">			<span class="keyword">for</span> x &lt; aLen &amp;&amp; y &lt; bLen &amp;&amp; ab.Equal(x, y) &#123;</span><br><span class="line">				x++</span><br><span class="line">				y++</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 设置当前(d,k)的x值</span></span><br><span class="line">			v[max+k] = x</span><br><span class="line">			<span class="comment">// 判断是已经到到目标</span></span><br><span class="line">			<span class="keyword">if</span> x == aLen &amp;&amp; y == bLen &#123;</span><br><span class="line">				<span class="keyword">break</span> search</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"> 	</span><br><span class="line">    <span class="comment">// 回溯</span></span><br><span class="line">	<span class="keyword">for</span> d := <span class="built_in">len</span>(trace) - <span class="number">1</span>; d &gt;= <span class="number">0</span>; d-- &#123;</span><br><span class="line">		v := trace[d] <span class="comment">// 获取前一轮的v</span></span><br><span class="line">		k := x - y <span class="comment">// 当前k</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">var</span> prevk <span class="keyword">int</span></span><br><span class="line">		<span class="comment">// 计算前驱结点的k值</span></span><br><span class="line">		<span class="keyword">if</span> k == -d || (k != d &amp;&amp; v[max+k<span class="number">-1</span>] &lt; v[max+k+<span class="number">1</span>]) &#123;</span><br><span class="line">			prevk = k + <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			prevk = k - <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 从历史状态获取x值并计算y值</span></span><br><span class="line">		prevx := v[max+prevk]</span><br><span class="line">		prevy := prevx - prevk</span><br><span class="line">        <span class="comment">// 判断是否执行了mov操作</span></span><br><span class="line">		<span class="keyword">for</span> x &gt; prevx &amp;&amp; y &gt; prevy &#123;</span><br><span class="line">			script = <span class="built_in">append</span>(script, OpMov)</span><br><span class="line">			x--</span><br><span class="line">			y--</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 如果当前d&gt;0</span></span><br><span class="line">		<span class="keyword">if</span> d &gt; <span class="number">0</span> &#123;</span><br><span class="line">            <span class="comment">// 如果x没有变化，则说明向下走，ins操作</span></span><br><span class="line">			<span class="keyword">if</span> x == prevx &#123;</span><br><span class="line">				script = <span class="built_in">append</span>(script, OpInsert)</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 否在就是del操作</span></span><br><span class="line">				script = <span class="built_in">append</span>(script, OpDel)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 更新x,y的值</span></span><br><span class="line">		x, y = prevx, prevy</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 回溯获取到的编辑顺序是逆序的</span></span><br><span class="line">	<span class="keyword">return</span> script.reverse()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/ymcvalu/godiff" target="_blank" rel="noopener">完整代码</a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><strong><a href="https://blog.jcoglan.com/2017/02/12/the-myers-diff-algorithm-part-1/" target="_blank" rel="noopener">the-myers-diff-algorithm</a></strong></li>
+<li><strong><a href="https://github.com/pkg/diff" target="_blank" rel="noopener">pkg-diff</a></strong></li>
+<li><a href="https://cjting.me/misc/how-git-generate-diff/?hmsr=toutiao.io&amp;utm_medium=toutiao.io&amp;utm_source=toutiao.io" target="_blank" rel="noopener">Git是怎样生成diff的：Myers算法</a></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
