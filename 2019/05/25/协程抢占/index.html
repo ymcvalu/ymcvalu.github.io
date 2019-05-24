@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>HOME</span>
+                    <span>主页</span>
                 </a>
             </li>
             <li>
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>TAGS</span>
+                    <span>标签</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>ARCHIVES</span>
+                    <span>存档</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>ABOUT</span>
+                    <span>关于</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>SEARCH</span>
+                    <span>搜索</span>
                 </a>
             </li>
             
@@ -100,7 +100,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">search</span>
+            <span id="begin-search">搜索</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -123,21 +123,21 @@
     </div>
 
     <div class="post-meta">
-        <span class="attr">Post：<span>2019-05-25 02:40:18</span></span>
+        <span class="attr">发布于：<span>2019-05-25 02:40:18</span></span>
         
-        <span class="attr">Tags：/
+        <span class="attr">标签：/
         
         <a class="tag" href="/tags/#golang" title="golang">golang</a>
         <span>/</span>
         
         
         </span>
-        <span class="attr">Visit：<span id="busuanzi_value_page_pv"></span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
 </span>
 
     </div>
     <div class="post-content ">
-        <h1 id="协程抢占"><a href="#协程抢占" class="headerlink" title="协程抢占"></a>协程抢占</h1><h3 id="协作式抢占"><a href="#协作式抢占" class="headerlink" title="协作式抢占"></a>协作式抢占</h3><h5 id="morestack：执行抢占"><a href="#morestack：执行抢占" class="headerlink" title="morestack：执行抢占"></a>morestack：执行抢占</h5><p>目前<code>go</code>实现是的协作抢占：在每个函数开头插入<code>runtime.morestack_noctxt</code>方法，除了检查是否需要扩张栈，同时还检查是否需要当前协程需要抢占。那么怎么判断一个协程是否需要抢占呢？后台线程会定时扫描当前运行中的协程，如果发现一个协程运行比较久，会将其标记为抢占状态。</p>
+        <h1 id="协程抢占"><a href="#协程抢占" class="headerlink" title="协程抢占"></a>协程抢占</h1><h3 id="协作式抢占"><a href="#协作式抢占" class="headerlink" title="协作式抢占"></a>协作式抢占</h3><h5 id="morestack：执行抢占"><a href="#morestack：执行抢占" class="headerlink" title="morestack：执行抢占"></a>morestack：执行抢占</h5><p>目前<code>go</code>实现是的协作抢占：在每个函数开头插入<code>morestack</code>检查，除了检查是否需要扩张栈，同时还检查是否当前协程需要抢占。那么怎么判断一个协程是否需要抢占呢？后台线程会定时扫描当前运行中的协程，如果发现一个协程运行比较久，会将其标记为抢占状态。</p>
 <p>我们首先看一下一个<code>main</code>函数的汇编代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x0000</span> <span class="number">00000</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	TEXT	<span class="string">""</span>.main(SB), $<span class="number">64</span><span class="number">-0</span></span><br><span class="line"><span class="number">0x0000</span> <span class="number">00000</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	MOVQ	TLS, CX</span><br><span class="line"><span class="number">0x0009</span> <span class="number">00009</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	MOVQ	(CX)(TLS*<span class="number">2</span>), CX <span class="comment">// 获取当前g</span></span><br><span class="line"><span class="comment">// 比较当前SP和g.stackguard0，如果小于则需要触发morestarck</span></span><br><span class="line"><span class="number">0x0010</span> <span class="number">00016</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	CMPQ	SP, <span class="number">16</span>(CX) </span><br><span class="line"><span class="number">0x0014</span> <span class="number">00020</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	JLS	<span class="number">110</span></span><br><span class="line"><span class="number">0x0016</span> <span class="number">00022</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	SUBQ	$<span class="number">64</span>, SP    <span class="comment">// SP-64，相当于设置栈帧大小64字节</span></span><br><span class="line"><span class="number">0x001a</span> <span class="number">00026</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	MOVQ	BP, <span class="number">56</span>(SP) <span class="comment">// 保存caller的BP，可以看到BP是保存到当前函数的栈帧中的，如果一个函数栈帧大小为0，则不需要保存BP</span></span><br><span class="line"><span class="number">0x001f</span> <span class="number">00031</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	LEAQ	<span class="number">56</span>(SP), BP <span class="comment">// 设置当前BP</span></span><br><span class="line">   ...</span><br><span class="line"><span class="number">0x0064</span> <span class="number">00100</span> (morestack.<span class="keyword">go</span>:<span class="number">7</span>)	MOVQ	<span class="number">56</span>(SP), BP <span class="comment">// 还原BP</span></span><br><span class="line"><span class="number">0x0069</span> <span class="number">00105</span> (morestack.<span class="keyword">go</span>:<span class="number">7</span>)	ADDQ	$<span class="number">64</span>, SP    <span class="comment">// SP+64，相当于销毁栈帧</span></span><br><span class="line"><span class="number">0x006d</span> <span class="number">00109</span> (morestack.<span class="keyword">go</span>:<span class="number">7</span>)	RET</span><br><span class="line"><span class="number">0x006e</span> <span class="number">00110</span> (morestack.<span class="keyword">go</span>:<span class="number">7</span>)	NOP</span><br><span class="line"><span class="number">0x006e</span> <span class="number">00110</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	CALL	runtime.morestack_noctxt(SB)</span><br><span class="line"><span class="number">0x0073</span> <span class="number">00115</span> (morestack.<span class="keyword">go</span>:<span class="number">5</span>)	JMP	<span class="number">0</span></span><br></pre></td></tr></table></figure>
 <p>我们可以看到，进入函数之后，首先会检查当前函数的<code>SP</code>寄存器是否已经达到<code>g.stackguard0</code>，如果是的话，则需要先调用<code>runtime.morestack_noctxt</code>方法扩张当前函数栈（现在的实现是重新分配一个更大的函数栈，然后把旧的函数栈内容拷贝过去），然后再根据栈帧大小设置<code>SP</code>和<code>BP</code>指针，而在函数返回前需要先恢复<code>BP</code>和<code>SP</code>指针。<strong>上面的BP和SP寄存器的相关设置是在morestack之后，也就是在执行morestack的时候，0(SP)为函数返回地址</strong></p>
