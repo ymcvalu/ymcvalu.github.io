@@ -56,32 +56,32 @@
             <li>
                 <a href="/">
                     <i class="iconfont icon-shouye1"></i>
-                    <span>主页</span>
+                    <span>HOME</span>
                 </a>
             </li>
             <li class="active">
                 <a href="/tags">
                     <i class="iconfont icon-biaoqian1"></i>
-                    <span>标签</span>
+                    <span>TAGS</span>
                 </a>
             </li>
             <li>
                 <a href="/archives">
                     <i class="iconfont icon-guidang2"></i>
-                    <span>存档</span>
+                    <span>ARCHIVES</span>
                 </a>
             </li>
             <li>
                 <a href="/about/">
                     <i class="iconfont icon-guanyu2"></i>
-                    <span>关于</span>
+                    <span>ABOUT</span>
                 </a>
             </li>
             
             <li>
                 <a id="search">
                     <i class="iconfont icon-sousuo1"></i>
-                    <span>搜索</span>
+                    <span>SEARCH</span>
                 </a>
             </li>
             
@@ -96,7 +96,7 @@
         <div class="search-input">
             <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
             <input id="search-input">
-            <span id="begin-search">搜索</span>
+            <span id="begin-search">search</span>
         </div>
         <div class="search-result-container" id="search-result-container">
 
@@ -136,11 +136,11 @@
     
     <a href="#classloader" title="classloader" rel="1">classloader</a>
     
+    <a href="#channel" title="channel" rel="1">channel</a>
+    
     <a href="#diff" title="diff" rel="1">diff</a>
     
     <a href="#myers" title="myers" rel="1">myers</a>
-    
-    <a href="#channel" title="channel" rel="1">channel</a>
     
     <a href="#defer" title="defer" rel="1">defer</a>
     
@@ -154,6 +154,8 @@
     
     <a href="#libtask" title="libtask" rel="1">libtask</a>
     
+    <a href="#golang" title="golang" rel="1">golang</a>
+    
 </div>
 
 <!-- 标签列表 -->
@@ -163,20 +165,6 @@
                 <span class="fa fa-tag listing-seperator" id="go">
                     <span class="tag-text">go</span>
                 </span>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
-        <a href="/2018/12/27/golang执行command/">
-            <h2 class="post-title">
-                golang执行command
-            </h2>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
     
     <!-- <li class="listing-item">
     <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
@@ -200,6 +188,20 @@
         <a href="/2019/03/31/golang内存逃逸/">
             <h2 class="post-title">
                 golang内存逃逸
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2018/12/27/golang执行command/">
+            <h2 class="post-title">
+                golang执行command
             </h2>
             
         </a>
@@ -253,9 +255,9 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2018/12/19/go编译共享库给c调用/">
+        <a href="/2018/01/07/go程序启动过程分析/">
             <h2 class="post-title">
-                go编译共享库给c调用
+                go程序启动过程分析
             </h2>
             
         </a>
@@ -267,9 +269,9 @@
     <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
     </li> -->
     <div class="post-preview">
-        <a href="/2018/01/07/go程序启动过程分析/">
+        <a href="/2018/12/19/go编译共享库给c调用/">
             <h2 class="post-title">
-                go程序启动过程分析
+                go编译共享库给c调用
             </h2>
             
         </a>
@@ -748,6 +750,27 @@
 </div>
 
 <div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="channel">
+                    <span class="tag-text">channel</span>
+                </span>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2019/01/31/channel源码分析/">
+            <h2 class="post-title">
+                channel源码分析
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+</div>
+
+<div class="one-tag-list">
                 <span class="fa fa-tag listing-seperator" id="diff">
                     <span class="tag-text">diff</span>
                 </span>
@@ -781,27 +804,6 @@
         <a href="/2019/05/23/diff算法/">
             <h2 class="post-title">
                 一种diff算法：Myers
-            </h2>
-            
-        </a>
-        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-    </div>
-    
-</div>
-
-<div class="one-tag-list">
-                <span class="fa fa-tag listing-seperator" id="channel">
-                    <span class="tag-text">channel</span>
-                </span>
-    
-    <!-- <li class="listing-item">
-    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-    </li> -->
-    <div class="post-preview">
-        <a href="/2019/01/31/channel源码分析/">
-            <h2 class="post-title">
-                channel源码分析
             </h2>
             
         </a>
@@ -928,6 +930,27 @@
         <a href="/2017/12/29/libtask分析/">
             <h2 class="post-title">
                 libtask分析
+            </h2>
+            
+        </a>
+        <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+    </div>
+    
+</div>
+
+<div class="one-tag-list">
+                <span class="fa fa-tag listing-seperator" id="golang">
+                    <span class="tag-text">golang</span>
+                </span>
+    
+    <!-- <li class="listing-item">
+    <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+    <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+    </li> -->
+    <div class="post-preview">
+        <a href="/2019/05/25/协程抢占/">
+            <h2 class="post-title">
+                协程抢占
             </h2>
             
         </a>
