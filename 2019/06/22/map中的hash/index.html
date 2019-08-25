@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        map中的hash - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题引入"><span class="toc-text">问题引入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#具体实现"><span class="toc-text">具体实现</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        map中的hash
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-06-22 09:56:18</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Key <span class="keyword">struct</span> &#123;</span><br><span class="line">	a     <span class="keyword">int</span></span><br><span class="line">	Iface <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	m := <span class="keyword">map</span>[Key]<span class="keyword">bool</span>&#123;&#125;</span><br><span class="line">	m[Key&#123;a: <span class="number">10</span>, Iface: <span class="number">10</span>&#125;] = <span class="literal">true</span> <span class="comment">// 运行通过</span></span><br><span class="line">	m[Key&#123;a: <span class="number">10</span>, Iface: <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;&#125;&#125;] = <span class="literal">true</span> <span class="comment">// panic</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行上面的代码，我们会得到一个panic：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">panic: runtime error: <span class="built_in">hash</span> of unhashable <span class="built_in">type</span> map[string]interface &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>原因是因为，当使用map存储时，<code>key</code>要求是可以计算<code>hash</code>值的，而在<code>go</code>中，<code>map</code>、<code>slice</code>、<code>channel</code>和<code>func</code>类型都是不能计算hash值的，因此当使用这些类型作为<code>map</code>的<code>key</code>时会发生panic，而当key是复合类型，并且包含了这四种类型，也会发生panic，如上面的例子中，如果包含了接口类型，那么在运行时会动态检查其类型。</p>
+<h3 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h3><p>接下来，我们来看一下其背后的实现逻辑。</p>
+<p>首先，我们先看一下map中关于hash的计算逻辑：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">alg := t.key.alg <span class="comment">// 这里的key是maptype</span></span><br><span class="line">hash := alg.hash(key, <span class="keyword">uintptr</span>(h.hash0))</span><br></pre></td></tr></table></figure>
+<p>接下来看一下<code>maptype</code>的结构定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> maptype <span class="keyword">struct</span> &#123;</span><br><span class="line">	typ        _type</span><br><span class="line">	key        *_type</span><br><span class="line">	elem       *_type</span><br><span class="line">	bucket     *_type <span class="comment">// internal type representing a hash bucket</span></span><br><span class="line">	keysize    <span class="keyword">uint8</span>  <span class="comment">// size of key slot</span></span><br><span class="line">	valuesize  <span class="keyword">uint8</span>  <span class="comment">// size of value slot</span></span><br><span class="line">	bucketsize <span class="keyword">uint16</span> <span class="comment">// size of bucket</span></span><br><span class="line">	flags      <span class="keyword">uint32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> _type <span class="keyword">struct</span> &#123;</span><br><span class="line">	size       <span class="keyword">uintptr</span></span><br><span class="line">	ptrdata    <span class="keyword">uintptr</span> <span class="comment">// size of memory prefix holding all pointers</span></span><br><span class="line">	hash       <span class="keyword">uint32</span></span><br><span class="line">	tflag      tflag</span><br><span class="line">	align      <span class="keyword">uint8</span></span><br><span class="line">	fieldalign <span class="keyword">uint8</span></span><br><span class="line">	kind       <span class="keyword">uint8</span></span><br><span class="line">	alg        *typeAlg </span><br><span class="line">	<span class="comment">// gcdata stores the GC type data for the garbage collector.</span></span><br><span class="line">	<span class="comment">// If the KindGCProg bit is set in kind, gcdata is a GC program.</span></span><br><span class="line">	<span class="comment">// Otherwise it is a ptrmask bitmap. See mbitmap.go for details.</span></span><br><span class="line">	gcdata    *<span class="keyword">byte</span></span><br><span class="line">	str       nameOff</span><br><span class="line">	ptrToThis typeOff</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> typeAlg <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// function for hashing objects of this type</span></span><br><span class="line">	<span class="comment">// (ptr to object, seed) -&gt; hash</span></span><br><span class="line">	hash <span class="function"><span class="keyword">func</span><span class="params">(unsafe.Pointer, <span class="keyword">uintptr</span>)</span> <span class="title">uintptr</span></span></span><br><span class="line"><span class="function">	// <span class="title">function</span> <span class="title">for</span> <span class="title">comparing</span> <span class="title">objects</span> <span class="title">of</span> <span class="title">this</span> <span class="title">type</span></span></span><br><span class="line"><span class="function">	// <span class="params">(ptr to object A, ptr to object B)</span> -&gt; ==?</span></span><br><span class="line"><span class="function">	<span class="title">equal</span> <span class="title">func</span><span class="params">(unsafe.Pointer, unsafe.Pointer)</span> <span class="title">bool</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>实际上，每个类型都会包含<code>_type</code>，而<code>_type</code>中的<code>alg</code>字段则定义了该类型对象的<code>hash</code>和<code>equal</code>方法</p>
+<p>而在<code>runtime</code>包中，已经声明了一些基本的<code>alg</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> algarray = [alg_max]typeAlg&#123;</span><br><span class="line">	alg_NOEQ:     &#123;<span class="literal">nil</span>, <span class="literal">nil</span>&#125;, <span class="comment">// 表示没有hash方法和equal方法 </span></span><br><span class="line">	alg_MEM0:     &#123;memhash0, memequal0&#125;,</span><br><span class="line">	alg_MEM8:     &#123;memhash8, memequal8&#125;,</span><br><span class="line">	alg_MEM16:    &#123;memhash16, memequal16&#125;,</span><br><span class="line">	alg_MEM32:    &#123;memhash32, memequal32&#125;,</span><br><span class="line">	alg_MEM64:    &#123;memhash64, memequal64&#125;,</span><br><span class="line">	alg_MEM128:   &#123;memhash128, memequal128&#125;,</span><br><span class="line">	alg_STRING:   &#123;strhash, strequal&#125;,</span><br><span class="line">	alg_INTER:    &#123;interhash, interequal&#125;, <span class="comment">// 用于计算iface类型</span></span><br><span class="line">	alg_NILINTER: &#123;nilinterhash, nilinterequal&#125;, <span class="comment">// 用于计算eface类型</span></span><br><span class="line">	alg_FLOAT32:  &#123;f32hash, f32equal&#125;,</span><br><span class="line">	alg_FLOAT64:  &#123;f64hash, f64equal&#125;,</span><br><span class="line">	alg_CPLX64:   &#123;c64hash, c64equal&#125;,</span><br><span class="line">	alg_CPLX128:  &#123;c128hash, c128equal&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们就看其中的<code>nilinterhash</code>的实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">nilinterhash</span><span class="params">(p unsafe.Pointer, h <span class="keyword">uintptr</span>)</span> <span class="title">uintptr</span></span> &#123;</span><br><span class="line">	a := (*eface)(p) <span class="comment">// p实际上就是一个空接口指针</span></span><br><span class="line">	t := a._type </span><br><span class="line">	<span class="keyword">if</span> t == <span class="literal">nil</span> &#123; </span><br><span class="line">		<span class="keyword">return</span> h</span><br><span class="line">	&#125;</span><br><span class="line">	fn := t.alg.hash </span><br><span class="line">	<span class="keyword">if</span> fn == <span class="literal">nil</span> &#123; <span class="comment">// 如果没有指定hash方法，表明该类型不支持计算hash</span></span><br><span class="line">        <span class="comment">// 这里的panic不就跟上面例子中的panic一样嘛</span></span><br><span class="line">		<span class="built_in">panic</span>(errorString(<span class="string">"hash of unhashable type "</span> + t.<span class="keyword">string</span>()))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> isDirectIface(t) &#123;</span><br><span class="line">		<span class="keyword">return</span> c1 * fn(unsafe.Pointer(&amp;a.data), h^c0)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> c1 * fn(a.data, h^c0)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，我们看一下文章开头例子反编译后的汇编代码，我们主要是要看一下<code>Key</code>类型的<code>hash</code>方法</p>
+<p>首先，看一下<code>Key</code>类型的<code>type</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span>.<span class="string">""</span>.Key SRODATA size=<span class="number">144</span></span><br><span class="line">	<span class="number">0x0000</span> <span class="number">18</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">18</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0010</span> <span class="number">18</span> cb <span class="number">58</span> <span class="number">54</span> <span class="number">07</span> <span class="number">08</span> <span class="number">08</span> <span class="number">19</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ..XT............</span><br><span class="line">	<span class="number">0x0020</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0030</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0040</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">02</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0050</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">40</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ........@.......</span><br><span class="line">	<span class="number">0x0060</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0070</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0080</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	rel <span class="number">24</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>..alg.<span class="string">""</span>.Key+<span class="number">0</span> <span class="comment">// 24+8偏移量对应的就是_type.alg</span></span><br><span class="line">	rel <span class="number">32</span>+<span class="number">8</span> t=<span class="number">1</span> runtime.gcbits<span class="number">.04</span>+<span class="number">0</span></span><br><span class="line">	rel <span class="number">40</span>+<span class="number">4</span> t=<span class="number">5</span> <span class="keyword">type</span>..namedata.*main.Key.+<span class="number">0</span></span><br><span class="line">	rel <span class="number">44</span>+<span class="number">4</span> t=<span class="number">5</span> <span class="keyword">type</span>.*<span class="string">""</span>.Key+<span class="number">0</span></span><br><span class="line">	rel <span class="number">48</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>..importpath.<span class="string">""</span>.+<span class="number">0</span></span><br><span class="line">	rel <span class="number">56</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>.<span class="string">""</span>.Key+<span class="number">96</span></span><br><span class="line">	rel <span class="number">80</span>+<span class="number">4</span> t=<span class="number">5</span> <span class="keyword">type</span>..importpath.<span class="string">""</span>.+<span class="number">0</span></span><br><span class="line">	rel <span class="number">96</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>..namedata.a-+<span class="number">0</span></span><br><span class="line">	rel <span class="number">104</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>.<span class="keyword">int</span>+<span class="number">0</span></span><br><span class="line">	rel <span class="number">120</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>..namedata.Iface.+<span class="number">0</span></span><br><span class="line">	rel <span class="number">128</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>.<span class="keyword">interface</span> &#123;&#125;+<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// key的alg包含了两个字段，hashfunc和eqfunc</span></span><br><span class="line"><span class="keyword">type</span>..alg.<span class="string">""</span>.Key SRODATA dupok size=<span class="number">16</span></span><br><span class="line">	<span class="number">0x0000</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	rel <span class="number">0</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>..hashfunc.<span class="string">""</span>.Key+<span class="number">0</span> </span><br><span class="line">	rel <span class="number">8</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>..eqfunc.<span class="string">""</span>.Key+<span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span>..hashfunc.<span class="string">""</span>.Key SRODATA dupok size=<span class="number">8</span></span><br><span class="line">	<span class="number">0x0000</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                          ........</span><br><span class="line">	rel <span class="number">0</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>..hash.<span class="string">""</span>.Key+<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>接着来看一下汇编生成的<code>type..hash.&quot;&quot;.Key</code>方法，只保留主要逻辑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 首先该函数有两个参数p和h，p表示要hash的对象指针，h表示hash seek，返回一个hash值</span><br><span class="line">TEXT	type..hash.&quot;&quot;.Key(SB), DUPOK|ABIInternal, $40-24</span><br><span class="line">	MOVQ	&quot;&quot;.p+48(SP), AX // 将要hash的镀锡指针mov到ax</span><br><span class="line">	MOVQ	AX, (SP) // memhash第一个参数</span><br><span class="line">	MOVQ	&quot;&quot;.h+56(SP), CX</span><br><span class="line">	MOVQ	CX, 8(SP) // memhash第二个参数</span><br><span class="line">	MOVQ	$8, 16(SP) // memhash第三个参数，这里8表示只对前8个字节进行hash计算</span><br><span class="line">	CALL	runtime.memhash(SB) // 调用memhash计算hash值</span><br><span class="line">	MOVQ	24(SP), AX // 将返回值保存到ax中</span><br><span class="line">	MOVQ	&quot;&quot;.p+48(SP), CX</span><br><span class="line">	ADDQ	$8, CX // 这里指针计算，p+8对应的就是Key.Iface</span><br><span class="line">	MOVQ	CX, (SP) // nilinterhash第一个参数</span><br><span class="line">	MOVQ	AX, 8(SP) // 将memhash的第一个参数作为nilinterhash第二个参数</span><br><span class="line">	CALL	runtime.nilinterhash(SB) // 调用nilinterhash</span><br><span class="line">	MOVQ	16(SP), AX // 返回值mov到ax</span><br><span class="line">	MOVQ	AX, &quot;&quot;.~r2+64(SP) // 设置返回值</span><br><span class="line">	RET</span><br></pre></td></tr></table></figure>
+<p>直接看上面的逻辑，当计算<code>Key</code>的<code>hash</code>时，会先计算前8个字节的hash值，然后在调用<code>nilinterhash</code>来计算<code>Iface</code>的hash值。</p>
+<p>那么开头我们的例子中，运行的结果是<code>panic</code>，因此说明在<code>nilinterhash</code>中，因此对应的type没有hash方法而导致panic，为了验证我们的结论，我们看下<code>map[string]interface{}{}</code>对应的<code>_type</code>中的<code>alg</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	m := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;&#125;</span><br><span class="line">	m[<span class="string">"a"</span>] = <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看编译后的汇编代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span>.<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span> &#123;&#125; SRODATA dupok size=<span class="number">80</span></span><br><span class="line">	<span class="number">0x0000</span> <span class="number">08</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">08</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0010</span> <span class="number">86</span> <span class="number">62</span> <span class="number">71</span> <span class="number">0</span>e <span class="number">02</span> <span class="number">08</span> <span class="number">08</span> <span class="number">35</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  .bq...<span class="number">.5</span>........</span><br><span class="line">	<span class="number">0x0020</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0030</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="number">0x0040</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">10</span> <span class="number">10</span> <span class="number">10</span> <span class="number">01</span> <span class="number">0</span>c <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>  ................</span><br><span class="line">	<span class="comment">// 看这里，runtime.algarray对应就是runtime.algarray[0]</span></span><br><span class="line">	<span class="comment">// 这个数组上面提到过，algarray[0]对应的hash和eq都是nil</span></span><br><span class="line">	rel <span class="number">24</span>+<span class="number">8</span> t=<span class="number">1</span> runtime.algarray+<span class="number">0</span></span><br><span class="line">	rel <span class="number">32</span>+<span class="number">8</span> t=<span class="number">1</span> runtime.gcbits<span class="number">.01</span>+<span class="number">0</span></span><br><span class="line">	rel <span class="number">40</span>+<span class="number">4</span> t=<span class="number">5</span> <span class="keyword">type</span>..namedata.*<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span> &#123;&#125;-+<span class="number">0</span></span><br><span class="line">	rel <span class="number">44</span>+<span class="number">4</span> t=<span class="number">6</span> <span class="keyword">type</span>.*<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span> &#123;&#125;+<span class="number">0</span></span><br><span class="line">	rel <span class="number">48</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>.<span class="keyword">string</span>+<span class="number">0</span></span><br><span class="line">	rel <span class="number">56</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>.<span class="keyword">interface</span> &#123;&#125;+<span class="number">0</span></span><br><span class="line">	rel <span class="number">64</span>+<span class="number">8</span> t=<span class="number">1</span> <span class="keyword">type</span>.noalg.<span class="keyword">map</span>.bucket[<span class="keyword">string</span>]<span class="keyword">interface</span> &#123;&#125;+<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

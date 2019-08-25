@@ -637,7 +637,7 @@ body {
   letter-spacing: 1px;
 }
 .post-content p img {
-  width: 80%;
+  width: auto;
 }
 .post-content ul,
 .post-content ol {
@@ -909,8 +909,8 @@ pre,
   margin: 20px 0;
   padding: 0;
   font-size: 13px;
-  color: #4d4d4c;
-  background: #f7f7f7;
+  color: #70d060;
+  background: #231c1c;
   line-height: 1.6;
 }
 pre,
@@ -969,13 +969,13 @@ pre code {
   padding-right: 10px;
   color: #869194;
   text-align: right;
-  background-color: #eff2f3;
+  background-color: #231c1c;
 }
 .highlight .code pre {
   width: 100%;
   padding-left: 10px;
   padding-right: 10px;
-  background-color: #f7f7f7;
+  background-color: #231c1c;
 }
 .highlight .line {
   height: 20px;
@@ -1002,7 +1002,7 @@ pre .meta {
   color: #8959a8;
 }
 pre .comment {
-  color: #8e908c;
+  color: #d4cf00;
 }
 pre .variable,
 pre .attribute,

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        tcp keepalive in go - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#overview"><span class="toc-text">overview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#code"><span class="toc-text">code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-text">参考链接</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        tcp keepalive in go
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-07-20 16:04:38</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go - tcp" title="go - tcp">go - tcp</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="overview"><a href="#overview" class="headerlink" title="overview"></a>overview</h3><p>建立<code>tcp</code>连接后，可以通过<code>FIN</code>包或者<code>RST</code>包通知对端关闭连接，其中<code>FIN</code>包是正常连接双方四次握手关闭连接过程中发送的，需要接收对方的<code>ack</code>，而<code>RST</code>包是通知对方立即关闭，也不需要等待对方的<code>ack</code>。</p>
+<p>但是，如果客户端在连接过程中宕机了，服务端不会收到任何消息，这时候服务端认为连接还存在，但是客户端并不了解。这时候，需要等到服务端向客户端写入消息时，因为客户端并没有这条连接的信息，向服务端返回<code>rst</code>包，服务端才会关闭这条连接，并释放相应的资源。</p>
+<p><code>tcp</code>连接建立之后，并不是一直处于读写状态，当有一方由于某种原因意外断开，另一方需要等到下一次发送数据时才能关闭连接，而这中间会一直占用系统资源。</p>
+<p>这就需要有一种心跳机制，能够定时检查对方连接是否存活，而<a href="https://tools.ietf.org/html/rfc1122#page-101" target="_blank" rel="noopener"><code>tcp keepalive</code></a>就算实现该功能的机制。</p>
+<p>服务端开启<code>tcp keepalive</code>之后，会定时发送空<code>body</code>的<code>packet</code>给客户端，客户端需要发送<code>ACK</code>来指示自己还存活着。<code>keepalive</code>不是<code>tcp</code>标准的一部分，并且默认是禁用的，但是目前大多数<code>tcp</code>实现都支持。</p>
+<p>在大多数实现中，设置<code>keepalive</code>主要有三个参数：</p>
+<ul>
+<li><p><code>tcp_keepalive_time</code>：间隔多久没有发送数据后，就发送一个心跳包</p>
+</li>
+<li><p><code>tcp_keepalive_intvl</code>：发送的心跳包如果没有收到<code>ack</code>，间隔多久后，重新发送</p>
+</li>
+<li><p><code>tcp_keepalive_probes</code>：最多发送多少个心跳包没有收到回复后，认为对方挂掉了</p>
+</li>
+</ul>
+<p>比如，<code>tcp_keepalive_time</code>设置为30s，<code>tcp_keepalive_intvl</code>设置为5s，<code>tcp_keepalive_probes</code>设置为3，那么当连接空闲30s没有发送数据，会发送第一个心跳包，如果接收到了<code>ack</code>，那么会等待空闲30s后再次发送心跳包；而如果没有收到<code>ack</code>，5s后会重试，发送第二个心跳包，如果再没有收到<code>ack</code>包，那么等待5s后会重试，发送第三个心跳包，如果还没有收到<code>ack</code>包，那么就任务对方连接已经挂掉了。</p>
+<p>在linux中，可以查看这三个参数的默认值：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/sys/net/ipv4/tcp_keepalive_time </span><br><span class="line">7200</span><br><span class="line">$ cat /proc/sys/net/ipv4/tcp_keepalive_intvl </span><br><span class="line">75</span><br><span class="line">$ cat /proc/sys/net/ipv4/tcp_keepalive_probes </span><br><span class="line">9</span><br></pre></td></tr></table></figure>
+<p>我们可以通过编辑<code>/etc/sysctl.conf</code>，来修改这三个参数的默认值，并使用<code>sysctl -p</code>使其生效，程序不需要重启，内核直接生效。</p>
+<p><code>keepalive</code>还有一个作用是当使用NAT代理或者防火墙的时候，防止连接因为不活动而被断开。</p>
+<h3 id="code"><a href="#code" class="headerlink" title="code"></a>code</h3><p><code>go</code>中的<code>net.TCPConn</code>提供了<code>SetKeepAlive</code>和<code>SetKeepAlivePeriod</code>两个方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	conn, err := ln.Accept()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">"failed to accept new conn: %s"</span>, err.Error())</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	tcpConn := conn.(*net.TCPConn)</span><br><span class="line">	tcpConn.SetKeepAlive(<span class="literal">true</span>) <span class="comment">// 开启keepalive</span></span><br><span class="line">	tcpConn.SetKeepAlivePeriod(time.Second * <span class="number">30</span>) <span class="comment">// 设置tcp_keepalive_time</span></span><br><span class="line">	<span class="keyword">go</span> handleConn(conn)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果需要设置<code>tcp_keepalive_intvl</code>和<code>tcp_keepalive_probes</code>两个参数，则需要<code>syscall</code>包中的方法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">fd, err := tcpConn.File()</span><br><span class="line"><span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="comment">// 设置tcp_keepalive_probes</span></span><br><span class="line">	err = syscall.SetsockoptInt(<span class="keyword">int</span>(fd.Fd()), syscall.IPPROTO_TCP, syscall.TCP_KEEPCNT, <span class="number">3</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// handle error</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 设置tcp_keepalive_intvl</span></span><br><span class="line">	err = syscall.SetsockoptInt(<span class="keyword">int</span>(fd.Fd()), syscall.IPPROTO_TCP, syscall.TCP_KEEPINTVL, <span class="number">5</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// handle error</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面使用<code>File.Fd</code>方法，该方法在<code>os/file_unix.go</code>的实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *File)</span> <span class="title">Fd</span><span class="params">()</span> <span class="title">uintptr</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> f == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ^(<span class="keyword">uintptr</span>(<span class="number">0</span>))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// If we put the file descriptor into nonblocking mode,</span></span><br><span class="line">	<span class="comment">// then set it to blocking mode before we return it,</span></span><br><span class="line">	<span class="comment">// because historically we have always returned a descriptor</span></span><br><span class="line">	<span class="comment">// opened in blocking mode. The File will continue to work,</span></span><br><span class="line">	<span class="comment">// but any blocking operation will tie up a thread.</span></span><br><span class="line">	<span class="keyword">if</span> f.nonblock &#123;</span><br><span class="line">        <span class="comment">// 设置成阻塞模式</span></span><br><span class="line">		f.pfd.SetBlocking()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">uintptr</span>(f.pfd.Sysfd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>go</code>中，网路连接默认是非阻塞模式，对网路连接的读写会通过<a href="http://mcll.top/2019/04/07/go%E7%BD%91%E7%BB%9Cio%E6%A8%A1%E5%9E%8B%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">netpoll</a>来实现非阻塞读写，而当转换成阻塞模式之后，每次读写都会变成一次阻塞的系统调用，从而导致<strong>大量的系统线程</strong>被创建。</p>
+<p><code>go1.11</code>之后，添加了<code>syscall.RawConn</code>接口，我们可以通过这个接口来规避使用<code>File.Fd</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">rawConn, err := tcpConn.SyscallConn()</span><br><span class="line"><span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">	rawConn.Control(<span class="function"><span class="keyword">func</span><span class="params">(fd <span class="keyword">uintptr</span>)</span></span> &#123;</span><br><span class="line">		<span class="comment">// 设置tcp_keepalive_probes</span></span><br><span class="line">		err = syscall.SetsockoptInt(<span class="keyword">int</span>(fd), syscall.IPPROTO_TCP, syscall.TCP_KEEPCNT, <span class="number">3</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="comment">// handle error</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 设置tcp_keepalive_intvl</span></span><br><span class="line">		err = syscall.SetsockoptInt(<span class="keyword">int</span>(fd), syscall.IPPROTO_TCP, syscall.TCP_KEEPINTVL, <span class="number">5</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="comment">// handle error</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ul>
+<li><a href="https://zhuanlan.zhihu.com/p/28894266" target="_blank" rel="noopener">聊聊 TCP 中的 KeepAlive 机制</a></li>
+<li><a href="https://thenotexpert.com/golang-tcp-keepalive/?utm_campaign=The%20Go%20Gazette&amp;utm_medium=email&amp;utm_source=Revue%20newsletter#an-important-note-on-file-descriptors" target="_blank" rel="noopener">Notes on TCP keepalive in Go</a></li>
+<li><a href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/overview.html" target="_blank" rel="noopener">TCP keepalive overview</a></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

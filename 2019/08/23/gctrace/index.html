@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        gctrace - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#gctrace"><span class="toc-text">gctrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GOGC"><span class="toc-text">GOGC</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        gctrace
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-08-23 10:56:51</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>在优化<code>go</code>程序时，内存优化是其中一项很重要的内容，减轻<code>gc</code>的压力，能够极大的优化我们的程序运行效率。</p>
+<p>今天先来看一下两个与<code>gc</code>相关的环境变量：<code>gctrace</code>和<code>GOGC</code></p>
+<h3 id="gctrace"><a href="#gctrace" class="headerlink" title="gctrace"></a>gctrace</h3><p><code>gctrace</code>本身是<a href="https://golang.org/pkg/runtime/#hdr-Environment_Variables" target="_blank" rel="noopener"><code>GODEBUG</code></a>这个环境变量中的一个选项，用来开启<code>gc</code>日志的。每次当完成一次<code>gc</code>扫描时，就会打印出本次<code>gc</code>的相关信息，我们可以用来监控程序的内存情况</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ GODEBUG=gctrace=1 GO_BIN <span class="comment"># 开启gctrace</span></span><br><span class="line">gc 1 @1.569s 0%: 0.28+2.2+4.6 ms clock, 1.1+0/0.96/4.6+18 ms cpu, 4-&gt;4-&gt;1 MB, 5 MB goal, 4 P</span><br><span class="line">gc 2 @3.124s 0%: 0.026+1.4+0.058 ms clock, 0.10+1.3/0.033/1.5+0.23 ms cpu, 4-&gt;4-&gt;1 MB, 5 MB goal, 4 P</span><br><span class="line">gc 3 @5.326s 0%: 0.58+0.53+0.12 ms clock, 2.3+0.36/0.44/0.30+0.48 ms cpu, 4-&gt;4-&gt;1 MB, 5 MB goal, 4 P</span><br><span class="line">...</span><br><span class="line">scvg1: inuse: 4, idle: 58, sys: 63, released: 0, consumed: 63 (MB)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>每一行对应一次<code>gc</code>，具体的输出格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gc # @#s #%: #+#+# ms clock, #+#/#/#+# ms cpu, #-&gt;#-&gt;# MB, # MB goal, # P [(forced)]</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><code>gc #</code>：第几轮gc，从1开始递增</p>
+</li>
+<li><p><code>@#s</code>：程序总的运行时间，单位<code>s</code></p>
+</li>
+<li><code>#%</code>：从程序开始到现在运行<code>gc</code>的时间占比</li>
+<li><code>#+#+# ms clock</code>：对应 <font color="red">第一次<code>STW</code>，终止<code>SWEEP</code>、开启写屏障</font> +  <font color="red">并发<code>Mark</code>和<code>Scan</code></font> + <font color="red">第二次<code>STW</code>，结束<code>Mark</code></font> 这三个阶段<code>wall-clock</code>的耗时，单位为<code>ms</code></li>
+<li><code>#+#/#/#+# ms cpu</code>：对应 <font color="red">第一次<code>STW</code></font> + <font color="red">并发标记：<code>Assist Time</code></font>/<font color="red"> 并发标记：<code>Background GC time</code></font> /<font color="red"> 并发标记：<code>Idle GC time</code></font> + <font color="red">第二次<code>STW</code>结束<code>Mark</code></font> 这几个阶段的<code>cpu</code>时间，单位<code>ms</code></li>
+<li><p><code>#-&gt;#-&gt;# MB</code>：分别对应<code>gc</code>开始时的堆大小、<code>gc</code>结束时的堆大小以及<code>live heap</code>（<code>gc mark</code>阶段标记为黑色的内存总量）的大小</p>
+</li>
+<li><p><code># MB goal</code>：目标<code>heap size</code></p>
+</li>
+<li><code># P</code>：使用的<code>P</code>数量</li>
+<li><code>(forced)</code>：如果调用<code>runtime.GC()</code>强制触发<code>gc</code></li>
+</ul>
+<p>除了输出<code>gc</code>的信息，当<code>runtime</code>向操作系统归还内存时，也会打印出信息，比如上面的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scvg1: inuse: 4, idle: 58, sys: 63, released: 0, consumed: 63 (MB)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>scvg#</code>：第几次归还，从1开始计数</li>
+<li><code>inuse: #</code>：正在使用或部分被使用的<code>spans</code>的内存大小，单位<code>MB</code></li>
+<li><code>idle: #</code>：空闲等待归还给操作系统的<code>spans</code>的内存大小，单位<code>MB</code>；</li>
+<li><code>sys: #</code>：从操作系统映射的内存大小，实际上是<code>gc</code>堆可访问的内存虚拟地址空间，单位<code>MB</code></li>
+<li><code>released: #</code>：本次归还给操作系统的内存大小，单位<code>MB</code></li>
+<li><code>consumed: #</code>：从操作系统分配的内存大小，等于<code>sys - released</code></li>
+</ul>
+<h3 id="GOGC"><a href="#GOGC" class="headerlink" title="GOGC"></a>GOGC</h3><p>根据<code>runtime/mgc.go</code>中的注释：</p>
+<blockquote>
+<p> Next GC is after we’ve allocated an extra amount of memory proportional to<br> the amount already in use. The proportion is controlled by GOGC environment variable<br> (100 by default). If GOGC=100 and we’re using 4M, we’ll GC again when we get to 8M<br> (this mark is tracked in next_gc variable). This keeps the GC cost in linear<br> proportion to the allocation cost. Adjusting GOGC just changes the linear constant<br> (and also the amount of extra memory used).</p>
+</blockquote>
+<p>在<code>go1.5</code>之前，运行<code>gc mark</code>阶段会<code>stop the world</code>， 能够根据<code>next_gc</code>变量（也就是<strong>goal heap size</strong>，可以直接通过<code>GOGC</code>变量调整）精确地控制堆内存的增长：</p>
+<p><img src="/img/gc_stw.jpg" alt=""></p>
+<p>但是<code>go1.5</code>之后，<code>gc mark</code>可以跟用户协程并发运行，因此在<code>gc</code>执行过程中仍然会有新的内存被分配，因此<code>gc</code>的触发点需要相对<code>next_gc</code>提前：</p>
+<p><img src="/img/gc_bg.jpg" alt=""></p>
+<p>如上图所示，<code>Hm(n-1)</code>表示上一次<code>gc</code>结束后的堆大小,而<code>Hg</code>是<code>next_gc</code>，而我们在<code>Ht</code>触发<code>gc</code>，因为gc过程中可能会有新的内存分配，当<code>gc</code>结束时，当前的堆大小为<code>Ha</code>。<code>go</code>的<code>gc</code>实现，需要提供一种动态调整的机制，根据内存分配情况调整<code>Ht</code>的值，使得<code>Ha</code>能够与<code>Hg</code>尽量接近。</p>
+<p>总体来说，我们可以通过设置<code>GOGC</code>的值来调整<code>gc</code>的触发阈值：</p>
+<ul>
+<li><strong>当小于零或者等于<code>off</code>时，将会关闭<code>gc</code></strong></li>
+<li>设置较大的值：减少<code>gc</code>触发，但是会增加内存占用</li>
+<li>设置偏小的值：频繁触发<code>gc</code></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

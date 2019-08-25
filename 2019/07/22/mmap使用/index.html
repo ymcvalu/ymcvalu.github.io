@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        mmap使用 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#在go中使用mmap"><span class="toc-text">在go中使用mmap</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        mmap使用
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-07-22 08:59:39</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#mmap - go" title="mmap - go">mmap - go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p><code>mmap</code>可以进程的虚拟内存中创建内存映射，常用来将磁盘文件映射到内存，读写文件转变成读写对应的内存</p>
+<p>使用<code>mmap</code>读写文件，通常比普通的<code>read</code>和<code>write</code>系统调用要更快：</p>
+<ul>
+<li>直接操作内存，避免了系统调用的执行，从而避免用户态/内核态之间的切换开销</li>
+<li>直接读写内存，不需要经过内核缓冲区，减少数据拷贝</li>
+</ul>
+<p>用户访映射的内存时，如果磁盘数据还没有加载到内存中，会触发缺页异常，然后操作系统会以<code>page</code>为单位将磁盘文件加载到内存中；如果内存数据被修改了，操作系统会将脏页回写到对应的文件中（脏页回写并不是实时的）。缺页异常的处理开销会比较大，尤其是当物理内存不足时，还会涉及到内存页的淘汰，如果被淘汰的内存页是脏页的话，还需要将其同步到磁盘中。在某些情况下，使用<code>mmap</code>映射内存，可能会频繁的触发缺页异常，从而导致性能下降，甚至不如直接使用<code>read/write</code>系统调用，比如物理内存很小，而映射的文件很大时。</p>
+<p>而且使用<code>mmap</code>并不会更改映射文件的大小，当需要更改文件大小时，需要重新映射。</p>
+<p><code>mmap</code>除了支持将文件映射到内存，还支持匿名映射，匿名映射不需要底层文件。匿名映射的内存也可以在多个进程间共享，因此可以用来实现进程间的内存共享通信。<code>go</code>运行时的内存管理，便是使用匿名映射向操作系统申请了一块大内存，然后基于<code>tcmalloc</code>进行内存管理。</p>
+<h3 id="在go中使用mmap"><a href="#在go中使用mmap" class="headerlink" title="在go中使用mmap"></a>在go中使用mmap</h3><p><code>mmap</code>相关的系统调用有：</p>
+<ul>
+<li>mmap：创建内存映射</li>
+<li>munmap：取消内存映射</li>
+<li>msync：同步内存到磁盘文件；内存的修改并不是实时写回磁盘的，当对实时性要求很高，比如数据库的写操作，需要在写内存后手动刷新到磁盘中</li>
+</ul>
+<p>接下来通过一个实例看一下如果在go中使用这几个接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">checkErr</span><span class="params">(err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 获取int类型的大小</span></span><br><span class="line">	<span class="keyword">const</span> INT_SIZE = unsafe.Sizeof(<span class="keyword">int</span>(<span class="number">0</span>))</span><br><span class="line">    <span class="comment">// 这里a.txt是我们要映射的底层文件</span></span><br><span class="line">	fd, err := os.OpenFile(<span class="string">"a.txt"</span>, os.O_RDWR|os.O_CREATE, os.ModePerm)</span><br><span class="line">	checkErr(err)</span><br><span class="line"></span><br><span class="line">	info, _ := fd.Stat()</span><br><span class="line">    <span class="comment">// mmap不会更改底层文件的大小，我们要确保访问的映射地址不会超过文件大小，否则会panic</span></span><br><span class="line">    <span class="comment">// 这里设置一下底层文件大小</span></span><br><span class="line">	<span class="keyword">if</span> info.Size() != <span class="keyword">int64</span>(INT_SIZE) &#123;</span><br><span class="line">		fd.Truncate(<span class="keyword">int64</span>(INT_SIZE))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用syscall的mmap接口，创建内存映射</span></span><br><span class="line">    <span class="comment">// mmap接口相比posix接口，少了一个addr参数，如果有需要可以使用syscall.Syscall6接口</span></span><br><span class="line">    <span class="comment">// MAP_SHARED指定映射的类型，该模式下对映射空间的更新对其他进程的映射可见，并且会写回底层文件</span></span><br><span class="line">    <span class="comment">// 映射内存会通过[]byte的形式返回</span></span><br><span class="line">	buf, err := syscall.Mmap(<span class="keyword">int</span>(fd.Fd()), <span class="number">0</span>, <span class="keyword">int</span>(INT_SIZE), syscall.PROT_WRITE|syscall.PROT_READ, syscall.MAP_SHARED)</span><br><span class="line">	<span class="comment">// mmap返回之后，底层文件的设备描述符可以立即close掉</span></span><br><span class="line">    fd.Close() <span class="comment">// After the mmap() call has returned, the file descriptor can be closed immediately</span></span><br><span class="line">	checkErr(err)</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 这里，直接将映射的内存强制类型转换成一个int指针p</span></span><br><span class="line">	p := (*<span class="keyword">int</span>)(unsafe.Pointer(&amp;buf[<span class="number">0</span>]))</span><br><span class="line">	<span class="comment">// 对指针p的读取就是读取文件内容</span></span><br><span class="line">	log.Printf(<span class="string">"the value saved on file is %d"</span>, *p)</span><br><span class="line">    <span class="comment">// 对指针p的更新就是更新文件内容</span></span><br><span class="line">	*p = rand.New(rand.NewSource(time.Now().UnixNano())).Intn(<span class="number">1000</span>)</span><br><span class="line">	<span class="comment">// 脏页写回并不是及时的，使用msync系统调用强制将更新写回磁盘文件</span></span><br><span class="line">	_, _, errno := syscall.Syscall(syscall.SYS_MSYNC, <span class="keyword">uintptr</span>(unsafe.Pointer(p)), <span class="keyword">uintptr</span>(INT_SIZE), syscall.MS_SYNC)</span><br><span class="line">	<span class="keyword">if</span> errno != <span class="number">0</span> &#123;</span><br><span class="line">		log.Fatal(syscall.Errno(errno))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 使用munmap系统调用需求内存映射</span></span><br><span class="line">	_, _, errno = syscall.Syscall(syscall.SYS_MUNMAP, <span class="keyword">uintptr</span>(unsafe.Pointer(p)), <span class="keyword">uintptr</span>(INT_SIZE), <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">if</span> errno != <span class="number">0</span> &#123;</span><br><span class="line">		log.Fatal(syscall.Errno(errno))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们可以直接将<code>mmap</code>创建的内存，强制转换成具体的类型值，然后像普通的变量一样操作，连序列化/反序列化都省了。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":300,"height":600},"mobile":{"show":true},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
