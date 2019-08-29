@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        数据库事务隔离级别 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库事务"><span class="toc-text">数据库事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事务的隔离"><span class="toc-text">事务的隔离</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        数据库事务隔离级别
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-08-29 14:00:07</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#mysql" title="mysql">mysql</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="数据库事务"><a href="#数据库事务" class="headerlink" title="数据库事务"></a>数据库事务</h3><p>提到事务大家肯定都不陌生，最典型的例子就是银行转账。如果从账户A转100元到账户B，主要执行：</p>
+<ol>
+<li>检查账户A的余额</li>
+<li>如果余额足够，从账户A的余额扣除100元</li>
+<li>账户B余额添加100元</li>
+</ol>
+<p>我们需要保证上面3步动作是不可分割的。否则，我们完全可以在步骤1和步骤2中间，再次发起另外一笔转账，这时候余额还没有扣除，检查仍然通过，这样银行不就乱套了吗？</p>
+<p>事务的概念：</p>
+<blockquote>
+<p>数据库事务通常包含了一个序列的对数据库的读/写操作。包含有以下两个目的：</p>
+<ul>
+<li>为数据库操作序列提供了一个从失败中恢复到正常状态的方法，同时提供了数据库即使在异常状态下仍能保持一致性的方法。</li>
+<li>当多个应用程序在并发访问数据库时，可以在这些应用程序之间提供一个隔离方法，以防止彼此的操作互相干扰。</li>
+</ul>
+</blockquote>
+<p>并非任意的对数据库的操作序列都是数据库事务。数据库事务拥有以下四个特性，习惯上被称之为ACID特性：</p>
+<ul>
+<li>原子性（Atomicity）：事务作为一个整体被执行，包含在其中的对数据库的操作要么全部被执行，要么都不执行</li>
+<li>一致性（Consistency）：事务应确保数据库的状态从一个一致状态转变为另一个一致状态。一致状态的含义是数据库中的数据应满足完整性约束</li>
+<li>隔离性（Isolation）：多个事务并发执行时，一个事务的执行不应影响其他事务的执行</li>
+<li>持久性（Durability）：已被提交的事务对数据库的修改应该永久保存在数据库中</li>
+</ul>
+<p>原子性、一致性和持久性都很好理解，我们今天就来说说是隔离性。</p>
+<h3 id="事务的隔离"><a href="#事务的隔离" class="headerlink" title="事务的隔离"></a>事务的隔离</h3><p>当数据库上有多个事务并发执行的时候，就有可能出现脏读（dirty read）、不可重复读（non-repeatable read）、幻读（phantom read）的问题：</p>
+<ul>
+<li>脏读：读取到其他事务未提交的数据，因为这条数据之后可能会被回滚，导致我们当前读取到的是脏数据</li>
+<li>不可重复读：一个事务中前后读取同一条数据两次，并且在两次读取中间，有其他事务修改了这条记录并提交，导致前后两次读到的数据不一致</li>
+<li>幻读：一个事务前后对同一个条件进行两次搜索，并且两次搜索中间有其他事务提交了更新，导致前后两次查询得到了不同的结果集。一个简单的例子，事务A需要查询两次<code>id between 1 and 100</code>，第一次查询得到了10条数据，这时候另一个事务插入了一条<code>id</code>在100以内的数据，事务A再次查询就会得到11条数据，比前一次查询多了一条。</li>
+</ul>
+<p>数据不一致的问题实际上是并发编程很常见的问题，如果每个每个事务都串行执行，那么上面的问题就都不存在了。</p>
+<p>在解决并发时的数据不一致问题时，我们常常通过加锁来解决。但是，如果加锁粒度太大，并发就上不去。</p>
+<p>SQL标准根据并发事务可能出现的问题，定义了不同的事务隔离级别，隔离级别越高，串行化程度就越高，程序的并发也就越低，因此很多时候，我们需要在二者之间寻找一个平衡点。</p>
+<p>这些隔离级别从低到高分别是：</p>
+<ul>
+<li>读未提交（Read Uncommitted）：允许脏读，一个事务还没提交，它的变更就能被别的事务看见</li>
+<li>读已提交（Read Committed）：解决了脏读问题，一个事务只有提交之后，它的变更才能被别的事务看到</li>
+<li>可重复读（Repeatable Read）：解决了不可重复读问题，一个事务执行过程中看到的数据总是跟这个事务在启动时看到的数据是一致的。<code>mysql</code>通过<code>mvcc</code>提供快照读，两个事务的读写不会冲突。标准中只要求该级别解决不可重复读问题，但是 <strong><code>mysql</code>的可重复读还通过<code>gap</code>锁解决了幻读现象</strong>。该级别是<code>mysql</code>的默认隔离级别。</li>
+<li>序列化（Serializable）：这是最高的隔离级别，也是SQL标准中的默认隔离级别。A serializable execution is defined to be an execution of the operations of concurrently executing SQL-transactions that produces the same effect as some serial execution of those same SQL-transactions. A serial execution is one in which each SQL-transaction executes to completion before the next SQL-transaction begins.</li>
+</ul>
+<p>上面的四种隔离级别，从上往下，隔离性越来越高，但是性能也越来越差。我们一般不会使用序列化隔离级别，该级别会导致大量的事务超时。<code>mysql</code>默认的隔离级别是<code>可重复读</code>级别，并且解决了<code>幻读</code>问题。有时候，当我们对数据的隔离性要求不高的时候，可以将其修改为<code>读已提交</code>级别。</p>
+<p><code>mysql</code>中查看当前隔离级别：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -p<span class="variable">$MYSQL_ROOT_PASSWORD</span></span><br><span class="line">mysql&gt; show variables like <span class="string">'transaction_isolation'</span>; </span><br><span class="line">+-----------------------+-----------------+</span><br><span class="line">| Variable_name         | Value           |</span><br><span class="line">+-----------------------+-----------------+</span><br><span class="line">| transaction_isolation | REPEATABLE-READ |</span><br><span class="line">+-----------------------+-----------------+</span><br><span class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.01 sec)</span><br></pre></td></tr></table></figure></p>
+<p>设置隔离级别：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET [global|session] transaction isolation LEVEL [READ UNCOMMITTED|READ COMMITTED|REPEATABLE READ|SERIALIZABLE];</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SET session transaction isolation LEVEL READ COMMITTED; <span class="comment"># 当前session级别</span></span><br><span class="line">mysql&gt; SET global transaction isolation LEVEL READ COMMITTED; <span class="comment"># 全局生效</span></span><br></pre></td></tr></table></figure>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

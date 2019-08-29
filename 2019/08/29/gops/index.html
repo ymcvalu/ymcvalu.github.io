@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        gops - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单使用"><span class="toc-text">简单使用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#查看命令帮助"><span class="toc-text">查看命令帮助</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查看当前系统的go进程"><span class="toc-text">查看当前系统的go进程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查看某个进程的信息"><span class="toc-text">查看某个进程的信息</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#进程诊断"><span class="toc-text">进程诊断</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#查看内存统计"><span class="toc-text">查看内存统计</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#设置gc触发百分比"><span class="toc-text">设置gc触发百分比</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gops的实现"><span class="toc-text">gops的实现</span></a></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        gops
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-08-29 15:49:02</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go - 性能优化" title="go - 性能优化">go - 性能优化</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p><a href="https://github.com/google/gops" target="_blank" rel="noopener">gops</a>: A tool to list and diagnose Go processes currently running on your system</p>
+<p><code>gops</code>能够列出当前系统中运行的<code>go</code>进程，并且能够帮助对指定<code>go</code>进程进行诊断，是<code>gopher</code>必备居家良品。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go get -u github.com/google/gops</span><br></pre></td></tr></table></figure>
+<h3 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h3><h5 id="查看命令帮助"><a href="#查看命令帮助" class="headerlink" title="查看命令帮助"></a>查看命令帮助</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$ gops </span><br><span class="line">gops is a tool to list and diagnose Go processes.</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  gops &lt;cmd&gt; &lt;pid|addr&gt; ...</span><br><span class="line">  gops &lt;pid&gt; <span class="comment"># displays process info</span></span><br><span class="line">  gops <span class="built_in">help</span>  <span class="comment"># displays this help message</span></span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  stack      Prints the stack trace.</span><br><span class="line">  gc         Runs the garbage collector and blocks until successful.</span><br><span class="line">  setgc	     Sets the garbage collection target percentage.</span><br><span class="line">  memstats   Prints the allocation and garbage collection stats.</span><br><span class="line">  version    Prints the Go version used to build the program.</span><br><span class="line">  stats      Prints runtime stats.</span><br><span class="line">  trace      Runs the runtime tracer <span class="keyword">for</span> 5 secs and launches <span class="string">"go tool trace"</span>.</span><br><span class="line">  pprof-heap Reads the heap profile and launches <span class="string">"go tool pprof"</span>.</span><br><span class="line">  pprof-cpu  Reads the CPU profile and launches <span class="string">"go tool pprof"</span>.</span><br><span class="line"></span><br><span class="line">All commands require the agent running on the Go process.</span><br><span class="line"><span class="string">"*"</span> indicates the process is running the agent.</span><br></pre></td></tr></table></figure>
+<h5 id="查看当前系统的go进程"><a href="#查看当前系统的go进程" class="headerlink" title="查看当前系统的go进程"></a>查看当前系统的go进程</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ gops </span><br><span class="line">3348  3088  docker-containerd       go1.7.5  /usr/bin/docker-containerd</span><br><span class="line">3088  1     dockerd                 go1.7.5  /usr/bin/dockerd</span><br><span class="line">26504 3088  docker-proxy            go1.7.5  /usr/bin/docker-proxy</span><br><span class="line">26510 3348  docker-containerd-shim  go1.7.5  /usr/bin/docker-containerd-shim</span><br><span class="line">29311 18550 gops                    go1.11.2 /usr/<span class="built_in">local</span>/bin/gops</span><br><span class="line">29135 27413 gops-demo             * go1.11.2 /home/vagrant/go/src/just-for-fun/gops/gops-demo</span><br></pre></td></tr></table></figure>
+<p>上面各列的含义分别是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid ppid 二进制文件名 go编译版本 二进制文件路径</span><br></pre></td></tr></table></figure></p>
+<p>而在go编译版本前面的 <code>*</code> 表明当前进程包含了<code>agent</code>。</p>
+<h5 id="查看某个进程的信息"><a href="#查看某个进程的信息" class="headerlink" title="查看某个进程的信息"></a>查看某个进程的信息</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ gops 29573</span><br><span class="line">parent PID:	27413</span><br><span class="line">threads:	6</span><br><span class="line">memory usage:	0.278%</span><br><span class="line">cpu usage:	0.012%</span><br><span class="line">username:	root</span><br><span class="line">cmd+args:	./gops-demo</span><br><span class="line">elapsed time:	02:49</span><br><span class="line"><span class="built_in">local</span>/remote:	:::5050 &lt;-&gt; :::0 (LISTEN)</span><br><span class="line"><span class="built_in">local</span>/remote:	:::8989 &lt;-&gt; :::0 (LISTEN)</span><br></pre></td></tr></table></figure>
+<h3 id="进程诊断"><a href="#进程诊断" class="headerlink" title="进程诊断"></a>进程诊断</h3><p>为了能够使用诊断功能，我们需要在我们的程序代码中启动一个<code>agent</code>：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// import "github.com/google/gops/agent"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	err := agent.Listen(agent.Options&#123;</span><br><span class="line">		Addr:            <span class="string">":5050"</span>, <span class="comment">// agent监听地址</span></span><br><span class="line">		ShutdownCleanup: <span class="literal">false</span>, <span class="comment">// 如果true，会监听SIGINT信号，自动关闭agent并退出进程</span></span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> agent.Close() <span class="comment">// 手动关闭agent</span></span><br><span class="line"></span><br><span class="line">  .....</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在启动<code>agent</code>的时候，我们需要指定监听的端口。</p>
+<p>启动了<code>agent</code>之后，我们在<code>gops</code>中就可以看到多了一个<code>*</code>：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gops</span><br><span class="line">29135 27413 gops-demo   * go1.11.2  /home/...</span><br></pre></td></tr></table></figure></p>
+<p>开启了<code>agent</code>之后，我们就可以使用<code>gops</code>强大的诊断功能了<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gops &lt;cmd&gt; &lt;pid|agent-addr&gt;</span><br></pre></td></tr></table></figure></p>
+<p>Commands:</p>
+<ul>
+<li><code>stack</code>：查看进程栈信息</li>
+<li><code>gc</code>：手动触发一次<code>gc</code>，并阻塞等到<code>gc</code>结束</li>
+<li><code>setgc</code>：相当于设置<code>GOGC</code>值</li>
+<li><code>memstats</code>：查看进程的内存统计信息</li>
+<li><code>version</code>：查看构建二进制程序的go版本</li>
+<li><code>stats</code>：查看runtimes的统计信息，主要是goroutine数量和thread数量</li>
+<li><code>trace</code>：运行5s的 runtime tracer，并启动一个<code>http server</code>用于查看trace信息</li>
+<li><code>pprof-heap</code>：读取heap的profile并启动<code>go tool pprof</code></li>
+<li><code>pprof-cpu</code>：读取cpu之后30s的profile并启动<code>go tool pprof</code></li>
+</ul>
+<h5 id="查看内存统计"><a href="#查看内存统计" class="headerlink" title="查看内存统计"></a>查看内存统计</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">$ gops memstats 29573</span><br><span class="line">alloc: 196.65KB (201368 bytes) <span class="comment"># 当前分配的堆对象字节数，同下面的`heap-alloc`</span></span><br><span class="line">total-alloc: 3.64MB (3819256 bytes) <span class="comment"># 分配的堆对象字节数的累加统计</span></span><br><span class="line">sys: 68.69MB (72022264 bytes) <span class="comment"># 从操作系统分配的内存的字节数，是下面所有`Xsys`的累加</span></span><br><span class="line">lookups: 0 <span class="comment"># runtime执行的指针查找次数统计，主要用于runtime内部的debug</span></span><br><span class="line">mallocs: 2225 <span class="comment"># 堆对象分配次数统计</span></span><br><span class="line">frees: 1507 <span class="comment"># 堆对象释放次数统计</span></span><br><span class="line"><span class="comment"># 堆内存统计</span></span><br><span class="line">heap-alloc: 196.65KB (201368 bytes) <span class="comment"># 当前分配的堆对象的字节数</span></span><br><span class="line">heap-sys: 63.56MB (66650112 bytes) <span class="comment"># 从操作系统分配的堆内存的大小</span></span><br><span class="line">heap-idle: 62.80MB (65847296 bytes) <span class="comment"># 空闲的堆内存大小（bytes in idle spans）</span></span><br><span class="line">heap-in-use: 784.00KB (802816 bytes) <span class="comment"># 当前正在使用的堆内存大小（bytes in in-use spans）</span></span><br><span class="line">heap-released: 0 bytes <span class="comment"># 归还操作系统的物理内存大小</span></span><br><span class="line">heap-objects: 718 <span class="comment"># 当前分配的堆对象的数量</span></span><br><span class="line"><span class="comment"># 下面是栈内存统计</span></span><br><span class="line"><span class="comment"># Stacks are not considered part of the heap, but the runtime can reuse a span of heap memory for stack memory, and vice-versa.</span></span><br><span class="line">stack-in-use: 448.00KB (458752 bytes) <span class="comment"># bytes in stack spans  </span></span><br><span class="line">stack-sys: 448.00KB (458752 bytes) <span class="comment"># bytes of stack memory obtained from the OS</span></span><br><span class="line"><span class="comment"># 下面主要是 runtime 内部数据结构分配的内存使用统计</span></span><br><span class="line">stack-mspan-inuse: 15.29KB (15656 bytes) </span><br><span class="line">stack-mspan-sys: 32.00KB (32768 bytes)</span><br><span class="line">stack-mcache-inuse: 6.75KB (6912 bytes)</span><br><span class="line">stack-mcache-sys: 16.00KB (16384 bytes)</span><br><span class="line">other-sys: 1.00MB (1049066 bytes) <span class="comment"># runtime中一些杂项数据结构的内存占用</span></span><br><span class="line">gc-sys: 2.26MB (2371584 bytes) <span class="comment"># 垃圾收集器元信息的内存占用</span></span><br><span class="line">next-gc: when heap-alloc &gt;= 4.00MB (4194304 bytes) <span class="comment"># 下一次触发gc的时机</span></span><br><span class="line">last-gc: 2019-08-29 16:42:26.502415917 +0800 CST <span class="comment"># 上一次gc时间</span></span><br><span class="line">gc-pause-total: 946.946µs <span class="comment"># gc总的STW的时间</span></span><br><span class="line">gc-pause: 134271 <span class="comment">#  最后一次 gc 的STW时间，单位ns</span></span><br><span class="line">num-gc: 9 <span class="comment"># gc次数</span></span><br><span class="line"><span class="built_in">enable</span>-gc: <span class="literal">true</span></span><br><span class="line">debug-gc: fals <span class="comment"># 该字段当前未使用(go1.12.5)</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意：读取内存统计信息的时候会触发<code>STW</code></strong>：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// runtime/mstas.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadMemStats</span><span class="params">(m *MemStats)</span></span> &#123;</span><br><span class="line">	stopTheWorld(<span class="string">"read mem stats"</span>)</span><br><span class="line"></span><br><span class="line">	systemstack(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		readmemstats_m(m)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	startTheWorld()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="设置gc触发百分比"><a href="#设置gc触发百分比" class="headerlink" title="设置gc触发百分比"></a>设置gc触发百分比</h5><p>默认<code>gc</code>的触发百分比是<code>100%</code></p>
+<p>查看当前<code>gc</code>触发比例：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ gops memstats 29573</span><br><span class="line">...</span><br><span class="line">next-gc: when heap-alloc &gt;= 4.00MB (4194304 bytes) <span class="comment"># 4MB是初始值</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>当前的触发时机是，<code>heap-alloc</code>达到4MB</p>
+<p>更改<code>gc</code>触发比例：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ gops setgc 29573 200</span><br><span class="line">New GC percent <span class="built_in">set</span> to 200. Previous value was 100.</span><br><span class="line"></span><br><span class="line">$ gops memstats 29573</span><br><span class="line">...</span><br><span class="line">next-gc: when heap-alloc &gt;= 8.00MB (8388608 bytes)</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p><code>next-gc</code>的计算公式：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">next_gc = heap_marked + heap_marked*<span class="keyword">uint64</span>(gcpercent)/<span class="number">100</span></span><br></pre></td></tr></table></figure></p>
+<p><code>heap_marked</code>表示在一次<code>gc</code>中，标记为存活的总对象大小，程序刚开始时初始化为<code>4MB</code>，而<code>gcpercent</code>就是我们设置的<code>gc</code>触发比例，默认为<code>100</code>。</p>
+<p><strong>注意：比如<code>next_gc</code>为<code>8MB</code>，并不是真的等到总共分配了8MB的对象才触发GC</strong>。<code>这个next_gc</code>实际上是<code>gc</code>后的<code>goal heap size</code>。现在的<code>gc</code>实现，对象标记与业务代码会并发执行，而在业务代码中还会申请分配新的对象。如果真的等到<code>next_gc</code>才触发<code>gc</code>，那么等到<code>gc</code>结束之后，当前的<code>heap size</code>可能会大于<code>next_gc</code>，因此实际上<code>gc</code>的触发会提前一点（有另一个字段<code>gc_trigger</code>来决定）。</p>
+<h3 id="gops的实现"><a href="#gops的实现" class="headerlink" title="gops的实现"></a>gops的实现</h3><p>我们程序中的<code>agent</code>，会在指定端口监听<code>tcp</code>连接，通时默认在<code>~/.config/gops</code>目录下，以进程号为文件名创建一个记录监听端口的文件。<br>当我们通过<code>gops</code>执行命令时，首先会读取该文件，获取监听的端口，然后与<code>agent</code>建立连接，发送事先定义好的命令：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">  <span class="comment">// StackTrace represents a command to print stack trace.</span></span><br><span class="line">  StackTrace = <span class="keyword">byte</span>(<span class="number">0x1</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// GC runs the garbage collector.</span></span><br><span class="line">  GC = <span class="keyword">byte</span>(<span class="number">0x2</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// MemStats reports memory stats.</span></span><br><span class="line">  MemStats = <span class="keyword">byte</span>(<span class="number">0x3</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Version prints the Go version.</span></span><br><span class="line">  Version = <span class="keyword">byte</span>(<span class="number">0x4</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// HeapProfile starts `go tool pprof` with the current memory profile.</span></span><br><span class="line">  HeapProfile = <span class="keyword">byte</span>(<span class="number">0x5</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// CPUProfile starts `go tool pprof` with the current CPU profile</span></span><br><span class="line">  CPUProfile = <span class="keyword">byte</span>(<span class="number">0x6</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Stats returns Go runtime statistics such as number of goroutines, GOMAXPROCS, and NumCPU.</span></span><br><span class="line">  Stats = <span class="keyword">byte</span>(<span class="number">0x7</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Trace starts the Go execution tracer, waits 5 seconds and launches the trace tool.</span></span><br><span class="line">  Trace = <span class="keyword">byte</span>(<span class="number">0x8</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// BinaryDump returns running binary file.</span></span><br><span class="line">  BinaryDump = <span class="keyword">byte</span>(<span class="number">0x9</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// SetGCPercent sets the garbage collection target percentage.</span></span><br><span class="line">  SetGCPercent = <span class="keyword">byte</span>(<span class="number">0x10</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p><code>agent</code>收到<code>gops</code>的请求后，调用<code>runtime</code>的接口，并将结果返回。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
