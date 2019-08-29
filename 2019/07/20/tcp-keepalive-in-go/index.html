@@ -140,8 +140,8 @@
         <h3 id="overview"><a href="#overview" class="headerlink" title="overview"></a>overview</h3><p>建立<code>tcp</code>连接后，可以通过<code>FIN</code>包或者<code>RST</code>包通知对端关闭连接，其中<code>FIN</code>包是正常连接双方四次握手关闭连接过程中发送的，需要接收对方的<code>ack</code>，而<code>RST</code>包是通知对方立即关闭，也不需要等待对方的<code>ack</code>。</p>
 <p>但是，如果客户端在连接过程中宕机了，服务端不会收到任何消息，这时候服务端认为连接还存在，但是客户端并不了解。这时候，需要等到服务端向客户端写入消息时，因为客户端并没有这条连接的信息，向服务端返回<code>rst</code>包，服务端才会关闭这条连接，并释放相应的资源。</p>
 <p><code>tcp</code>连接建立之后，并不是一直处于读写状态，当有一方由于某种原因意外断开，另一方需要等到下一次发送数据时才能关闭连接，而这中间会一直占用系统资源。</p>
-<p>这就需要有一种心跳机制，能够定时检查对方连接是否存活，而<a href="https://tools.ietf.org/html/rfc1122#page-101" target="_blank" rel="noopener"><code>tcp keepalive</code></a>就算实现该功能的机制。</p>
-<p>服务端开启<code>tcp keepalive</code>之后，会定时发送空<code>body</code>的<code>packet</code>给客户端，客户端需要发送<code>ACK</code>来指示自己还存活着。<code>keepalive</code>不是<code>tcp</code>标准的一部分，并且默认是禁用的，但是目前大多数<code>tcp</code>实现都支持。</p>
+<p>这就需要有一种心跳机制，能够定时检查对方连接是否存活，而<a href="https://tools.ietf.org/html/rfc1122#page-101" target="_blank" rel="noopener"><code>tcp keepalive</code></a>就算实现该功能的机制。<code>keepalive</code>不是<code>tcp</code>标准的一部分，并且默认是禁用的，但是目前大多数<code>tcp</code>实现都支持。</p>
+<p>服务端开启<code>tcp keepalive</code>之后，当连接空闲的时候，会定时发送空<code>body</code>的<code>packet</code>给客户端。根据<code>tcp</code>的规范，当客户端接收到一个包之后，需要回复<code>ACK</code>，即使之前已经回复过相同的<code>ACK</code>了，因此即使客户端没有实现<code>keepalive</code>功能也可以正常工作。</p>
 <p>在大多数实现中，设置<code>keepalive</code>主要有三个参数：</p>
 <ul>
 <li><p><code>tcp_keepalive_time</code>：间隔多久没有发送数据后，就发送一个心跳包</p>
