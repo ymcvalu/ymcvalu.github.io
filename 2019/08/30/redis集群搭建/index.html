@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        redis集群搭建 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i>  </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#环境准备"><span class="toc-text">环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译redis源码"><span class="toc-text">编译redis源码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动redis实例"><span class="toc-text">启动redis实例</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#编辑配置文件"><span class="toc-text">编辑配置文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#启动"><span class="toc-text">启动</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#创建集群"><span class="toc-text">创建集群</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#安装ruby"><span class="toc-text">安装ruby</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#集群创建"><span class="toc-text">集群创建</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#5-0以下"><span class="toc-text">5.0以下</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#5-0之后"><span class="toc-text">5.0之后</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试集群"><span class="toc-text">测试集群</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看集群状态"><span class="toc-text">查看集群状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis集群的数据分片"><span class="toc-text">redis集群的数据分片</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#mult-keys-操作"><span class="toc-text">mult-keys 操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#codis"><span class="toc-text">codis</span></a></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+        <div class="index-about-mobile">
+            <i>  </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        redis集群搭建
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-08-30 10:18:43</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#redis" title="redis">redis</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><p>准备六台服务器（系统为<code>centos7</code>），并且安装make、gcc等工具</p>
+<p>每个节点需要开放指定端口，为了方便，关闭防火墙，生产不要关闭</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ service iptables stop <span class="comment"># centos 6.x</span></span><br><span class="line">$ systemctl stop firewalld.service <span class="comment"># centos 7.x</span></span><br></pre></td></tr></table></figure>
+<h3 id="编译redis源码"><a href="#编译redis源码" class="headerlink" title="编译redis源码"></a>编译redis源码</h3><p>下载<code>redis</code>源码（<code>redis-5.0.3.tar.gz</code>)，解压进入项目目录后，执行<code>make MALLOC=libc</code>进行编译，编译完成后，可以在<code>src/</code>目录下看到编译生成的二进制可执行文件。</p>
+<h3 id="启动redis实例"><a href="#启动redis实例" class="headerlink" title="启动redis实例"></a>启动redis实例</h3><h5 id="编辑配置文件"><a href="#编辑配置文件" class="headerlink" title="编辑配置文件"></a>编辑配置文件</h5><p>一个节点可以有多个redis实例，这里每台只配置两个实例。</p>
+<p>在每个节点上创建目录<code>~/redis-cluster/7000</code>和<code>~/redis-cluster/7001</code>两个目录，这里<code>7000</code>和<code>7001</code>表示实例监听端口，如果一个节点需要部署多个实例，就创建多个不同端口号的目录，然后在每个目录下创建<code>redis.conf</code>文件：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#端口7000，7001</span></span><br><span class="line">port 7000</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认ip为127.0.0.1，需要改为其他节点机器可访问的ip，否则创建集群时无法访问对应的端口，无法创建集群</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"></span><br><span class="line"><span class="comment">#redis后台运行</span></span><br><span class="line">daemonize yes</span><br><span class="line"></span><br><span class="line"><span class="comment">#pidfile文件 7000和7001</span></span><br><span class="line">pidfile /var/run/redis_7000.pid</span><br><span class="line"></span><br><span class="line"><span class="comment">#开启集群</span></span><br><span class="line">cluster-enabled yes</span><br><span class="line"></span><br><span class="line"><span class="comment">#集群的配置，配置文件首次启动自动生成   </span></span><br><span class="line">cluster-config-file nodes_7000.conf</span><br><span class="line"></span><br><span class="line"><span class="comment">#请求超时，默认15秒，可自行设置 </span></span><br><span class="line">cluster-node-timeout 10100</span><br><span class="line"></span><br><span class="line"><span class="comment">#aof日志开启，有需要就开启，它会每次写操作都记录一条日志</span></span><br><span class="line">appendonly yes</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认是yes，只要有结点宕机导致16384个槽不能都可以访问到，整个集群就全部停止服务，所以一定要改为no</span></span><br><span class="line">cluster-require-full-coverage no</span><br></pre></td></tr></table></figure>
+<h5 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h5><p>在每个节点执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">for</span> ((i=0;i&lt;2;i++)); <span class="keyword">do</span> redis-5.0.3/src/redis-server redis-cluster/700<span class="variable">$i</span>/redis.conf; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>启动时，会为每个实例生成nodeid，并在当前目录生成<code>nodes_7000.conf</code>和<code>nodes_7001.conf</code>两个文件。</p>
+<p>检查进程：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ps -ef | grep redis           //redis是否启动成功</span><br><span class="line">$ netstat -tnlp | grep redis    //监听redis端口</span><br></pre></td></tr></table></figure>
+<h3 id="创建集群"><a href="#创建集群" class="headerlink" title="创建集群"></a>创建集群</h3><p>官方提供了<code>redis-trib.rb</code>来创建集群，就在<code>redis-5.0.3/src</code>目录下，该脚本只需要在集群中任意一个节点上执行一次就行。</p>
+<h5 id="安装ruby"><a href="#安装ruby" class="headerlink" title="安装ruby"></a>安装ruby</h5><p>如果是<code>redis-4.x.x</code>版本，需要安装ruby。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum -y install ruby ruby-devel rubygems rpm-build</span><br></pre></td></tr></table></figure>
+<p>在<code>centos 7</code>中，安装的<code>ruby</code>版本过低，使用下面方法安装：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ yum install centos-release-scl-rh</span><br><span class="line">$ yum install rh-ruby23 -y</span><br><span class="line">$ scl  <span class="built_in">enable</span>  rh-ruby23 bash</span><br><span class="line">$ ruby -v</span><br></pre></td></tr></table></figure>
+<p>安装<code>redis</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gem install redis -v 3.3.5</span><br></pre></td></tr></table></figure>
+<h5 id="集群创建"><a href="#集群创建" class="headerlink" title="集群创建"></a>集群创建</h5><h6 id="5-0以下"><a href="#5-0以下" class="headerlink" title="5.0以下"></a>5.0以下</h6><p>如果为<code>5.0</code>以下版本创建集群，则执行官方的ruby脚本，这个工具能自动检测服务器分配master和slave，<code>--replicas</code>指定每个<code>master</code>有几个<code>slave</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-4.0.12/src/redis-trib.rb create --replicas 3 10.0.1.50:7000 10.0.1.50:7001 10.0.1.19:7000 10.0.1.19:7001 10.0.1.133:7000 10.0.1.133:7001 10.0.1.169:7000 10.0.1.169:7001 10.0.1.210:7000 10.0.1.210:7001 10.0.1.127:7000 10.0.1.127:7001</span><br></pre></td></tr></table></figure>
+<h6 id="5-0之后"><a href="#5-0之后" class="headerlink" title="5.0之后"></a>5.0之后</h6><p>通过<code>redis-cli</code>客户端工具来创建集群，<code>--cluster-replicas 3</code>指定每个<code>master</code>有3个<code>slave</code><br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-cli --cluster create --replicas 3 10.0.1.50:7000 10.0.1.50:7001 10.0.1.19:7000 10.0.1.19:7001 10.0.1.133:7000 10.0.1.133:7001 10.0.1.169:7000 10.0.1.169:7001 10.0.1.210:7000 10.0.1.210:7001 10.0.1.127:7000 10.0.1.127:7001 --cluster-replicas 3</span><br></pre></td></tr></table></figure></p>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; Performing hash slots allocation on 12 nodes...</span><br><span class="line">Master[0] -&gt; Slots 0 - 5460</span><br><span class="line">Master[1] -&gt; Slots 5461 - 10922</span><br><span class="line">Master[2] -&gt; Slots 10923 - 16383</span><br><span class="line">Adding replica 10.0.1.169:7000 to 10.0.1.50:7000</span><br><span class="line">Adding replica 10.0.1.210:7000 to 10.0.1.50:7000</span><br><span class="line">Adding replica 10.0.1.127:7000 to 10.0.1.50:7000</span><br><span class="line">Adding replica 10.0.1.50:7001 to 10.0.1.19:7000</span><br><span class="line">Adding replica 10.0.1.133:7001 to 10.0.1.19:7000</span><br><span class="line">Adding replica 10.0.1.169:7001 to 10.0.1.19:7000</span><br><span class="line">Adding replica 10.0.1.19:7001 to 10.0.1.133:7000</span><br><span class="line">Adding replica 10.0.1.210:7001 to 10.0.1.133:7000</span><br><span class="line">Adding replica 10.0.1.127:7001 to 10.0.1.133:7000</span><br><span class="line">M: 0c58af35acebf7988ff8eade95dfc9873eefe89c 10.0.1.50:7000</span><br><span class="line">   slots:[0-5460] (5461 slots) master</span><br><span class="line">S: da377f156086211e31170674caabb348bdb544e3 10.0.1.50:7001</span><br><span class="line">   replicates 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d</span><br><span class="line">M: 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d 10.0.1.19:7000</span><br><span class="line">   slots:[5461-10922] (5462 slots) master</span><br><span class="line">S: 903b50ea7ed1524f491d10b6f0be6e16dbfb8d40 10.0.1.19:7001</span><br><span class="line">   replicates d0e3847c6b89140566a180e6a536c053b64ab901</span><br><span class="line">M: d0e3847c6b89140566a180e6a536c053b64ab901 10.0.1.133:7000</span><br><span class="line">   slots:[10923-16383] (5461 slots) master</span><br><span class="line">S: 0f8e1743c272e959cabea082002a2b3e4dc24dd0 10.0.1.133:7001</span><br><span class="line">   replicates 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d</span><br><span class="line">S: bf03f0fe45fc6d1850f3edfeec918193a61f0bba 10.0.1.169:7000</span><br><span class="line">   replicates 0c58af35acebf7988ff8eade95dfc9873eefe89c</span><br><span class="line">S: 047f288ddf0ec6a92042520aa4b812e531803aed 10.0.1.169:7001</span><br><span class="line">   replicates 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d</span><br><span class="line">S: 3c1a50c8e195f93d569abcb0bc77b2b8dfcef828 10.0.1.210:7000</span><br><span class="line">   replicates 0c58af35acebf7988ff8eade95dfc9873eefe89c</span><br><span class="line">S: 229ee5af18dab07d5b813acbc9f9eb17b9132dd7 10.0.1.210:7001</span><br><span class="line">   replicates d0e3847c6b89140566a180e6a536c053b64ab901</span><br><span class="line">S: 2b7ad5f50a04b5df6015a06b2be3b07f0384c557 10.0.1.127:7000</span><br><span class="line">   replicates 0c58af35acebf7988ff8eade95dfc9873eefe89c</span><br><span class="line">S: 20172d062bd9b2a7d9c833ab1e653e25bbb6be03 10.0.1.127:7001</span><br><span class="line">   replicates d0e3847c6b89140566a180e6a536c053b64ab901</span><br><span class="line">Can I set the above configuration? (type &apos;yes&apos; to accept):</span><br></pre></td></tr></table></figure>
+<p>可以看到分配了三个主节点，并且每个主节点分配了三个从节点，输入<code>yes</code>完成创建：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; Nodes configuration updated</span><br><span class="line">&gt;&gt;&gt; Assign a different config epoch to each node</span><br><span class="line">&gt;&gt;&gt; Sending CLUSTER MEET messages to join the cluster</span><br><span class="line">Waiting for the cluster to join</span><br><span class="line">..........</span><br><span class="line">&gt;&gt;&gt; Performing Cluster Check (using node 10.0.1.50:7000)</span><br><span class="line">M: 0c58af35acebf7988ff8eade95dfc9873eefe89c 10.0.1.50:7000</span><br><span class="line">   slots:[0-5460] (5461 slots) master</span><br><span class="line">   3 additional replica(s)</span><br><span class="line">S: 0f8e1743c272e959cabea082002a2b3e4dc24dd0 10.0.1.133:7001</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d</span><br><span class="line">S: 229ee5af18dab07d5b813acbc9f9eb17b9132dd7 10.0.1.210:7001</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates d0e3847c6b89140566a180e6a536c053b64ab901</span><br><span class="line">S: 3c1a50c8e195f93d569abcb0bc77b2b8dfcef828 10.0.1.210:7000</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 0c58af35acebf7988ff8eade95dfc9873eefe89c</span><br><span class="line">S: 047f288ddf0ec6a92042520aa4b812e531803aed 10.0.1.169:7001</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d</span><br><span class="line">S: da377f156086211e31170674caabb348bdb544e3 10.0.1.50:7001</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d</span><br><span class="line">S: 2b7ad5f50a04b5df6015a06b2be3b07f0384c557 10.0.1.127:7000</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 0c58af35acebf7988ff8eade95dfc9873eefe89c</span><br><span class="line">S: bf03f0fe45fc6d1850f3edfeec918193a61f0bba 10.0.1.169:7000</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 0c58af35acebf7988ff8eade95dfc9873eefe89c</span><br><span class="line">S: 903b50ea7ed1524f491d10b6f0be6e16dbfb8d40 10.0.1.19:7001</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates d0e3847c6b89140566a180e6a536c053b64ab901</span><br><span class="line">S: 20172d062bd9b2a7d9c833ab1e653e25bbb6be03 10.0.1.127:7001</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates d0e3847c6b89140566a180e6a536c053b64ab901</span><br><span class="line">M: d0e3847c6b89140566a180e6a536c053b64ab901 10.0.1.133:7000</span><br><span class="line">   slots:[10923-16383] (5461 slots) master</span><br><span class="line">   3 additional replica(s)</span><br><span class="line">M: 1e8cc5ef1f15cea04e94f48610a66ebc8a775d8d 10.0.1.19:7000</span><br><span class="line">   slots:[5461-10922] (5462 slots) master</span><br><span class="line">   3 additional replica(s)</span><br><span class="line">[OK] All nodes agree about slots configuration.</span><br><span class="line">&gt;&gt;&gt; Check for open slots...</span><br><span class="line">&gt;&gt;&gt; Check slots coverage...</span><br><span class="line">[OK] All 16384 slots covered.</span><br></pre></td></tr></table></figure></p>
+<h3 id="测试集群"><a href="#测试集群" class="headerlink" title="测试集群"></a>测试集群</h3><p>使用客户端工具连接<code>redis</code>集群：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-5.0.3/src/redis-cli -c -p 7000</span><br></pre></td></tr></table></figure>
+<p>上面的<code>-c</code>表示连接集群，当访问的<code>key</code>不在当前节点时，可以重定向到目标节点获取数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:7001&gt; get foo</span><br><span class="line">-&gt; Redirected to slot [12182] located at 10.0.1.210:7001</span><br><span class="line">&quot;haha&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="查看集群状态"><a href="#查看集群状态" class="headerlink" title="查看集群状态"></a>查看集群状态</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">10.0.1.210:7001&gt; cluster info</span><br><span class="line">cluster_state:ok</span><br><span class="line">cluster_slots_assigned:16384</span><br><span class="line">cluster_slots_ok:16384</span><br><span class="line">cluster_slots_pfail:0</span><br><span class="line">cluster_slots_fail:0</span><br><span class="line">cluster_known_nodes:12</span><br><span class="line">cluster_size:3</span><br><span class="line">cluster_current_epoch:13</span><br><span class="line">cluster_my_epoch:13</span><br><span class="line">cluster_stats_messages_ping_sent:4896</span><br><span class="line">cluster_stats_messages_pong_sent:3255</span><br><span class="line">cluster_stats_messages_meet_sent:2</span><br><span class="line">cluster_stats_messages_auth-req_sent:11</span><br><span class="line">cluster_stats_messages_sent:8164</span><br><span class="line">cluster_stats_messages_ping_received:3234</span><br><span class="line">cluster_stats_messages_pong_received:3382</span><br><span class="line">cluster_stats_messages_meet_received:9</span><br><span class="line">cluster_stats_messages_fail_received:2</span><br><span class="line">cluster_stats_messages_auth-ack_received:2</span><br><span class="line">cluster_stats_messages_received:6629</span><br></pre></td></tr></table></figure>
+<h3 id="redis集群的数据分片"><a href="#redis集群的数据分片" class="headerlink" title="redis集群的数据分片"></a>redis集群的数据分片</h3><blockquote>
+<p>Redis Cluster does not use consistent hashing, but a different form of sharding where every key is conceptually part of what we call an <strong>hash slot</strong>.</p>
+<p>There are 16384 hash slots in Redis Cluster, and to compute what is the hash slot of a given key, we simply take the CRC16 of the key modulo 16384.</p>
+<p>Every node in a Redis Cluster is responsible for a subset of the hash slots, so for example you may have a cluster with 3 nodes, where:</p>
+<ul>
+<li>Node A contains hash slots from 0 to 5500.</li>
+<li>Node B contains hash slots from 5501 to 11000.</li>
+<li>Node C contains hash slots from 11001 to 16383.</li>
+</ul>
+</blockquote>
+<p>redis集群没有使用hash一致性来存储来对key进行分配，而是使用哈希槽的概念。</p>
+<p>在redis集群中有16384个哈希槽，通过使用<code>CRC16(key)%16384</code>来确定key存储在哪个哈希槽中。<br>redis集群中每个节点可以包含多个哈希槽，比如：</p>
+<ul>
+<li>节点A：0~5500</li>
+<li>节点B：5501~11000</li>
+<li>节点C：11001~16383</li>
+</ul>
+<h5 id="mult-keys-操作"><a href="#mult-keys-操作" class="headerlink" title="mult-keys 操作"></a>mult-keys 操作</h5><p><code>redis</code>集群对<code>mult-keys</code>命令的支持有限：</p>
+<p><strong>Redis Cluster supports multiple key operations as long as all the keys involved into a single command execution (or whole transaction, or Lua script execution) all belong to the same hash slot</strong>.The user can force multiple keys to be part of the same hash slot by using a concept called <em>hash tags</em>.</p>
+<p>一个事务、lua脚本或者<code>mult-keys</code>命令只能使用位于同一个哈希槽中的<code>key</code>，也就是不支持一个<code>mult-keys</code>操作不支持跨哈希槽。可以使用<code>hash tags</code>来强制让需要在一个命令中执行的数据存储到同一个哈希槽中。</p>
+<p>在key中包含<code>{TAG}</code>，则会使用<code>{}</code>中的<code>TAG</code>来计算该key所属的哈希槽，比如<code>{foo}k1</code>和<code>{foo}k2</code>将会被分配到同一个哈希槽，这样就可以在<code>lua</code>脚本中同时使用<code>{foo}k1</code>和<code>{foo}k2</code>。否则如果在一个<code>lua</code>脚本中同时访问不同哈希槽中的key将会报错。</p>
+<h3 id="codis"><a href="#codis" class="headerlink" title="codis"></a>codis</h3><p>和redis集群不同的是，<code>Codis</code>采用一层无状态的<code>proxy</code>层，将分布式逻辑写在<code>proxy</code>上，底层的存储引擎还是<code>Redis</code>本身。</p>
+<p><code>codis</code>通过<code>presharding</code>把数据在概念上分成<code>1024</code>个<code>slot</code>，然后在<code>proxy</code>中将不同<code>key</code>的请求转发到不同的机器上，通过<code>crc32(key)%1024</code>计算<code>key</code>对应的<code>slot</code>。</p>
+<p><code>Codis</code>支持的<code>MGET/MSET</code>无法保证原本单点时的原子语义。 因为<code>MSET</code>所参与的<code>key</code>可能分不在不同的机器上，如果需要保证原来的语义，也就是要么一起成功，要么一起失败，这样就是一个分布式事务的问题，对于<code>Redis</code>来说，并没有<code>WAL</code>或者回滚这么一说，所以即使是一个最简单的二阶段提交的策略都很难实现，而且即使实现了，性能也没有保证。所以在<code>Codis</code>中使用<code>MSET/MGET</code>其实和你本地开个多线程<code>SET/GET</code>效果一样，只不过是由<code>codis</code>帮忙实现了。</p>
+<p><code>codis</code>支持<code>lua</code>脚本，但是<strong>仅仅是转发而已，它并不保证你脚本操作的数据是否在正确的节点上。</strong>比如，脚本里涉及操作多个<code>key</code>，<code>Codis</code>能做的就是将这个脚本分配到参数列表中的第一个<code>key</code>的机器上执行。所以这种场景下，你需要自己保证你的脚本所用到的<code>key</code>分布在同一个机器上，这里可以采用<code>hashtag</code>的方式。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
