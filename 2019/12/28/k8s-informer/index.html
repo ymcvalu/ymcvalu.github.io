@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#kubernetes之Informer"><span class="toc-text">kubernetes之Informer</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Informer相关的接口"><span class="toc-text">Informer相关的接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#探索informer实现"><span class="toc-text">探索informer实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#创建"><span class="toc-text">创建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#启动"><span class="toc-text">启动</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解密controller"><span class="toc-text">解密controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reflector：ListAndWatch"><span class="toc-text">Reflector：ListAndWatch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InformerFactory"><span class="toc-text">InformerFactory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Informer相关的接口"><span class="toc-text">Informer相关的接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#探索informer实现"><span class="toc-text">探索informer实现</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#创建"><span class="toc-text">创建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#启动"><span class="toc-text">启动</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#解密controller"><span class="toc-text">解密controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reflector：ListAndWatch"><span class="toc-text">Reflector：ListAndWatch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#InformerFactory"><span class="toc-text">InformerFactory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li>
 </div>
     
 </div>
@@ -137,7 +137,7 @@
 
     </div>
     <div class="post-content ">
-        <h1 id="kubernetes之Informer"><a href="#kubernetes之Informer" class="headerlink" title="kubernetes之Informer"></a>kubernetes之Informer</h1><p> <img src="/img/kubernetes-high-level-component-archtecture.jpg" alt=""></p>
+        <p> <img src="/img/kubernetes-high-level-component-archtecture.jpg" alt=""></p>
 <p>我们与<code>k8s</code>集群的交互，主要是通过向<code>api-server</code>提交资源对象。</p>
 <p>举个例子，我们要部署一个应用，则只需要提交一个<code>deployment</code>类型的资源对象到<code>api-server</code>。</p>
 <p><code>api-server</code>在验证用户提交的资源对象通过之后，会将该资源对象保存到<code>etcd</code>集群中。</p>
