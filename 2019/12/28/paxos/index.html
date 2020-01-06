@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        paxos - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i>  </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Paxos"><span class="toc-text">Paxos</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#系统中的角色"><span class="toc-text">系统中的角色</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#算法推导"><span class="toc-text">算法推导</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#活锁问题"><span class="toc-text">活锁问题</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#学习选中的值"><span class="toc-text">学习选中的值</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#Multi-Paxos"><span class="toc-text">Multi Paxos</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i>  </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        paxos
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2019-12-28 23:31:51</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#paxos - consensus algorithm" title="paxos - consensus algorithm">paxos - consensus algorithm</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h3 id="Paxos"><a href="#Paxos" class="headerlink" title="Paxos"></a>Paxos</h3><p><code>Paxos</code>是分布式领域的宗师<code>Lamport</code>提出的基于消息传递、失败容忍的分布式一致性算法。</p>
+<p><code>Google Chubby</code>的作者<code>Mike Burrows</code>说过，<strong>世界上只有一种一致性算法，那就是<code>Paxos</code></strong>，可见<code>Paxos</code>在分布式领域的重要性。</p>
+<p>接下来我们就基于<code>&lt;&lt;Paxos Made Simple&gt;&gt;</code>这篇论文来学习一下<code>Paxos</code>算法。</p>
+<p>在该论文中，介绍的实际上是<code>Base Paxos</code>算法：假设有一组进程可以提议值，那么通过<code>Base Paxos</code>，在这些被提议的值中只会有一个值被选中，这组进程就这个值达到一致。</p>
+<p>很重要的一点，<code>Base Paxos</code>只能选中一个值。</p>
+<p><code>Base Paxos</code>需要保证：</p>
+<ul>
+<li>如果没有值被提出，就不会有值被选中，不能无中生有</li>
+<li>最终只能有一个值被选中，否则就脑裂了</li>
+<li>任意一个进程不能学习到未被选中的值</li>
+</ul>
+<h5 id="系统中的角色"><a href="#系统中的角色" class="headerlink" title="系统中的角色"></a>系统中的角色</h5><p>在<code>Paxos</code>算法中，存在三种角色的<code>agents</code>：<code>proposers</code>，<code>acceptors</code>，<code>learners</code>。在具体实现中，一个进程可能同时充当所有角色。</p>
+<ul>
+<li><code>proposers</code>：向<code>acceptors</code>提议某个值</li>
+<li><code>acceptors</code>：对<code>proposers</code>提出的值进行投票</li>
+<li><code>leaders</code>：学习最后被选中的值</li>
+</ul>
+<p>我们假设：</p>
+<ul>
+<li><code>agents</code>可以以任意速度运行，可能停止或者重启；因为<code>agents</code>可能会重启，因此需要能够持久化一些关键信息，并在重启之后能够恢复。</li>
+<li><code>agents</code>可以通过发送消息来进行通信。消息可以任意长，可以重复或者丢失，但是不能被篡改。</li>
+</ul>
+<p>也就是，这是一个异步的、非拜占庭模型。</p>
+<h5 id="算法推导"><a href="#算法推导" class="headerlink" title="算法推导"></a>算法推导</h5><p>为了能够在多个进程中选中一个值，最简单的方法是只有一个<code>acceptor agent</code>，只要选中其第一个接收到的提议的值。然而，这样就存在单点故障，无法实现失败容忍了。只要这个<code>agent</code>挂了，那么系统就无法工作了。</p>
+<p>因此，需要同时存在多个<code>acceptor</code>。一个<code>acceptor</code>可以接受它接收到的提议值。当一个提议值被大多数<code>acceptor</code>接受时，那么这个提议值就被选中。</p>
+<blockquote>
+<p>A proposer sends a proposed value to a set of acceptors. An acceptor may accepte the proposed value. The value is chosen when a large enough set of acceptors have accepted it.</p>
+</blockquote>
+<p>这里的大多数，也就是<code>majority</code>应该是多少呢？假设有N个acceptor，那么应该至少需要 <code>N/2+1</code>。这样在N个acceptor中，任意两个<code>majority</code>会有一个公共的<code>acceptor</code>。如果一个<code>acceptor</code>只能接受一个值，那么就可以确保不会有超过一个提议值被选中。</p>
+<p>不考虑节点故障或者消息丢失的情况下，我们想要即使只有一个<code>proposer</code>发表提案，系统最终都能够选中一个值，因此要求满足条件 P1：</p>
+<p><strong>P1：acceptors必须接受他接收到的第一个提案</strong></p>
+<p>然而，同一时间可能会有多个<code>proposer</code>同时发起提议，每个<code>acceptor</code>可能接收到不同的值，按照条件 P1，每个<code>acceptor</code>都接受他们第一个收到的值，从而导致没有一个提议值被<code>majority</code>的<code>acceptors</code>接受，进而导致最终没有值被选中。</p>
+<p>选票瓜分是客端存在的，而为了能够达到最终有一个提案被<code>majority</code>接受，因此一个<code>acceptor</code>应该能够接受超过一个提案，当然，这肯定是有条件的，不能随便接受。</p>
+<p>首先规定，每次<code>propose</code>提议一个值的时候，都要<strong>生成一个全局唯一且可比较</strong>的编号。因此，一个<code>proposer</code>发表的提案，实际上包含了一个唯一编号和提议值。有了这个唯一编号之后，我们就可以有效的区分不同的提案了，我们可以通过<code>&lt;number, value&gt;</code>唯一标识一个提案。</p>
+<blockquote>
+<p>一个生成编号的可行方案：</p>
+<p>In a system with n replicas, assign each replica r a unique id i<sub>r</sub> between 0 and n-1. Replica r picks the smallest sequence number s larger than any it has seen, such that s mod n = i<sub>r</sub>.</p>
+<p>如果集群成员需要变更，则 <code>unique id</code> 可以使用素数替代。</p>
+</blockquote>
+<p><strong>每次<code>proposer</code>在生成一个编号的时候，都要确保新的编号大于它当前所看见的最大编号</strong>。我们可以通过比较提案的编号来判断提案的新旧，更高编号的提案被认为更新。</p>
+<p>一个提议值被选中，只有当对应的提案被大多数<code>acceptor</code>所接受，也就是对应的提案被选中。</p>
+<p>在<code>paxos</code>中，<strong>允许多个提案被选中，但是必须保证这些提案都具有相同的提议值，也就是具有相同的<code>value</code></strong>。</p>
+<p>这时候，为了保证所有被选中的提案具有相同的值，需要保证条件 P2 成立：</p>
+<p><strong>P2：如果一个包含值 v 的提案被选中，那么所有被选中的具有更高编号的提案也包含值 v</strong></p>
+<p>因为提案的编号是全局可比较的，该条件保证了关键的安全性：只有一个值被选中。</p>
+<p>为了被选中，一个提案至少需要被一个<code>acceptor</code>接受，因此，可以通过满足条件 P2<sup>a</sup> 来满足条件 P2：</p>
+<p><strong>P2<sup>a</sup>：如果一个具有值v的提案被选中，那么任意一个accptor接受的更高编号的提案要包含值v</strong></p>
+<p>条件 P1 仍然需要维护，以确保能够有提案被选中。</p>
+<p>可能当一个值被选中时，某个<code>acceptor</code>还没有接收过任何提案，比如在此期间该<code>acceptor</code>重启了，刚好错过了<code>proposer</code>的请求；这时候如果该<code>acceptor</code>收到了一个具有更高编号但是包含了一个不同值的提案，这时候根据条件 P1，<code>acceptor</code>需要接受这个值，从而违反了条件 P2<sup>a</sup>。为了同时满足 P1和 P2<sup>a</sup>，需要增强条件 P2<sup>a</sup> 为 P2<sup>b：</sup></p>
+<p><strong>P2<sup>b</sup>：如果一个包含值v的提案被选中，那么任意proposer提出的更高编号的提案需要包含值v</strong></p>
+<p>因为提案被接受之前需要先被提出，因此满足 P2<sup>b</sup> 也就满足 P2<sup>a</sup>，也就满足了P2。</p>
+<p>要发现如何满足 P2<sup>b</sup>，我们可以尝试证明在什么条件下该条件成立。</p>
+<p>我们假设一个提案<code>&lt;m, v&gt;</code>已经被选中了，现在需要证明任何具有大于<code>m</code>的编号<code>n</code>的提案也具有值<code>v</code>。</p>
+<p>我们通过在<code>n</code>上使用归纳法来简化证明。我们首先引入额外的归纳假设，每个编号在<code>[m, n-1]</code>的提案都具有值<code>v</code>。</p>
+<p><strong>因为编号m的提案被选中，因此，必定存在集合C，包含acceptors的majority，集合C中的每个acceptor都接受该提案</strong>。</p>
+<p>结合该条件以及归纳假设，我们假设m被选中，则意味着：</p>
+<blockquote>
+<p>集合<code>C</code>中的每个<code>acceptor</code>都曾经接受过一个编号在<code>[m,n-1]</code>的提案，并且每个被任意<code>acceptor</code>接受的编号在<code>[m,n-1]</code>的提案都有值<code>v</code>。</p>
+<p>Every acceptor in C has accepted a proposal with number in m ..(n − 1), and every proposal with number in m ..(n − 1) accepted by any acceptor has value v. </p>
+</blockquote>
+<p><code>acceptors</code>中的任意<code>majority</code>组成的集合<code>S</code>，至少与集合<code>C</code>有一个公共的成员，我们可以通过维护条件 P2<sup>c</sup>，来推断出编号<code>n</code>的提案具有值<code>v</code>这个结论：</p>
+<p><strong>P2<sup>c</sup>：对于一个具有任意编号<code>n</code>和值<code>v</code>的提案被提议，那么存在集合<code>S</code>是<code>acceptors</code>中的<code>majority</code>，要么满足： a)<code>S</code>中没有<code>acceptor</code>接受过提案编号小于<code>n</code>的提案，即当前还没有编号小于 <code>n</code>的提案被选中；或者满足： b)<code>v</code>是<code>S</code>中的所有<code>acceptors</code>接受的所有编号小于<code>n</code>的提案中编号最高的那个提案的值，这个提案可能现在已经被选中了，也有可能还没有被选中，但是将来可能被选中。</strong></p>
+<p>由此，我们可以通过维护条件 P2<sup>c</sup>，来满足条件 P2<sup>b</sup>。</p>
+<p>为了维护不变式 P2<sup>c</sup>，一个<code>proposer</code>在提议编号为<code>n</code>的提案之前，必须先了解整个系统中，当前编号小于<code>n</code>的提案中具有最高编号的，并且已经被选中或者<strong>将被选中</strong>的提案。了解已经被接受的提案很容易，但是要预测将会被接受的提案很困难。</p>
+<p>替代试图去预测未来，<code>paxos</code>选择了在提议一个值的时候，使用两阶段提交的方式。</p>
+<p><code>proposer</code>在提议一个编号为<code>n</code>的提案之前，需要先向<code>acceptors</code>发起一个<code>prepare</code>请求：请求<code>acceptor</code>不要接受编号小于<code>n</code>的提案。具体如下：</p>
+<ol>
+<li><p><code>proposer</code>选择一个新的提案编号<code>n</code>，然后向<code>acceptor</code>集合发送<code>prepare</code>请求：</p>
+<p>a). 要求承诺不再接受编号小于<code>n</code>的的提案</p>
+<p>b). 如果之前曾经接受过编号小于<code>n</code>的提案，则返回这些提案（指编号小于<code>n</code>的提案）中编号最大的那个提案</p>
+</li>
+<li><p>如果<code>proposer</code>接收到了<code>acceptors</code>中的<code>majority</code>的响应，则可以提议一个新的编号为<code>n</code>的提案，如果这些响应中有包含<code>acceptor</code>已经接受的提案，则新的提案的值为这些返回的提案中编号最大的那个提案的值，否则该<code>proposer</code>可以自己决定一个值。</p>
+</li>
+</ol>
+<p><code>proposer</code>通过向<code>acceptor</code>集合发送请求来提议一个提案，该请求要求这些<code>acceptor</code>接受该提案，因此称作<code>accept</code>请求。发送<code>prepare</code>请求的目标<code>acceptor</code>集合不需要与发送<code>accept</code>请求的目标集合相同。</p>
+<p>​可以看到，<code>acceptor</code>可以接受两种请求：<code>prepare</code>请求和<code>accept</code>请求。<code>acceptor</code>可以忽略任何一种请求（本身由于网络的不稳定，请求或者响应消息本身就可能丢失），并不会影响协议的安全性。</p>
+<p>因为引入了<code>prepare</code>请求，P1 条件需要进行修订：</p>
+<p><strong>P1<sup>a</sup>：一个acceptor在接受一个编号为n的提案时，要求其没有响应过编号大于n的prepare请求</strong></p>
+<p>我们假设所有提案的编号是唯一的，那么现在我们就有一个完整的算法，来满足在多个实例之间确定一个值的算法了。 </p>
+<p>这里可以对<code>prepare</code>请求进行优化，如果一个<code>acceptor</code>在收到一个编号为<code>n</code>的<code>prepare</code>请求时，已经响应过一个具有更高编号的<code>prepare</code>请求，根据承诺这个<code>acceptor</code>不会再接受编号为<code>n</code>的提案了，因此这个时候可以忽略掉该次<code>prepare</code>请求。<code>acceptor</code>还可以忽略掉它已经接受的提案的<code>prepare</code>请求。</p>
+<p>通过这种优化，<code>acceptor</code>只需要记住它曾经接受的最高编号的提案以及它已经响应的最高编号的<code>prepare</code>请求的编号。为了维护条件 P2<sup>c</sup> ，因此 <code>acceptor</code> 必须将这些信息持久化保存，并且再重启之后能够恢复。请注意，<code>proposer</code>可以放弃任何一个提案并完全忘记它，只要它不尝试发布另一个具有相同编号的提案。 </p>
+<p>最终的算法分为两阶段：</p>
+<p>阶段一：</p>
+<ol>
+<li><code>proposer</code>选择一个编号<code>n</code>，然后向<code>aceptors</code>中的<code>majority</code>发送<code>prepare</code>请求</li>
+<li>当<code>acceptor</code>接收到该编号为<code>n</code>的<code>prepare</code>请求，如果编号<code>n</code>大于所有它已经响应过的<code>prepare</code>请求的编号，那么它响应这次<code>prepare</code>请求，承诺不会接受任何编号小于<code>n</code>的提案，并在返回中携带它已经接受过的编号最高的提案（如果有的话）。</li>
+</ol>
+<p>阶段二：</p>
+<ol>
+<li>如果<code>proposer</code>的编号为<code>n</code>的<code>prepare</code>请求得到了<code>acceptors</code>中的<code>majority</code>的响应，那么它可以发送一个<code>accetpt</code>请求给<code>acceptors</code>的<code>majority</code>，该请求提议的提案编号为<code>n</code>，值为所有响应中编号最高的提案的值，如果所有响应都不包含提案，说明还没有提案被选中，并且由于<code>majority of acceptors</code>对编号为<code>n</code>的<code>prepare</code>请求的承诺，这时候不会有编号小于<code>n</code>的提案被选中，<code>proposer</code>可以自己确定一个要提议的值。</li>
+<li>如果一个acceptor接收到了一个编号为n的accept请求，如果它还没有响应过一个编号大于n的prepare请求，则接受该提案。</li>
+</ol>
+<p><code>proposer</code>可以多次提议，也可以在提议中途丢弃某个提案。如果一个提案已经过时（有更高的编号被提议），<code>acceptor</code>可以通知<code>proposer</code>丢弃该提案，然后重新提议一个编号更高的提案。</p>
+<h5 id="活锁问题"><a href="#活锁问题" class="headerlink" title="活锁问题"></a>活锁问题</h5><p>如果有多个<code>proposer</code>同时在提议，第一个提交了编号为<code>n</code>的提案，第二个提交了编号<code>n+1</code>的提案，导致前一个<code>n</code>的提案被废弃，然后重新提交了<code>n+2</code>的提案，导致<code>n+1</code>的提案被废弃。。。这样一直下去，会导致活锁，系统最终无法选中一个值。</p>
+<p><code>FLP Impossibility</code>已经证明了:</p>
+<blockquote>
+<p>no completely asynchronous consensus protocol can tolerate even a single unannounced process death.</p>
+</blockquote>
+<p>我们可以参考<code>raft</code>的选主过程，每次<code>proposer</code>在下一次提议新的提案时，先等待一个<strong>随机</strong>的时间间隔，这样就可以有效改善活锁问题了。</p>
+<h5 id="学习选中的值"><a href="#学习选中的值" class="headerlink" title="学习选中的值"></a>学习选中的值</h5><p>前面说过，在<code>paxos</code>协议中有三中角色的<code>agent</code>，这里还有<code>learner</code>没有提及。</p>
+<p><code>learner</code>需要学习系统中被选中的值。为了学习被选中的值，<code>learner</code>需要知道被大多数<code>acceptor</code>接受的提案。</p>
+<p>一种直观的做法是，可以让<code>acceptor</code>每次接受一个提案时，就通知所有的<code>learner</code>。假如系统有<code>m</code>个<code>acceptor</code>，<code>n</code>个<code>learner</code>，那么正常情况下一个提案会有<code>m*n</code>个请求被发送出去。</p>
+<p>另一种做法是，因为是非拜占庭模型，消息不会被篡改。可以让所有的<code>acceptor</code>只通知一个<code>learner</code>，然后当这个<code>learner</code>发现一个提案被选中时，就通知其他的<code>learner</code>，这只需要<code>m+n</code>个请求。然而这就存在单点故障了。</p>
+<p>更通常的做法是，<code>acceptor</code>通知一部分<code>learner</code>，然后这部分<code>learner</code>再去通知其余的<code>learner</code>。</p>
+<h3 id="Multi-Paxos"><a href="#Multi-Paxos" class="headerlink" title="Multi Paxos"></a>Multi Paxos</h3><p><code>Base Paxos</code>只能用于在多个进程中就一个值达到一致性，而这肯定是不符合我们的现实需求的。</p>
+<p>通常我们会对数据进行分片和多副本存储。</p>
+<p>分片的主要目的是为了解决单机的性能瓶颈，从而实现水平扩展，正所谓性能不够机器来凑。</p>
+<p>而多副本存储则是为了保证数据安全，防止单点故障。如果每个分片采用单副本存储，如果某台机器故障了，比如磁盘损坏了，那么上面的数据就丢失了。因为我们需要对每个分片进行多副本存储。</p>
+<p>那么，如果保证同一个分片的多个副本之间的数据一致性呢？</p>
+<p>在<code>&lt;&lt;Paxos Made Simple&gt;&gt;</code>中，作者提出了确定性状态机(deterministric state machine)。</p>
+<p>对于一个确定性状态机，从一个确定的状态输入相同的命令（也叫做日志），会进入另一个确定的状态。<br>对于一组确定性状态机，只要执行相同序列的命令，最终都会处于一致的状态。</p>
+<p>将每个存储服务实现为确定性状态机，只要保证他们执行相同序列的命令，就可以保证多个副本之间的一致性。</p>
+<p>现在，为了保证副本之间的一致性，我们只需要保证这些副本执行一致的命令序列就可以了。</p>
+<p>我们可以将每个命令看成是一个日志。对于对序列中的每个日志，可以通过一个<code>BasePaxos</code>实例来确定。也就是，序列中第<code>i</code>个日志，就由第<code>i</code>个<code>BasePaxos</code>实例来确定。</p>
+<p>然而，每个<code>BasePaxos</code>实例，都需要发送<code>prepare</code>和<code>accept</code>请求。这里可以做一个优化，如果一个<code>proposer</code>提议了一个日志被选中，那么后续可以继续由该<code>proposer</code>提议，并且跳过<code>prepare</code>阶段，直接发送<code>accept</code>请求，并且保持提案中的编号<code>n</code>不变。而为了能够对这些日志进行区分，需要额外引入一个日志序列号。也就是日志和它的序列号组成提案的<code>value</code>。</p>
+<p>这种优化是安全的，即使同时存在多个<code>proposer</code>发起提议，也不过是退化成<code>BasePaxos</code>。</p>
+<p>也就是，当一个<code>proposer</code>提议成功，可以将他看成是<code>leader</code>，并且定期向其他<code>proposer</code>发送心跳，这些<code>proposer</code>在本地维护<code>leader</code>的租期定时器，在该期间不允许发起提议，并且接收到的客户端请求转发到当前<code>leader</code>。而即使同时存在多个<code>leader</code>，也不过是退化成<code>BasePaxos</code>，根据前面的推导，该算法是安全的。</p>
+<p>与<code>raft</code>协议进行对比，<code>multiPaxos</code>中提案的编号和日志的序列号，不就对应<code>raft</code>中的<code>term</code>和日志的<code>index</code>吗？只不过<code>raft</code>是强<code>leader</code>，只允许<code>leader</code>同步日志，从而保证日志的<code>index</code>是连续的，这更便于日志的查询和复制。而<code>multiPaxos</code>的日志序列号则允许空洞存在。</p>
+<p>根据<code>CAP</code>理论，一个分布式系统不能同时满足：</p>
+<ul>
+<li>C：强一致性，每次读请求都可以获取到最新的写入，通常指的是线性一致性</li>
+<li>A：可用性，每个请求都可以接收到非错误的返回（不需要保证总是可以读取到最新的写入）</li>
+<li>P：分区容忍性，即使节点之间通信的任意数量的消息丢失或者延时，系统都可以正常运行。</li>
+</ul>
+<p>当设计分布式系统时，三者只能择其二。因为网络分区总是客观存在的，因此<code>P</code>是无法舍弃的，只能在<code>CP</code>和<code>AP</code>之间做选择。</p>
+<p>根据<code>Paxos</code>和<code>raft</code>的原理，通过这些协议实现的分布式存储系统，通常都是<code>CP</code>系统。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://en.wikipedia.org/wiki/CAP_theorem" target="_blank" rel="noopener">CAP theorem</a></li>
+<li><a href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf" target="_blank" rel="noopener">Paxos Made Simple</a></li>
+<li><a href="http://amberonrails.com/paxosmulti-paxos-algorithm/" target="_blank" rel="noopener">paxosmulti-paxos-algorithm</a></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
