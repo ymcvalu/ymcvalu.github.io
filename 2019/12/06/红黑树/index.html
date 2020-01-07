@@ -190,7 +190,7 @@
 <li><p>如果当前节点是左分支，且sibling的左儿子是红色的，右儿子是黑色的，则sibling是一个3-node，可以借出一个节点，但是需要先调换sibling和sibling.left的颜色，然后对sibling进行right rotate，本质上就是原来sibling是3-node的中间key，现在需要调换sibling.left为中间key，继续下一步；如果当前节点是右分支，与之类似</p>
 <p><img src="/img/RBTreeDelete33.png" alt=""></p>
 </li>
-<li><p>如果当前节点是左分支，且sibling的右儿子是红色的，而sibling是一个3-node或者4-node，这时候可以借出节点，将sibling的颜色设置为parent的颜色，sibling的right设置为黑色，parent设置为黑色，然后对parent执行left rotate，完成删除。本质上是借出sibling，然后sibling.right变成中间节点；如果是右分支，与之类似</p>
+<li><p>如果当前节点是左分支，且sibling的右儿子是红色的，那么sibling是一个3-node或者4-node，这时候可以借出节点，将sibling的颜色设置为parent的颜色，sibling的right设置为黑色，parent设置为黑色，然后对parent执行left rotate，完成删除。本质上是借出sibling，然后sibling.right变成中间节点；如果是右分支，与之类似</p>
 <p><img src="/img/RBTreeDelete34.png" alt=""></p>
 </li>
 </ol>
