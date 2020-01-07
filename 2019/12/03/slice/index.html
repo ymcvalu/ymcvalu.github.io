@@ -151,6 +151,15 @@
 <p>因此，如果对象的大小不超过<code>32kb</code>（实际上我们很少会用到那么大的对象），那么内存分配的效率与分配的大小并没有多大关系。而且本身频繁的内存分配也是一种性能损耗。</p>
 <p>因此，<strong>推荐的是使用<code>[]User</code>类型</strong>。这样只会分配一次内存。而如果使用<code>[]*User</code>类型，需要分配n+1次，底层数组1次加上n次切片元素。</p>
 <p>然而，事与愿违的是，我们一般会使用第三方<code>orm</code>框架，这些框架中，会循环的通过反射去<code>new</code>对象，然后<code>append</code>进去。</p>
+<p>那么切片什么时候等于<code>nil</code>呢？</p>
+<p><code>slice</code>本身本质上是一个结构体，只有当其三个字段都是零值的时候，才等于<code>nil</code>。</p>
+<p>在代码中，我们判断一个<code>slice</code>是否有内容，并不需要关心其是否是<code>nil</code>,只要使用<code>len(s) == 0</code>就可以了。</p>
+<p>但是当<code>json</code>序列化时，如果切片为<code>nil</code>时，对应序列化为<code>null</code>，而如果是非<code>nil</code>的空切片，则对应为<code>[]</code>。</p>
+<p>当我们声明一个变量时：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> s1 []<span class="keyword">int</span></span><br></pre></td></tr></table></figure></p>
+<p>因为初始化为零值，则对应的切片结构体三个字段都是零值，因此<code>s1==nil</code></p>
+<p>而当我们这样写时：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> s1 = []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> s2 = <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>这两个切片都是非<code>nil</code>的空切片。而又因为切片的<code>cap</code>是零，<code>go</code>会将其<code>data</code>字段初始化为：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// base address for all 0-byte allocations</span></span><br><span class="line"><span class="keyword">var</span> zerobase <span class="keyword">uintptr</span></span><br></pre></td></tr></table></figure></p>
+<p><code>zerobase</code>是声明在<code>runtime</code>包下面的一个全局变量，当需要分配一块零字节的内存时，都会返回该变量的地址：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mallocgc</span><span class="params">(size <span class="keyword">uintptr</span>, typ *_typ, needzero <span class="keyword">bool</span>)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> size == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> unsafe.Pointer(&amp;zerobase)</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
         
         <div id="comment-container">

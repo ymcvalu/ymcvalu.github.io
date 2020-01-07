@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        在go中获取连接的文件描述符，你掉坑里了吗 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i>  </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i>  </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        在go中获取连接的文件描述符，你掉坑里了吗
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-01-07 20:13:41</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>在<code>go</code>中，我们有时候想要拿到一条连接对应的<code>fd</code>，我们可能会这样写：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ln, _ := net.Listen(<span class="string">"tcp"</span>, <span class="string">":8080"</span>)</span><br><span class="line"><span class="keyword">defer</span> ln.Close()</span><br><span class="line"></span><br><span class="line">tcpln := ln.(*net.TCPListener)</span><br><span class="line"></span><br><span class="line">cf, _ := tcpln.File()</span><br><span class="line"><span class="keyword">defer</span> cf.Close()</span><br><span class="line"> </span><br><span class="line">fd := cf.FD() <span class="comment">// 拿到对应的fd</span></span><br></pre></td></tr></table></figure></p>
+<p>可以看到，在上面的代码中，我们分别调用了两次<code>Close</code>。这是因为<code>File</code>方法，实际上执行的是<code>dup</code>系统调用。</p>
+<p><img src="/img/openfile.png" alt=""></p>
+<p>在表示进程的<code>task_struct</code>中，有一个<code>files</code>字段：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> &#123;</span></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Open file information: */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">files_struct</span>		*<span class="title">files</span>;</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>files_struct</code>用于保存当前进程打开的文件信息。</p>
+<p>当前进程打开的文件，会有一个对应的<code>file</code>结构体，而在<code>files_struct</code>有一个<code>files *</code>类型的数组，保存当前进程打开的所有文件的<code>file</code>结构体的地址。我们在用户空间中使用到的文件描述符<code>fd</code>，实际上是该数组中的下标。当需要访问某个文件时，通过<code>fd</code>在与数组起始地址进行指针运算，就可以得到对应的<code>file</code>结构体的地址了。</p>
+<p>该数组的前三个默认是：</p>
+<ul>
+<li><code>0</code>：标准输入</li>
+<li><code>1</code>：标准输出</li>
+<li><code>2</code>：标准错误输出</li>
+</ul>
+<p>替换这三个的内容，就可以实现重定向了。</p>
+<p>一个打开的文件可以被多个进程同时引用，用于实现共享文件；也可以通过<code>dup</code>系统调用来实现同一个进程同时引用同一个文件多次：</p>
+<blockquote>
+<p>The dup() system call creates a copy of the file descriptor oldfd, using the lowest-numbered unused file descriptor for the new descriptor. After a successful return, the old and new file descriptors may be used interchangeably. They refer to the same open file description and thus share file offset and file status flags.</p>
+</blockquote>
+<p>当打开一个文件时，会对应有一个<code>file</code>结构体来表示，也就是上面说的<code>file description</code>，而<code>file descriptor</code>对应的就是我们所说的<code>fd</code>。</p>
+<p><code>file</code>中有一个字段用来表示引用次数，当调用<code>close</code>时，会先把引用次数减<code>1</code>，只有当不再被引用时才执行真正的<code>close</code>。</p>
+<p>回到开头的例子中，因为<code>File</code>方法内部实际上是执行<code>dup</code>系统调用，因此当前进程现在会有两个<code>fd</code>指向同一个打开的连接，因此如果要真正关闭该连接，需要分别执行两次<code>close</code>方法。</p>
+<p>接下来，我们看一下<code>File</code>方法的实现：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *TCPListener)</span> <span class="title">File</span><span class="params">()</span> <span class="params">(f *os.File, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !l.ok() &#123; <span class="comment">// 判断文件是否为空</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, syscall.EINVAL</span><br><span class="line">	&#125;</span><br><span class="line">	f, err = l.file() <span class="comment">// 真正干活的方法</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, &amp;OpError&#123;Op: <span class="string">"file"</span>, Net: l.fd.net, Source: <span class="literal">nil</span>, Addr: l.fd.laddr, Err: err&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，实际上调用的是<code>TCPListener#file</code>方法，接下来看一下该方法：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ln *TCPListener)</span> <span class="title">file</span><span class="params">()</span> <span class="params">(*os.File, error)</span></span> &#123;</span><br><span class="line">	f, err := ln.fd.dup()  <span class="comment">// 这里出现dup了吧</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> f, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(fd *netFD)</span> <span class="title">dup</span><span class="params">()</span> <span class="params">(f *os.File, err error)</span></span> &#123;</span><br><span class="line">	ns, call, err := fd.pfd.Dup() <span class="comment">// 继续看一下</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> call != <span class="string">""</span> &#123;</span><br><span class="line">			err = os.NewSyscallError(call, err)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> os.NewFile(<span class="keyword">uintptr</span>(ns), fd.name()), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(fd *FD)</span> <span class="title">Dup</span><span class="params">()</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := fd.incref(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>, <span class="string">""</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> fd.decref()</span><br><span class="line">	<span class="keyword">return</span> DupCloseOnExec(fd.Sysfd) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到最终会调用<code>DupCloseOnExec</code>方法：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// DupCloseOnExec dups fd and marks it close-on-exec.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DupCloseOnExec</span><span class="params">(fd <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> atomic.LoadInt32(&amp;tryDupCloexec) == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="comment">// 通过fcntl系统调用执行dup，同时设置 close-on-exec flag</span></span><br><span class="line">		r0, e1 := fcntl(fd, syscall.F_DUPFD_CLOEXEC, <span class="number">0</span>) </span><br><span class="line">		<span class="keyword">if</span> e1 == <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> r0, <span class="string">""</span>, <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">switch</span> e1.(syscall.Errno) &#123;</span><br><span class="line">		<span class="keyword">case</span> syscall.EINVAL, syscall.ENOSYS:</span><br><span class="line">			<span class="comment">// 老版本的linux内核</span></span><br><span class="line">			atomic.StoreInt32(&amp;tryDupCloexec, <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">return</span> <span class="number">-1</span>, <span class="string">"fcntl"</span>, e1</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 老版本内核的fcntl不支持F_DUPFD_CLOEXEC命令</span></span><br><span class="line">	<span class="keyword">return</span> dupCloseOnExecOld(fd)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// dupCloseOnExecUnixOld is the traditional way to dup an fd and</span></span><br><span class="line"><span class="comment">// set its O_CLOEXEC bit, using two system calls.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">dupCloseOnExecOld</span><span class="params">(fd <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 这里要加fork锁！！！</span></span><br><span class="line">	syscall.ForkLock.RLock()</span><br><span class="line">	<span class="keyword">defer</span> syscall.ForkLock.RUnlock()</span><br><span class="line">	newfd, err := syscall.Dup(fd)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>, <span class="string">"dup"</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	syscall.CloseOnExec(newfd)</span><br><span class="line">	<span class="keyword">return</span> newfd, <span class="string">""</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>首先，会尝试使用<code>fcntl</code>系统调用的<code>F_DUPFD_CLOEXEC</code>命令来实现。该方法具有原子性，也就是执行<code>dup</code>和设置<code>close-on-exec</code>标志位两个操作是原子的。而老版本的内核并不支持该方法，则需要先执行<code>dup</code>系统调用，然后通过<code>fcntl</code>系统调用设置<code>close-on-exec</code>标志位。</p>
+<p>在<code>go</code>中，打开的文件默认都会设置<code>close-on-exec</code>标志位。因为，<code>fork</code>的子进程默认会继承父进程打开的文件列表。而设置了<code>close-on-exec</code>标志位的文件，在子进程执行<code>exec</code>族函数时会先<code>close</code>掉。这样就可以防止文件被子进程继承，而子进程又没有关闭，导致文件泄露。如果子进程确实需要继承父进程的文件，则需要手动指定，这时候会取消<code>close-on-exec</code>标志位。</p>
+<p>回到前面，在低版本内核中，需要分为两步执行，那么可能在执行<code>dup</code>系统调用后，设置<code>close-on-exec</code>标志前，在另一个协程中执行了<code>fork</code>系统调用，这时候这个文件就不会在子进程执行<code>exec</code>时被关闭，从而导致泄露。因此在<code>dupCloseOnExecOld</code>这个方法中，需要加<code>syscall.ForkLock</code>锁。</p>
+<p>接下来，我们看一下获取<code>fd</code>的<code>FD</code>方法：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *File)</span> <span class="title">Fd</span><span class="params">()</span> <span class="title">uintptr</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> f == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ^(<span class="keyword">uintptr</span>(<span class="number">0</span>))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> f.nonblock &#123;</span><br><span class="line">        <span class="comment">// 如果是非阻塞模式，则设置成阻塞模式</span></span><br><span class="line">		f.pfd.SetBlocking() </span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">uintptr</span>(f.pfd.Sysfd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>go</code>，网络连接默认是非阻塞模式的。</p>
+<p>在非阻塞模式中，当<code>accept/write/read</code>没有新的请求可以接受/没有空闲缓冲区可写/缓冲区没有内容可读，会立即返回<code>EAGEIN</code>。这时候，<code>runtime</code>会将其加入到<code>epoll</code>中监听，然后将对应的协程挂起，直到等待的事件到来才将其唤醒。</p>
+<p>而如果是阻塞模式，当<code>accept/write/read</code>没有新的请求可以接受/没有空闲缓冲区可写/缓冲区没有内容可读，会一直阻塞，不仅会阻塞当前协程，还会把系统线程阻塞掉。一不小心就会导致系统线程激增。</p>
+<p>因此在对网络连接使用<code>FD</code>方法时，需要格外小心。可以使用下面方法替代：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rawConn, err := tcpConn.SyscallConn()</span><br><span class="line"><span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">	rawConn.Control(<span class="function"><span class="keyword">func</span><span class="params">(fd <span class="keyword">uintptr</span>)</span></span> &#123;</span><br><span class="line">		<span class="comment">// 这里就可以拿到 fd 了</span></span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最后看一下下面完整demo：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"syscall"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ln, err := net.Listen(<span class="string">"tcp"</span>, <span class="string">":8080"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">	tcpln := ln.(*net.TCPListener)</span><br><span class="line"></span><br><span class="line">	nf, err := tcpln.File() <span class="comment">// 使用dup系统调用，内核中的file的引用加1，返回的是新的fd</span></span><br><span class="line">	ln.Close()              <span class="comment">// close掉原先的连接</span></span><br><span class="line"></span><br><span class="line">	fd := nf.Fd()    <span class="comment">// 注意这时候 listener 变成 Blocking</span></span><br><span class="line">	fmt.Println(fd) <span class="comment">// 会输出 4, 而不是 3</span></span><br><span class="line"></span><br><span class="line">	cid, _, err := syscall.Accept(<span class="keyword">int</span>(fd))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	syscall.Close(cid) <span class="comment">// 关闭请求连接</span></span><br><span class="line">	syscall.Close(<span class="keyword">int</span>(fd)) <span class="comment">// 关闭listener</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
