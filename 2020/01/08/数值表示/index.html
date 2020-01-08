@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        计算机的原码、反码和补码 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i>  </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#原码-反码-补码"><span class="toc-text">原码 反码 补码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#机器数和真值"><span class="toc-text">机器数和真值</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#机器数"><span class="toc-text">机器数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#真值"><span class="toc-text">真值</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原码-反码-补码-1"><span class="toc-text">原码 反码 补码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#原码"><span class="toc-text">原码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#反码"><span class="toc-text">反码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#补码"><span class="toc-text">补码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#为什么需要反码和补码"><span class="toc-text">为什么需要反码和补码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#补码的本质"><span class="toc-text">补码的本质</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#应用"><span class="toc-text">应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i>  </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        计算机的原码、反码和补码
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-01-08 22:17:50</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#计算机原理" title="计算机原理">计算机原理</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="原码-反码-补码"><a href="#原码-反码-补码" class="headerlink" title="原码 反码 补码"></a>原码 反码 补码</h1><h3 id="机器数和真值"><a href="#机器数和真值" class="headerlink" title="机器数和真值"></a>机器数和真值</h3><h5 id="机器数"><a href="#机器数" class="headerlink" title="机器数"></a>机器数</h5><p> 一个数在计算机中的二进制表示形式, 叫做这个数的机器数。机器数是带符号的，在计算机用一个数的最高位存放符号, 正数为0, 负数为1 。</p>
+<p>比如，十进制中的数<code>+3</code> ，计算机字长为8位，转换成二进制就是<code>00000011</code>。如果是 <code>-3</code> ，就是 <code>10000011</code> 。</p>
+<p>那么，这里的 <code>00000011</code> 和 <code>10000011</code> 就是机器数。</p>
+<h5 id="真值"><a href="#真值" class="headerlink" title="真值"></a>真值</h5><p>因为第一位是符号位，所以机器数的形式值就不等于真正的数值。例如上面的有符号数 <code>10000011</code>，其最高位<code>1</code>代表负，其真正数值是 <code>-3</code> 而不是形式值<code>131</code>（<code>10000011</code>转换成十进制等于<code>131</code>）。所以，为区别起见，将带符号位的机器数对应的真正数值称为机器数的真值。</p>
+<p>因此<code>10000011</code>的真值为<code>-3</code>。</p>
+<h3 id="原码-反码-补码-1"><a href="#原码-反码-补码-1" class="headerlink" title="原码 反码 补码"></a>原码 反码 补码</h3><h5 id="原码"><a href="#原码" class="headerlink" title="原码"></a>原码</h5><p>原码就是符号位加上真值的绝对值, 即用第一位表示符号, 其余位表示值. 比如如果是8位二进制:</p>
+<blockquote>
+<p>[-1]<sub>原</sub> = 1000 0001</p>
+<p>[+1]<sub>原</sub> = 0000 0001</p>
+</blockquote>
+<p>第一位是符号位。因为第一位是符号位, 所以8位二进制数的取值范围就是：</p>
+<blockquote>
+<p> [1111 1111 , 0111 1111] </p>
+</blockquote>
+<p>即</p>
+<blockquote>
+<p>[-127, 127]</p>
+</blockquote>
+<h5 id="反码"><a href="#反码" class="headerlink" title="反码"></a>反码</h5><p>反码的表示方法是：</p>
+<ul>
+<li><p>正数的反码是其本身</p>
+</li>
+<li><p>负数的反码是在其原码的基础上，符号位不变，其余各个位取反：</p>
+<blockquote>
+<p>[+1] = [00000001]<sub>原</sub> = [00000001]<sub>反</sub></p>
+<p>[-1] = [10000001]<sub>原</sub> = [11111110]<sub>反</sub></p>
+</blockquote>
+</li>
+</ul>
+<p>可见如果一个反码表示的是负数, 人脑无法直观的看出来它的数值。通常要将其转换成原码再计算。</p>
+<h5 id="补码"><a href="#补码" class="headerlink" title="补码"></a>补码</h5><p>补码的表示方法是：</p>
+<ul>
+<li><p>正数的补码就是其本身</p>
+</li>
+<li><p>负数的补码是在其原码的基础上，符号位不变，其余各位取反，最后加1（即在反码的基础上加1）</p>
+<blockquote>
+<p>[+1] = [00000001]<sub>原</sub> = [00000001]<sub>反</sub> = [00000001]<sub>补</sub></p>
+<p>[-1] = [10000001]<sub>原</sub> = [11111110]<sub>反</sub> = [11111111]<sub>补</sub></p>
+</blockquote>
+</li>
+</ul>
+<h5 id="为什么需要反码和补码"><a href="#为什么需要反码和补码" class="headerlink" title="为什么需要反码和补码"></a>为什么需要反码和补码</h5><p> 首先, 因为人脑可以知道第一位是符号位, 在计算的时候我们会根据符号位, 选择对真值区域的加减。 但是对于计算机, 加减乘数已经是最基础的运算, 要设计的尽量简单 。 计算机辨别”符号位”显然会让计算机的基础电路设计变得十分复杂 。 于是人们想出了将符号位也参与运算的方法 。</p>
+<p>我们知道, 根据运算法则减去一个正数等于加上一个负数, 即: <code>1 - 1 = 1 + (-1) = 0</code> , 所以机器可以只有加法而没有减法, 这样计算机运算的设计就更简单了 。</p>
+<p>对于计算<code>1-1=0</code>，首先来看原码：</p>
+<blockquote>
+<p>1 - 1 = 1 + (-1) = [00000001]<sub>原</sub> + [10000001]<sub>原</sub> = [10000010]<sub>原</sub> = -2</p>
+</blockquote>
+<p>如果用原码来进行计算，将符号位也参与计算，显然计算结果是错误的。</p>
+<p>因此引入了反码：</p>
+<blockquote>
+<p>1 - 1 = 1 + (-1) = [00000001]<sub>反</sub> + [111111110]<sub>反</sub>  = [11111111]<sub>反</sub> = -0</p>
+</blockquote>
+<p>发现使用反码计算，结果的真值是正确的。但是也存在问题，再看下面一个例子：</p>
+<blockquote>
+<p>0 + 0 = [00000000]<sub>反</sub> + [00000000]<sub>反</sub> = +0</p>
+</blockquote>
+<p>对于结果<code>0</code>,可能会得到<code>-0</code>和<code>+0</code>两个不同的结果。</p>
+<p>而补码的出现，解决了这个问题：</p>
+<blockquote>
+<p>1 - 1 = [00000001]<sub>补</sub> + [11111111]<sub>补</sub> = [00000000]<sub>补</sub> = 0</p>
+<p>0 + 0 = [00000000]<sub>补</sub> + [00000000]<sub>补</sub> = 0</p>
+</blockquote>
+<p>可以看到，使用补码进行计算，将会只有一个<code>0</code>，而且可以用<code>10000000</code>来表示<code>-128</code>:</p>
+<blockquote>
+<p>-1 + -127 = [11111111]<sub>补</sub> + [10000001]<sub>补</sub> = [10000000]<sub>补</sub></p>
+</blockquote>
+<p>因此，对于一个8位的带符号数，如果使用补码来进行表示，则取值范围位<code>[-128, 127]</code></p>
+<p>而对于原码和反码，因为都存在两个<code>0</code>：</p>
+<blockquote>
+<p>+0 = [00000000]<sub>原</sub> = [00000000]<sub>反</sub></p>
+<p>-0 = [10000000]<sub>原</sub> = [11111111]<sub>反</sub></p>
+</blockquote>
+<p>有效取值范围都只有<code>[-127, 127]</code></p>
+<p>使用补码，不仅解决了减法的问题，还修复了存在两个<code>0</code>的问题，使得负数的有效值可以多一位。</p>
+<p>因此，计算机都是使用补码来表示正数，对于<code>n</code>位的整数，其有效范围为：</p>
+<blockquote>
+<p>[-2<sup>n-1</sup>, 2<sup>n-1</sup>-1]</p>
+</blockquote>
+<h5 id="补码的本质"><a href="#补码的本质" class="headerlink" title="补码的本质"></a>补码的本质</h5><p>补码本质是用来构成一个环，以实现一个同余运算。 </p>
+<p>假设8位的整数为例，我们计算的结果最终都是<code>2^8</code>的余数，这与符号位没有关系，也就是需要<code>mod 2^8</code>，也就是当计算结果超过8位时，高位会被舍弃，就是溢出。</p>
+<p>比如：</p>
+<blockquote>
+<p>1 + 255 = 256  = 0</p>
+<p>1 - 1 = 0 </p>
+</blockquote>
+<p>这其实是<strong>同余</strong>的概念：两个整数a，b，若它们除以整数m所得的余数相等，则称a，b对于模m同余，记作<code>a ≡ b (mod m)</code></p>
+<p>我们来看 255和-1：</p>
+<blockquote>
+<p>255 mod 256 = 255 </p>
+<p>-1 mod 256 = 255</p>
+</blockquote>
+<p>也就是 <code>-1 ≡ 255 mod 256</code></p>
+<p>在一个环中，00000000<sub>b</sub>和11111111<sub>b</sub>连接，当00000000<sub>b</sub>向后走一步，就回到11111111<sub>b</sub>了。</p>
+<p>同余加法：</p>
+<blockquote>
+<p>a ≡ b mod m</p>
+<p>c ≡ d mod m </p>
+<p>a+c ≡ b+d mod m</p>
+</blockquote>
+<p>所以有：</p>
+<blockquote>
+<p>1 ≡ 1 mod 256</p>
+<p>-1 ≡ 255 mod 256</p>
+<p>1-1 ≡ 1+255 mod 256</p>
+</blockquote>
+<p>所以 1-1 = 1+255 = 0</p>
+<p>对于255的二进制表示：</p>
+<blockquote>
+<p>255 = 11111111<sub>b</sub></p>
+</blockquote>
+<p>因为 <code>-1≡255 mod 256</code>，在8位的带符号数中，我们可以用11111111<sub>b</sub>来表示<code>-1</code>，而这不正是<code>-1</code>的补码吗。</p>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><p>前面讲到，计算机中使用补码存储整数，而我们可以把补码看成是一个环<br>因此：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="keyword">uint8</span>(<span class="number">2</span>)</span><br><span class="line">b := <span class="keyword">uint8</span>(<span class="number">255</span>)</span><br><span class="line">a - b == <span class="number">3</span> <span class="comment">// 2倒退3步回到255</span></span><br></pre></td></tr></table></figure></p>
+<p>利用这个性质，当我们在实现环形队列时：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> RingQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">	buf        []<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	head, tail <span class="keyword">uint32</span></span><br><span class="line">	<span class="built_in">cap</span>        <span class="keyword">uint32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(<span class="built_in">cap</span> <span class="keyword">uint32</span>)</span> *<span class="title">RingQueue</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;RingQueue&#123;</span><br><span class="line">		buf: <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="built_in">cap</span>),</span><br><span class="line">		<span class="built_in">cap</span>: <span class="built_in">cap</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *RingQueue)</span> <span class="title">Push</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> r.tail-r.head &lt; r.<span class="built_in">cap</span> &#123;</span><br><span class="line">		r.buf[r.tail%r.<span class="built_in">cap</span>] = v</span><br><span class="line">		r.tail++</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *RingQueue)</span> <span class="title">Size</span><span class="params">()</span> <span class="title">uint32</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> r.tail - r.head</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *RingQueue)</span> <span class="title">Cap</span><span class="params">()</span> <span class="title">uint32</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> r.<span class="built_in">cap</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *RingQueue)</span> <span class="title">Pop</span><span class="params">()</span> <span class="params">(<span class="keyword">interface</span>&#123;&#125;, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> r.tail-r.head &gt; <span class="number">0</span> &#123;</span><br><span class="line">		v := r.buf[r.head%r.<span class="built_in">cap</span>]</span><br><span class="line">		r.head++</span><br><span class="line">		<span class="keyword">return</span> v, <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.cnblogs.com/zhangziqiu/archive/2011/03/30/computercode.html" target="_blank" rel="noopener">原码、反码和补码详解</a></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
