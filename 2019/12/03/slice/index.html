@@ -153,7 +153,8 @@
 <p>然而，事与愿违的是，我们一般会使用第三方<code>orm</code>框架，这些框架中，会循环的通过反射去<code>new</code>对象，然后<code>append</code>进去。</p>
 <p>那么切片什么时候等于<code>nil</code>呢？</p>
 <p><code>slice</code>本身本质上是一个结构体，只有当其三个字段都是零值的时候，才等于<code>nil</code>。</p>
-<p>在代码中，我们判断一个<code>slice</code>是否有内容，并不需要关心其是否是<code>nil</code>,只要使用<code>len(s) == 0</code>就可以了。</p>
+<p>在代码中，我们判断一个<code>slice</code>是否为空，并不需要关心其是否是<code>nil</code>,只要使用<code>len(s) == 0</code>就可以了<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> s []<span class="keyword">int</span> <span class="comment">// s == nil</span></span><br><span class="line"></span><br><span class="line">s1 = <span class="built_in">append</span>(s, <span class="number">1</span>) <span class="comment">// 发生扩容</span></span><br><span class="line"></span><br><span class="line">s2 = s[:<span class="number">0</span>] <span class="comment">// s2 != nil</span></span><br></pre></td></tr></table></figure></p>
+<p>像上面的操作，虽然<code>s</code>等于<code>nil</code>，但是这些操作都可以正常执行，因此我们在平时的使用中，并不需要刻意关心切片是否等于<code>nil</code>。</p>
 <p>但是当<code>json</code>序列化时，如果切片为<code>nil</code>时，对应序列化为<code>null</code>，而如果是非<code>nil</code>的空切片，则对应为<code>[]</code>。</p>
 <p>当我们声明一个变量时：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> s1 []<span class="keyword">int</span></span><br></pre></td></tr></table></figure></p>
 <p>因为初始化为零值，则对应的切片结构体三个字段都是零值，因此<code>s1==nil</code></p>
