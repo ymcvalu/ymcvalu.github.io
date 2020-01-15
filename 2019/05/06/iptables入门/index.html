@@ -188,6 +188,7 @@
 <p>上图描述链了在任何接口上收到的网络数据包是按照怎样的顺序穿过表的交通管制链。第一个路由策略包括决定数据包的目的地是本地主机（这种情况下，数据包穿过 <code>INPUT</code> 链），还是其他主机（数据包穿过 <code>FORWARD</code> 链）；中间的路由策略包括决定给传出的数据包使用那个源地址、分配哪个接口；最后一个路由策略存在是因为先前的<code>mangle</code> 与 <code>nat</code> 链可能会改变数据包的路由信息。数据包通过路径上的每一条链时，链中的每一条规则按顺序匹配；无论何时匹配了一条规则，相应的<code>target</code> 动作将会执行。内置的链有默认的策略，但是用户自定义的链没有默认的策略。在<code>jump</code> 到的自定义链中，若每一条规则都不能提供完全匹配，那么数据包像下图描述的一样返回到调用链。在任何时候，若 <code>DROP</code> 的规则实现完全匹配，那么被匹配的数据包会被丢弃，不会进行进一步处理。如果一个数据包在链中被 <code>ACCEPT</code>，那么这个包就会被<code>ACCEPT</code>，不会再遍历后面的规则。</p>
 <p>然而，要注意的是，数据包还会以正常的方式继续遍历其他表中的其他链。</p>
 <p><img src="/img/iptable_subtraverse.jpg" alt="图2"></p>
+<p>接下来看一下数据包在内核的 netfilter 的流动：<br><img src="/img/Netfilter-packet-flow.svg" alt=""></p>
 <h3 id="Command"><a href="#Command" class="headerlink" title="Command"></a>Command</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ iptables -t 表名 &lt;-A/I/D/R&gt; 规则链名 [规则号] &lt;-i/o 网卡名&gt; -p 协议名 &lt;-s 源IP/源子网&gt; --sport 源端口 &lt;-d 目标IP/目标子网&gt; --dport 目标端口 -j 动作</span><br></pre></td></tr></table></figure>
 <h6 id="规则管理命令"><a href="#规则管理命令" class="headerlink" title="规则管理命令"></a>规则管理命令</h6><ul>
 <li><p><code>-A</code> or <code>--append</code> ：将规则加到<code>chain</code>末尾</p>
