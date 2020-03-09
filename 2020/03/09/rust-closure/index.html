@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        rust_closure - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#closure"><span class="toc-text">closure</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Fn-trait"><span class="toc-text">Fn trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FnMut-trait"><span class="toc-text">FnMut trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FnOnce-trait"><span class="toc-text">FnOnce trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部分获取ownership"><span class="toc-text">部分获取ownership</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#closure基本使用"><span class="toc-text">closure基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FnXxx和fn的区别"><span class="toc-text">FnXxx和fn的区别</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        rust_closure
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-03-09 22:32:06</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#rust" title="rust">rust</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <h1 id="closure"><a href="#closure" class="headerlink" title="closure"></a>closure</h1><p><code>rust</code>的闭包，实际上是语法糖，它本质上是一个实现了特定<code>trait</code>的匿名的<code>struct</code>。</p>
+<h3 id="Fn-trait"><a href="#Fn-trait" class="headerlink" title="Fn trait"></a>Fn trait</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[lang = <span class="meta-string">"fn"</span>]</span></span><br><span class="line"><span class="meta">#[must_use = <span class="meta-string">"closures are lazy and do nothing unless called"</span>]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">trait</span> <span class="title">Fn</span></span>&lt;Args&gt;: <span class="built_in">FnMut</span>&lt;Args&gt; &#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">"rust-call"</span> <span class="function"><span class="keyword">fn</span> <span class="title">call</span></span>(&amp;<span class="keyword">self</span>, args: Args) -&gt; Self::Output;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Instances of <code>Fn</code> can be called repeatedly without mutating state.</p>
+<p><strong><code>Fn</code> is implemented automatically by closures which only take immutable references to captured variables or don’t capture anything at all</strong>, as well as (safe) <a href="https://doc.rust-lang.org/std/primitive.fn.html" target="_blank" rel="noopener">function pointers</a> (with some caveats, see their documentation for more details). Additionally, <strong>for any type <code>F</code> that implements <code>Fn</code>, <code>&amp;F</code> implements <code>Fn</code></strong>, too. </p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> hello = <span class="built_in">String</span>::from(<span class="string">"hello, rust!"</span>);</span><br><span class="line">    <span class="keyword">let</span> l = || <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">    call_fn(l);</span><br><span class="line">    call_fnmut(l);</span><br><span class="line">    l();</span><br><span class="line">    (&amp;l)();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">call_fn</span></span>&lt;T&gt;(t: T)</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    T: <span class="built_in">Fn</span>() + <span class="built_in">Copy</span>,</span><br><span class="line">&#123;</span><br><span class="line">    t();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">call_fnmut</span></span>&lt;T&gt;(<span class="keyword">mut</span> t: T)</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    T: <span class="built_in">FnMut</span>() + <span class="built_in">Copy</span>,</span><br><span class="line">&#123;</span><br><span class="line">    t();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上，没有捕获外部变量或者只捕获了<code>immutable reference</code>的<code>closure</code>，会被编译成实现了<code>Fn</code>这个<code>trait</code>的匿名的<code>struct</code>。</p>
+<p>并且这个<code>struct</code>还会实现<code>Copy</code>这个<code>trait</code>，因为这个匿名<code>struct</code>里面只有<code>ref</code>，是可以<code>copy</code>的，因此这个<code>closure</code>可以多次传输。</p>
+<p><strong>闭包本质上就是一个重载了<code>call</code>运算符的匿名结构体，不同的闭包，其结构体是不一样的，因此是DST，因此当需要使用闭包作为参数时，需要使用泛型或者trait object，当需要返回闭包时，可以使用<code>impl Fn(T) -&gt; U</code>或者使用 trait object，比如 Box<dyn fn(t)-="">U&gt;</dyn></strong></p>
+<h3 id="FnMut-trait"><a href="#FnMut-trait" class="headerlink" title="FnMut trait"></a>FnMut trait</h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[lang = <span class="meta-string">"fn_mut"</span>]</span></span><br><span class="line"><span class="meta">#[must_use = <span class="meta-string">"closures are lazy and do nothing unless called"</span>]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">trait</span> <span class="title">FnMut</span></span>&lt;Args&gt;: <span class="built_in">FnOnce</span>&lt;Args&gt; &#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">"rust-call"</span> <span class="function"><span class="keyword">fn</span> <span class="title">call_mut</span></span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, args: Args) -&gt; Self::Output;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当一个闭包捕获了外部的<code>mutable reference</code>时，生成的匿名结构体会实现<code>FnMut</code>这个<code>trait</code>，并且<strong>不会实现<code>Copy</code>这个<code>trait</code></strong>，而且，从方法<code>call_mut</code>的签名可以看到参数是<code>&amp;mut self</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> hello = <span class="built_in">String</span>::from(<span class="string">"hello, closure!"</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> l = || &#123;</span><br><span class="line">        hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">    &#125;;</span><br><span class="line">    call_fnmut(l);</span><br><span class="line">    		   - value moved here</span><br><span class="line">    l();</span><br><span class="line">    ^ value borrowed here after <span class="keyword">move</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">call_fnmut</span></span>&lt;T&gt;(<span class="keyword">mut</span> t: T) <span class="comment">// 这里`t`需要指定为`mut`</span></span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    T: <span class="built_in">FnMut</span>(),</span><br><span class="line">&#123;</span><br><span class="line">    t();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，作为参数传输的时候，会<code>move</code>，我们可以通过传递引用来解决：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> hello = <span class="built_in">String</span>::from(<span class="string">"hello, rust!"</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> l = || &#123;</span><br><span class="line">        hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">    &#125;;</span><br><span class="line">    call_fnmut(&amp;<span class="keyword">mut</span> l); <span class="comment">// 传递 mutable ref</span></span><br><span class="line">    l(); <span class="comment">// l需要是mut的，因为参数是`&amp;mut self`</span></span><br><span class="line">    (&amp;<span class="keyword">mut</span> l)();</span><br><span class="line">	</span><br><span class="line">    <span class="keyword">let</span> l = || &#123;</span><br><span class="line">        hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">    &#125;;</span><br><span class="line">    call_fnmut(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><code>FnMut</code> is implemented automatically by closures which take mutable references to captured variables</strong>, as well as all types that implement <a href="https://doc.rust-lang.org/core/ops/trait.Fn.html" target="_blank" rel="noopener"><code>Fn</code></a>, e.g., (safe) <a href="https://doc.rust-lang.org/std/primitive.fn.html" target="_blank" rel="noopener">function pointers</a> (since <code>FnMut</code> is a supertrait of <a href="https://doc.rust-lang.org/core/ops/trait.Fn.html" target="_blank" rel="noopener"><code>Fn</code></a>). Additionally, <strong>for any type <code>F</code> that implements <code>FnMut</code>, <code>&amp;mut F</code> implements <code>FnMut</code>, too.</strong></p>
+<p><code>FnMut</code>是<code>Fn</code>的<code>supertrait</code>，也就是实现<code>Fn</code>的前提是实现<code>FnMut</code>。</p>
+<p>除了<code>borrow</code>外部变量的<code>reference</code>，有时候我们需要<code>closure</code>获得外部变量的<code>ownership</code>，比如我们的<code>closure</code>需要传到子线程执行，这时候它的<code>lifetime</code>需要是<code>&#39;static</code>的，我们可以使用<code>move</code>关键字，来表明我们需要让<code>closure</code>获取所有它捕获的所有外部变量的<code>ownership</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> hello = <span class="built_in">String</span>::from(<span class="string">"hello, closure!"</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> l = <span class="keyword">move</span> || &#123;</span><br><span class="line">        hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">    &#125;;</span><br><span class="line">    call_fnmut(&amp;<span class="keyword">mut</span> l);</span><br><span class="line">    l();</span><br><span class="line">    l();</span><br><span class="line">    <span class="comment">// println!("&#123;&#125;", hello); // hello已经被move到closure内部了，这里无法使用了</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">call_fnmut</span></span>&lt;T&gt;(t: &amp;<span class="keyword">mut</span> T)</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    T: <span class="built_in">FnMut</span>(),</span><br><span class="line">&#123;</span><br><span class="line">    t();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>当我们在声明<code>closure</code>的时候，指定了<code>move</code>关键字，那么它捕获的所有外部变量都会<code>move</code>到匿名结构体中。</strong></p>
+<p>对于获取了外部变量的<code>ownership</code>，但是没有<code>consume</code>外部变量的<code>closure</code>，也同样实现<code>FnMut</code>这个<code>trait</code>，就像上面的例子中的一样。</p>
+<h3 id="FnOnce-trait"><a href="#FnOnce-trait" class="headerlink" title="FnOnce trait"></a>FnOnce trait</h3><p>当一个<code>closure</code>获取了外部变量的<code>ownership</code>，并且可能<code>consume</code>这个变量，那么这个<code>closure</code>只会实现<code>FnOnce</code>这个<code>trait</code>，并且只能被调用一次：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> hello = <span class="built_in">String</span>::from(<span class="string">"hello, closure!"</span>);</span><br><span class="line">    <span class="keyword">let</span> l = <span class="keyword">move</span> || &#123; <span class="comment">// hello被move到closure内</span></span><br><span class="line">        hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">        <span class="built_in">drop</span>(hello); <span class="comment">// 这里消费了hello</span></span><br><span class="line">    &#125;;</span><br><span class="line">    l();</span><br><span class="line">    <span class="comment">// l(); // 只能被调用一次</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们来看一下<code>FnOnce</code>的声明：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[lang = <span class="meta-string">"fn_once"</span>]</span></span><br><span class="line"><span class="meta">#[must_use = <span class="meta-string">"closures are lazy and do nothing unless called"</span>]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">trait</span> <span class="title">FnOnce</span></span>&lt;Args&gt; &#123;</span><br><span class="line">    <span class="class"><span class="keyword">type</span> <span class="title">Output</span></span>;</span><br><span class="line">    <span class="keyword">extern</span> <span class="string">"rust-call"</span> <span class="function"><span class="keyword">fn</span> <span class="title">call_once</span></span>(<span class="keyword">self</span>, args: Args) -&gt; Self::Output;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，<strong><code>call_once</code>的参数是<code>self</code></strong>。</p>
+<p><strong><code>FnOnce</code> is implemented automatically by closure that might consume captured variables</strong>, as well as all types that implement <a href="https://doc.rust-lang.org/core/ops/trait.FnMut.html" target="_blank" rel="noopener"><code>FnMut</code></a>, e.g., (safe) <a href="https://doc.rust-lang.org/std/primitive.fn.html" target="_blank" rel="noopener">function pointers</a> (since <code>FnOnce</code> is a supertrait of <a href="https://doc.rust-lang.org/core/ops/trait.FnMut.html" target="_blank" rel="noopener"><code>FnMut</code></a>). </p>
+<p><strong>这里的<code>consume</code>指的是，在执行过程中，把move到匿名结构体中的变量又<code>move</code>到别的地方去了</strong></p>
+<p>这个时候，原来的变量已经被<code>move</code>掉了，如果允许再次被执行，就和所有权系统相违背了。</p>
+<p>这三个<code>trait</code>，<code>FnOnce</code>是<code>FnMut</code>的<code>supertrait</code>，而<code>FnMut</code>是<code>Fn</code>的<code>supertrait</code></p>
+<h3 id="部分获取ownership"><a href="#部分获取ownership" class="headerlink" title="部分获取ownership"></a>部分获取ownership</h3><p>前面说到，<strong>使用<code>move</code>，会把闭包捕获的所有变量的<code>ownership</code>都<code>move</code>到闭包内</strong></p>
+<p>但是，有时候，可能我们只需要<code>move</code>部分变量的<code>ownership</code>到闭包内，这时候，我们可以：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> hello = <span class="built_in">String</span>::from(<span class="string">"hello, closure!"</span>);</span><br><span class="line">    <span class="keyword">let</span> s = <span class="built_in">String</span>::from(<span class="string">"this is a string"</span>);</span><br><span class="line">    <span class="keyword">let</span> l = || &#123;</span><br><span class="line">        hello = capture(hello);</span><br><span class="line">        hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, s);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    l();</span><br><span class="line">    <span class="comment">// println!("&#123;&#125;", hello); // hello被move到闭包内了</span></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, s);   <span class="comment">// s并没有被move到闭包内</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">capture</span></span>&lt;T&gt;(t: T) -&gt; T &#123; <span class="comment">// 该方法会让编译器分析需要获取ownership</span></span><br><span class="line">    t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，编译器会自动分析，需要捕获外部变量的<code>ownership</code>，因此<code>hello</code>被<code>move</code>到闭包内了，但是<code>s</code>只是获取了它的引用。</p>
+<p>但是，这个闭包只实现了<code>FnOnce</code>，因为消费了<code>hello</code>。</p>
+<h3 id="closure基本使用"><a href="#closure基本使用" class="headerlink" title="closure基本使用"></a>closure基本使用</h3><p>首先来看一个比较容易迷惑人的细节：</p>
+<p>首先，我们的代码如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> hello = <span class="built_in">String</span>::from(<span class="string">"hello, closure!"</span>);</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut</span> l = || hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">    l();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是运行的时候，编译器会报错：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="keyword">mut</span> l = || hello.push_str(<span class="string">"!"</span>);</span><br><span class="line">			-- ----- first borrow occurs due to <span class="keyword">use</span> of `hello` <span class="keyword">in</span> closure</span><br><span class="line">            |</span><br><span class="line">            mutable borrow occurs here</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, hello);</span><br><span class="line">               ^^^^^ immutable borrow occurs here</span><br><span class="line">l();</span><br><span class="line">- mutable borrow later used here</span><br></pre></td></tr></table></figure>
+<p>可能我们会想，我们不是还没有调用闭包吗，怎么就拿了<code>hello</code>的<code>mutable ref</code>了呢？？？</p>
+<p><strong>那是因为，前面说到，闭包的本质是一个实现了特定trait的匿名结构体，因此我们在声明一个闭包的时候，就是创建了一个匿名结构体，而这个匿名结构体，拿了它捕获的外部变量<code>hello</code>的<code>mutable ref</code></strong></p>
+<p>一旦我们知道了闭包实现的原理，一切就变得明晰了。</p>
+<p>闭包和函数一样，可以有参数和返回值，对于参数和返回值的类型，可以由编译器根据上下文自动推导，我们也可以显示指定：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fn</span> <span class="title">main</span></span>() &#123;</span><br><span class="line">    <span class="comment">// 参数在`||`里面</span></span><br><span class="line">    <span class="keyword">let</span> l1 = |x| x + <span class="number">1</span>; <span class="comment">// 如果只有一个表达式，可以省略`&#123;&#125;`</span></span><br><span class="line">    <span class="keyword">let</span> l2 = |x, y| x + y;</span><br><span class="line">    <span class="keyword">let</span> l3 = || <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">let</span> l4 = |x: <span class="built_in">i32</span>, y: <span class="built_in">i32</span>| x + y;</span><br><span class="line">    <span class="keyword">let</span> l5 = |x, y| -&gt; <span class="built_in">i32</span> &#123; x + y &#125;;</span><br><span class="line">    <span class="keyword">let</span> l6 = |x: <span class="built_in">i32</span>, y: <span class="built_in">i32</span>| -&gt; <span class="built_in">i32</span> &#123; x + y &#125;; <span class="comment">// 如果显示指定了返回值，需要`&#123;&#125;`</span></span><br><span class="line">    <span class="keyword">let</span> l7 = |x: <span class="built_in">i32</span>, y: <span class="built_in">i32</span>| &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">"&#123;&#125;+&#123;&#125;"</span>, x, y);</span><br><span class="line">        x + y</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, l1(<span class="number">1</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, l2(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, l3());</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, l4(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, l5(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, l6(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">"&#123;&#125;"</span>, l7(<span class="number">1</span>, <span class="number">2</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>目前，还不支持声明泛型<code>closure</code>，如果需要泛型还是使用函数，或者使用泛型函数返回一个闭包。</p>
+<h3 id="FnXxx和fn的区别"><a href="#FnXxx和fn的区别" class="headerlink" title="FnXxx和fn的区别"></a>FnXxx和fn的区别</h3><p><code>FnXxx</code>是<code>trait</code>，因此它们是<code>DST</code>，<strong>而<code>fn</code>是类型，函数指针</strong>，它的size的编译时已知的。</p>
+<p><code>fn</code>也实现了这些<code>trait</code>，因此声明参数的时候，我们可以统一使用泛型加<code>FnXxx</code>，这样调用的时候，无论传<code>closure</code>还是传函数指针都是可以。</p>
+<p>不过，比如与<code>c</code>语言进行交互，就需要用函数指针了。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
