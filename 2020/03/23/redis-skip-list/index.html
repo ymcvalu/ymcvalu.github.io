@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        skip list - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现redis版本的skiplist"><span class="toc-text">实现redis版本的skiplist</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        skip list
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-03-23 21:09:36</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#redis - skip_list" title="redis - skip_list">redis - skip_list</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>最近业务上有一个任务分配的需求，具体的需求可以简化为：</p>
+<p>需要有一个任务队列，队列中每个任务都需要分配给两个不同的用户，并且需要按照FIFO的顺序进行分配，并且只有当用户来请求任务时才分配任务，不能预先分配。</p>
+<p>因为一个任务需要分配给两个不同的用户，因此当分配一次之后，不能立即将其从队列中移除，这样就导致了，当一个用户请求时，需要从队列头部进行扫描，直到找到第一个他没有处理过的任务。</p>
+<p>为了加快任务的分配，我们可以在每次给用户分配之后，记录当前分配的任务id，下次直接从该id之后进行分配。这时候我就想到了使用redis的zset，因为其底层采用skiplist，我们使用任务id作为score，根据skiplist的特性，可以高效地找到第一个大于某个score的元素。</p>
+<p>但是，因为实际业务更复杂一点，并且需要保证分配的原子性，直接使用redis实现的话，需要通过lua脚本，并且开发上也会更复杂一点，因此最终是决定在代码中自行实现skiplist。</p>
+<p>redis中的skiplist，与传统的skiplist有一点区别。<br>传统的skiplist是使用一个专门的key来进行排序的，而redis中的skiplist，是由score和val共同进行排序的，因此当zset中所有的元素score都设置为0之后，就变成按照val的字典序进行排序了，该特性可以用来实现一些需要前缀查询的场景，比如联想输入，并且redis的skiplist还会记录rank，可以更快的查找第i个元素。</p>
+<p>很明显，redis的skiplist会更复杂一点，但是功能更加强大，既然要实现skiplist，那么我们肯定是实现功能更强大的redis skiplist了。</p>
+<blockquote>
+<p>redis中zset实际上是由dict和skiplist两个数据结构一起实现的，因为zset本身是一个集合，需要通过dict来保证唯一性，而使用skiplist来保证有序性，两者结合就变成了有序集合。</p>
+</blockquote>
+<h3 id="实现redis版本的skiplist"><a href="#实现redis版本的skiplist" class="headerlink" title="实现redis版本的skiplist"></a>实现redis版本的skiplist</h3><p>接下来使用go语言实现一下，redis版本的skiplist，实现逻辑主要是参考redis的源代码，这里只实现几个接口，其他操作，比如range查询，实际上都是大同小异的。</p>
+<p>我们先来看skiplist的声明：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> znode <span class="keyword">struct</span> &#123;</span><br><span class="line">	key      []<span class="keyword">byte</span></span><br><span class="line">	score    <span class="keyword">float64</span></span><br><span class="line">	backward *znode <span class="comment">// 执行前驱节点</span></span><br><span class="line">	span     []<span class="keyword">int</span>  <span class="comment">// span[i]记录level[i]跨越的节点数量，用于快速查询第i个元素 </span></span><br><span class="line">	level    []*znode <span class="comment">// 记录每层的下一个节点</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> SkipList <span class="keyword">struct</span> &#123;</span><br><span class="line">	header *znode </span><br><span class="line">	tail   *znode </span><br><span class="line">	length <span class="keyword">int</span> <span class="comment">// 当前skiplist元素个数</span></span><br><span class="line">	level  <span class="keyword">int</span> <span class="comment">// 记录当前最高level</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createNode</span><span class="params">(level <span class="keyword">int</span>, score <span class="keyword">float64</span>, key []<span class="keyword">byte</span>)</span> *<span class="title">znode</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;znode&#123;</span><br><span class="line">		key:   key,</span><br><span class="line">		score: score,</span><br><span class="line">		level: <span class="built_in">make</span>([]*znode, level),</span><br><span class="line">		span:  <span class="built_in">make</span>([]<span class="keyword">int</span>, level),</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span> *<span class="title">SkipList</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;SkipList&#123;</span><br><span class="line">		header: createNode(ZSKIP_LIST_MAXLEVEL, <span class="number">0</span>, <span class="literal">nil</span>),</span><br><span class="line">		level:  <span class="number">1</span>,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>znode</code>代表skiplist中的一个节点，<code>level</code>这个切片就是用于记录每一层的下一个节点。</p>
+<p>接着我们来看一下插入逻辑：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// caller需要确保key是唯一的</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sl *SkipList)</span> <span class="title">Insert</span><span class="params">(score <span class="keyword">float64</span>, key []<span class="keyword">byte</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> math.IsNaN(score) &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"unsupported: the score is NaN"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	update := <span class="built_in">make</span>([]*znode, ZSKIP_LIST_MAXLEVEL)</span><br><span class="line">	rank := <span class="built_in">make</span>([]<span class="keyword">int</span>, ZSKIP_LIST_MAXLEVEL) <span class="comment">// 记录每一层的span</span></span><br><span class="line">	x := sl.header</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> 这块代码提取出来做公共逻辑</span></span><br><span class="line">    <span class="comment">// 首先要定位插入的位置</span></span><br><span class="line">	<span class="keyword">for</span> i := sl.level - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">		<span class="keyword">if</span> i &lt; sl.level<span class="number">-1</span> &#123;</span><br><span class="line">			rank[i] = rank[i+<span class="number">1</span>]</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> x.level[i] != <span class="literal">nil</span> &amp;&amp;</span><br><span class="line">			<span class="comment">// 首先比较分数</span></span><br><span class="line">			(x.level[i].score &lt; score ||</span><br><span class="line">				<span class="comment">// 分数相同则按照key的字节序排序</span></span><br><span class="line">				(x.level[i].score == score &amp;&amp; bytes.Compare(x.level[i].key, key) &lt; <span class="number">0</span>)) &#123;</span><br><span class="line">			rank[i] += x.span[i]</span><br><span class="line">			x = x.level[i]</span><br><span class="line">		&#125;</span><br><span class="line">		update[i] = x</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    level := randomLevel() <span class="comment">// 随机生成level</span></span><br><span class="line">    <span class="comment">// 更新skiplist当前最大的level</span></span><br><span class="line">	<span class="keyword">if</span> level &gt; sl.level &#123;</span><br><span class="line">		<span class="keyword">for</span> i := sl.level; i &lt; level; i++ &#123;</span><br><span class="line">			rank[i] = <span class="number">0</span></span><br><span class="line">			update[i] = sl.header</span><br><span class="line">			update[i].span[i] = sl.length</span><br><span class="line">		&#125;</span><br><span class="line">		sl.level = level</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    x = createNode(level, score, key)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 维护level指针和span</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; level; i++ &#123;</span><br><span class="line">		x.level[i] = update[i].level[i]</span><br><span class="line">		update[i].level[i] = x</span><br><span class="line">		<span class="comment">// rank[0]-rank[i]表示从update[i]到当前节点的span</span></span><br><span class="line">		x.span[i] = update[i].span[i] - (rank[<span class="number">0</span>] - rank[i])</span><br><span class="line">		update[i].span[i] = (rank[<span class="number">0</span>] - rank[i]) + <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := level; i &lt; sl.level; i++ &#123;</span><br><span class="line">		update[i].span[i]++</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 维护backward指针和skiplist的tail指针</span></span><br><span class="line">	<span class="keyword">if</span> update[<span class="number">0</span>] != sl.header &#123;</span><br><span class="line">		x.backward = update[<span class="number">0</span>]</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> x.level[<span class="number">0</span>] != <span class="literal">nil</span> &#123;</span><br><span class="line">		x.level[<span class="number">0</span>].backward = x</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		sl.tail = x</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">	sl.length++</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">randomLevel</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	h := <span class="number">1</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> h &lt; ZSKIP_LIST_MAXLEVEL &amp;&amp; rand.Int()&amp;<span class="number">0xFFFF</span> &lt; <span class="number">0xFFFF</span>&gt;&gt;<span class="number">2</span> &#123;</span><br><span class="line">		h++</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> h</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>跟传统的skiplist实现的差别，主要在于对于<code>span</code>切片的维护和<code>backward</code>指针的维护了。首先需要定位到要插入的位置，然后执行插入逻辑。</p>
+<p>接下来，看一下删除逻辑：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sl *SkipList)</span> <span class="title">Delete</span><span class="params">(score <span class="keyword">float64</span>, key []<span class="keyword">byte</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	updates := <span class="built_in">make</span>([]*znode, ZSKIP_LIST_MAXLEVEL)</span><br><span class="line"></span><br><span class="line">	x := sl.header</span><br><span class="line">    <span class="comment">// 定位要删除的元素</span></span><br><span class="line">	<span class="keyword">for</span> i := sl.level - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">		<span class="keyword">for</span> x.level[i] != <span class="literal">nil</span> &amp;&amp;</span><br><span class="line">			(x.level[i].score &lt; score ||</span><br><span class="line">				(x.level[i].score == score &amp;&amp; bytes.Compare(x.level[i].key, key) &lt; <span class="number">0</span>)) &#123;</span><br><span class="line">			x = x.level[i]</span><br><span class="line">		&#125;</span><br><span class="line">		updates[i] = x</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    x = x.level[<span class="number">0</span>]</span><br><span class="line">    <span class="comment">// 判断元素是否存在</span></span><br><span class="line">	<span class="keyword">if</span> x.score != score || bytes.Compare(x.key, key) != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 删除节点</span></span><br><span class="line">	sl.delNode(x, updates)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sl *SkipList)</span> <span class="title">delNode</span><span class="params">(x *znode, updates []*znode)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 首先，更新level和span</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; sl.level; i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> updates[i].level[i] == x &#123;</span><br><span class="line">			updates[i].span[i] += x.span[i] - <span class="number">1</span></span><br><span class="line">			updates[i].level[i] = x.level[i]</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			updates[i].span[i]--</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更新backward和tail指针</span></span><br><span class="line">	<span class="keyword">if</span> x.level[<span class="number">0</span>] != <span class="literal">nil</span> &#123;</span><br><span class="line">		x.level[<span class="number">0</span>].backward = x.backward</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		sl.tail = x.backward</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> sl.level &gt; <span class="number">1</span> &amp;&amp; sl.header.level[sl.level<span class="number">-1</span>] == <span class="literal">nil</span> &#123;</span><br><span class="line">		sl.level--</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	sl.length--</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>删除的逻辑，一样也是需要先定位到目标元素，可以看到比插入方法还简单。</p>
+<p>接着，我们看一下如果借助<code>span</code>切片快速获取第i个元素：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  0 获取第一个元素</span></span><br><span class="line"><span class="comment">// -1 获取最后一个元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sl *SkipList)</span> <span class="title">GetByRank</span><span class="params">(r <span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">float64</span>, []<span class="keyword">byte</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 如果小于0，表示获取倒数个元素，将其转换为正向获取</span></span><br><span class="line">	<span class="keyword">if</span> r &lt; <span class="number">0</span> &#123;</span><br><span class="line">		r = <span class="keyword">int</span>(sl.length) + r</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> r &lt; <span class="number">0</span> || r &gt;= sl.length &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	r += <span class="number">1</span> <span class="comment">// 0代表第1个元素，1代表第2个元素</span></span><br><span class="line"></span><br><span class="line">	x := sl.header</span><br><span class="line">	<span class="keyword">for</span> i := sl.level - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">		<span class="keyword">for</span> x.level[i] != <span class="literal">nil</span> &amp;&amp; r-x.span[i] &gt;= <span class="number">0</span> &#123;</span><br><span class="line">			r -= x.span[i]</span><br><span class="line">			x = x.level[i]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> r == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> x.score, x.key, <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0.0</span>, <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，我们实现的skiplist，可以比较快速的查询第i个元素，甚至是快速查找一个<code>range</code>。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
