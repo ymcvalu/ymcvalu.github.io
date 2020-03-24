@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        dp上手 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#硬币找零问题"><span class="toc-text">硬币找零问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编辑距离问题"><span class="toc-text">编辑距离问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#按摩师问题"><span class="toc-text">按摩师问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可被三整除的最大和"><span class="toc-text">可被三整除的最大和</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最长公共子序列"><span class="toc-text">最长公共子序列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#割绳子"><span class="toc-text">割绳子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0-1背包问题"><span class="toc-text">0-1背包问题</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        dp上手
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-03-24 21:26:55</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#leetcode - dp" title="leetcode - dp">leetcode - dp</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>一直没有写过leetcode刷题相关的内容，确实是以前刷题比较少。最近一段时间有开始在慢慢刷题，毕竟作为一名合格的程序员，基本的算法能力还是要掌握的。</p>
+<p>今天就来看一下动态规划。</p>
+<p>动态规划听上去是挺高大上的，但是实际很容易理解的，首先来看一个简单的例子：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">skipStage</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	dp1 := <span class="number">1</span></span><br><span class="line">	dp2 := <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">2</span>; i &lt;= n; i++ &#123;</span><br><span class="line">		dp2, dp1 = dp2+dp1, dp2</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dp2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面是<a href="https://leetcode-cn.com/problems/qing-wa-tiao-tai-jie-wen-ti-lcof/" target="_blank" rel="noopener">跳台阶问题</a>的一个dp求解。如果你细心的话，就会发现实际上跳台阶就是求斐波那契数列。</p>
+<p><strong>动态规划是一个自底向上的过程</strong>。能够使用DP求解的问题，需要具有这几个性质：</p>
+<ul>
+<li><strong>最优子结构</strong>：大规模问题集的最优解可以由小规模问题集的最优解推导出来</li>
+<li><strong>无后效性</strong>：未来与过去无关，当前阶段所作的结果不会对未来阶段产生影响。</li>
+</ul>
+<p>因为具有最优子结构，我们可以先求解小规模问题集的解，然后再组合成大规模问题集的解，比如上面的跳台阶问题，假设函数f是问题规模n到结果的映射，当n=0的时候，可以看成只有一种方案，因此f(0)=1，当n=1的时候，明显也只有一种方案，因此f(1)=1，而当n=2的时候，也可从0跳2步到2，也可以从1跳1步到2，因此f(2)=f(1)+f(0)，这样递推下去，我们就得到了<strong>状态转移方程</strong>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">f(n) = f(n-1) + f(n-2)</span><br></pre></td></tr></table></figure></p>
+<p>这个状态转移方程是DP问题求解的核心，只要我们能够找出状态转移方程，程序就可以写出来了。</p>
+<p>现在看来，动态规划很简单吧。</p>
+<p>接下来，我们来看一下几个dp题目。</p>
+<h3 id="硬币找零问题"><a href="#硬币找零问题" class="headerlink" title="硬币找零问题"></a>硬币找零问题</h3><p>问题描述：<br>给定不同面额的硬币coins和一个总金额account，求解可以凑成总金额的所需的最少硬币个数，为了一定能够凑足零钱，规定conins中存在最小面额1，可以认为每种coin的数量都是无限的。</p>
+<p>我们可以使用dp[i]表示，面额为i的时候，所需要的最少硬币个数，那么状态转换方程就很明显了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i] = min(dp[i-x]+1), foreach x in conins</span><br></pre></td></tr></table></figure></p>
+<p>那么，代码就很容易写出来了：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">coin</span><span class="params">(n <span class="keyword">int</span>, coins []<span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">0</span> || <span class="built_in">len</span>(coins) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 零钱有序排列</span></span><br><span class="line">	sort.Slice(coins, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">		<span class="keyword">return</span> coins[i] &lt; coins[j]</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 最小值要为1</span></span><br><span class="line">	<span class="keyword">if</span> coins[<span class="number">0</span>] != <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dp := <span class="built_in">make</span>([]<span class="keyword">int</span>, n+<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// dp求最值</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt;= n; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(coins) &amp;&amp; coins[j] &lt;= i; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> dp[i] == <span class="number">0</span> &#123;</span><br><span class="line">				dp[i] = dp[i<span class="number">-1</span>] + <span class="number">1</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				dp[i] = min(dp[i], dp[i-coins[j]]+<span class="number">1</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	solve := <span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	c := dp[n]</span><br><span class="line">	m := n</span><br><span class="line">	<span class="comment">// 回溯，求找零方案</span></span><br><span class="line">	<span class="keyword">for</span> i := n - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- &#123;</span><br><span class="line">		<span class="keyword">if</span> dp[i] == c<span class="number">-1</span> &#123;</span><br><span class="line">			solve[m-i] += <span class="number">1</span></span><br><span class="line">			c = dp[i]</span><br><span class="line">			m = i</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> dp[n], solve</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上面的代码中，我们除了计算出需要的最少硬币数量，还通过对dp数组进行回溯，求解出了一个可能的最优解。</p>
+<h3 id="编辑距离问题"><a href="#编辑距离问题" class="headerlink" title="编辑距离问题"></a>编辑距离问题</h3><p>问题描述：<br>对于两个单词word1和word2，计算出将word1转换为word2所需使用的最少操作数。操作主要有3种：</p>
+<ul>
+<li>插入一个单词</li>
+<li>删除一个单词</li>
+<li>替换一个单词</li>
+</ul>
+<p>这个题也挺容易的，我们可以使用dp[i][j]表示将word1[:i+1]转变为word2[:j+1]的最少操作数，那么状态转换方程就很明显了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if word1[i] != word2[j]</span><br><span class="line">    dp[i][j] = min(min(dp[i-1][j-1]+1, dp[i-1][j]+1), dp[i][j-1]+1)</span><br><span class="line">else </span><br><span class="line">    dp[i][j] = dp[i-1][j-1]</span><br></pre></td></tr></table></figure></p>
+<p>其中：</p>
+<ul>
+<li>dp[i-1][j-1]+1 可以表示替换一个字符</li>
+<li>dp[i-1][j]+1 可以表示从word1中插入一个字符</li>
+<li>dp[i][j-1]+1 可以表示从word1中删除一个字符</li>
+</ul>
+<p>对此，我们的代码就很容易写出来了：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">minDistance</span><span class="params">(s1, s2 <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	ln1 := <span class="built_in">len</span>(s1)</span><br><span class="line">    ln2 := <span class="built_in">len</span>(s2)</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">if</span> ln1 == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ln2</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> ln2 == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ln1</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	m := <span class="built_in">make</span>([][]<span class="keyword">int</span>, ln1+<span class="number">1</span>)</span><br><span class="line">	m[<span class="number">0</span>] = <span class="built_in">make</span>([]<span class="keyword">int</span>, ln2+<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; ln1+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		m[i] = <span class="built_in">make</span>([]<span class="keyword">int</span>, ln2+<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; ln1+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		m[i][<span class="number">0</span>] = i</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; ln2+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		m[<span class="number">0</span>][i] = i</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; ln1+<span class="number">1</span>; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">1</span>; j &lt; ln2+<span class="number">1</span>; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> s1[i<span class="number">-1</span>] == s2[j<span class="number">-1</span>] &#123;</span><br><span class="line">				m[i][j] = m[i<span class="number">-1</span>][j<span class="number">-1</span>]</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				m[i][j] = min(min(m[i<span class="number">-1</span>][j], m[i][j<span class="number">-1</span>]), m[i<span class="number">-1</span>][j<span class="number">-1</span>]) + <span class="number">1</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> m[ln1][ln2]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">min</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> i &lt; j &#123;</span><br><span class="line">		<span class="keyword">return</span> i</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> j</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="按摩师问题"><a href="#按摩师问题" class="headerlink" title="按摩师问题"></a>按摩师问题</h3><p>问题描述：<br>一个有名的按摩师会收到源源不断的预约请求，每个预约都可以选择接或不接。在每次预约服务之间要有休息时间，因此她不能接受相邻的预约。给定一个预约请求序列，替按摩师找到最优的预约集合（总预约时间最长），返回总的分钟数。</p>
+<p>这个题目和另外一个打家劫舍其实是同一个问题，我们可以使用dp[i]表示到第i个预约，总的最长的预约时长，那么状态转移方程很明显了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i] = max(dp[i-1], dp[i-2]+num[i])</span><br></pre></td></tr></table></figure></p>
+<p>有了状态转移方程，代码就很简单了：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">massage</span><span class="params">(nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(nums)==<span class="number">0</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    dp:=<span class="built_in">make</span>([]<span class="keyword">int</span>,<span class="built_in">len</span>(nums)+<span class="number">1</span>)</span><br><span class="line">    dp[<span class="number">0</span>]=<span class="number">0</span></span><br><span class="line">    dp[<span class="number">1</span>]=nums[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">for</span> i:=<span class="number">1</span>;i&lt;<span class="built_in">len</span>(nums);i++&#123;</span><br><span class="line">        dp[i+<span class="number">1</span>]=max(dp[i],dp[i<span class="number">-1</span>]+nums[i])</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dp[<span class="built_in">len</span>(nums)]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">max</span><span class="params">(i,j <span class="keyword">int</span>)</span><span class="title">int</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> i&gt;j&#123;</span><br><span class="line">        <span class="keyword">return</span> i </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> j </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="可被三整除的最大和"><a href="#可被三整除的最大和" class="headerlink" title="可被三整除的最大和"></a>可被三整除的最大和</h3><p>问题描述：<br>给你一个整数数组 nums，请你找出并返回能被三整除的元素最大和。</p>
+<p>这个问题的状态转移方程就没有那么容易看出来了。我们先分析问题，对于元素的和，mod 3之后，结果为0, 1, 2，如果等于0，说明刚好被3整除。我们可以使用一个大小为3的数组来记录当前，mod 3分别为0, 1, 2的最大的sum，我们直接来看代码实现，因为状态转移方程不像前面的那么好直接写出来：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxSumDivThree</span><span class="params">(nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(nums) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"> 	dp := [<span class="number">3</span>]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	dp[nums[<span class="number">0</span>]%<span class="number">3</span>] = nums[<span class="number">0</span>]</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 状态转移</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="built_in">len</span>(nums); i++ &#123;</span><br><span class="line">		_dp := dp</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="number">3</span>; j++ &#123;</span><br><span class="line">			sum := dp[j] + nums[i]</span><br><span class="line">			mod := sum % <span class="number">3</span></span><br><span class="line">			_dp[mod] = max(_dp[mod], sum)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		dp = _dp</span><br><span class="line"> </span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> dp[<span class="number">0</span>] <span class="comment">// mod 3==0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">max</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> i &gt; j &#123;</span><br><span class="line">		<span class="keyword">return</span> i</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> j</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="最长公共子序列"><a href="#最长公共子序列" class="headerlink" title="最长公共子序列"></a>最长公共子序列</h3><p>求两个字符串的最长公共子序列。<br>这个问题就简单的多了，直接dp[i][j]表示str1[:i+1]和str2[:j+1]的最长公共子序列，代码很简单：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LCS</span><span class="params">(s1, s2 <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	ln1, ln2 := <span class="built_in">len</span>(s1), <span class="built_in">len</span>(s2)</span><br><span class="line">	max := ln1</span><br><span class="line">	<span class="keyword">if</span> max &lt; ln2 &#123;</span><br><span class="line">		max = ln2</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ln1++</span><br><span class="line">	ln2++</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 构造二维数组，空间换时间</span></span><br><span class="line">	m := <span class="built_in">make</span>([][]<span class="keyword">int</span>, ln1)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; ln1; i++ &#123;</span><br><span class="line">		m[i] = <span class="built_in">make</span>([]<span class="keyword">int</span>, ln2)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; ln1; i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">1</span>; j &lt; ln2; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> s1[i<span class="number">-1</span>] == s2[j<span class="number">-1</span>] &#123;</span><br><span class="line">				m[i][j] = m[i<span class="number">-1</span>][j<span class="number">-1</span>] + <span class="number">1</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				v := m[i<span class="number">-1</span>][j<span class="number">-1</span>]</span><br><span class="line">				<span class="keyword">if</span> v &lt; m[i][j<span class="number">-1</span>] &#123;</span><br><span class="line">					v = m[i][j<span class="number">-1</span>]</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> v &lt; m[i<span class="number">-1</span>][j] &#123;</span><br><span class="line">					v = m[i<span class="number">-1</span>][j]</span><br><span class="line">				&#125;</span><br><span class="line">				m[i][j] = v</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 回溯</span></span><br><span class="line">	i, j := ln1<span class="number">-1</span>, ln2<span class="number">-1</span></span><br><span class="line">	<span class="built_in">len</span> := m[i][j]</span><br><span class="line">	ret := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="built_in">len</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> <span class="built_in">len</span> &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> n := m[i][j]; n &gt; m[i<span class="number">-1</span>][j<span class="number">-1</span>] &#123;</span><br><span class="line">			<span class="built_in">len</span>--</span><br><span class="line">			ret[<span class="built_in">len</span>] = s1[i<span class="number">-1</span>]</span><br><span class="line">			i--</span><br><span class="line">			j--</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> n &gt; m[i<span class="number">-1</span>][j] &#123;</span><br><span class="line">			<span class="built_in">len</span>--</span><br><span class="line">			ret[<span class="built_in">len</span>] = s1[i<span class="number">-1</span>]</span><br><span class="line">			i--</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> n &gt; m[i][j<span class="number">-1</span>] &#123;</span><br><span class="line">			<span class="built_in">len</span>--</span><br><span class="line">			ret[<span class="built_in">len</span>] = s1[i<span class="number">-1</span>]</span><br><span class="line">			j--</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			i--</span><br><span class="line">			j--</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(ret)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="割绳子"><a href="#割绳子" class="headerlink" title="割绳子"></a>割绳子</h3><p>一段长度为k的绳子，将其分割成多段（至少两段），然后将每段长乘积，求最大值。</p>
+<p>经过前面的学习，相信这题肯定难不倒你，话不多说，我们直接看代码实现：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">cuttingRope</span><span class="params">(l <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> l &lt;= <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	dp := <span class="built_in">make</span>([]<span class="keyword">int</span>, l+<span class="number">1</span>)</span><br><span class="line">	dp[<span class="number">1</span>] = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">2</span>; i &lt;= l; i++ &#123;</span><br><span class="line">		m := <span class="number">0</span></span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">1</span>; j &lt; i; j++ &#123;</span><br><span class="line">			m = max(m, j*dp[i-j])</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">		<span class="keyword">if</span> i &lt; l &#123;</span><br><span class="line">			m = max(m, i)</span><br><span class="line">		&#125;</span><br><span class="line">		dp[i] = m</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> dp[l]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">max</span><span class="params">(i,j <span class="keyword">int</span>)</span><span class="title">int</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> i&gt;j&#123;</span><br><span class="line">        <span class="keyword">return</span> i </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> j</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="0-1背包问题"><a href="#0-1背包问题" class="headerlink" title="0-1背包问题"></a>0-1背包问题</h3><p>最后，以一个01背包问题来收尾，01背包问题算是dp的入门题目了，只找到以前写的java实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Scanner;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by ymcvalu on 2017/4/19.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bag_0_1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[]args)</span></span>&#123;</span><br><span class="line">        Scanner scanner = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">        <span class="keyword">int</span> ceilingWeight = scanner.nextInt();</span><br><span class="line">        <span class="keyword">int</span> n = scanner.nextInt();</span><br><span class="line">        <span class="keyword">int</span>[] weight = <span class="keyword">new</span> <span class="keyword">int</span>[n+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span>[] value = <span class="keyword">new</span> <span class="keyword">int</span>[n+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;value.length; i++) &#123;</span><br><span class="line">            weight[i] = scanner.nextInt();</span><br><span class="line">            value[i] = scanner.nextInt();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span>[][] matrix = <span class="keyword">new</span> <span class="keyword">int</span>[n+<span class="number">1</span>][ceilingWeight+<span class="number">1</span>];</span><br><span class="line">        bag_0_1(matrix,weight,value,ceilingWeight);</span><br><span class="line">        System.out.println(matrix[n][ceilingWeight]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bag_0_1</span><span class="params">(<span class="keyword">int</span>[][]matrix,<span class="keyword">int</span>[]weight,<span class="keyword">int</span>[]value,<span class="keyword">int</span> ceilingWeight)</span></span>&#123;</span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;matrix.length;i++)</span><br><span class="line">             matrix[i][<span class="number">0</span>]=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;matrix[<span class="number">0</span>].length;i++)</span><br><span class="line">             matrix[<span class="number">0</span>][i]=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">int</span> ceiling=Math.min(weight[<span class="number">1</span>],ceilingWeight);</span><br><span class="line">         </span><br><span class="line">		 <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;ceiling;i++)</span><br><span class="line">             matrix[<span class="number">1</span>][i]=<span class="number">0</span>;</span><br><span class="line">         </span><br><span class="line">		 <span class="keyword">for</span>(<span class="keyword">int</span> i=weight[<span class="number">1</span>];i&lt;=ceilingWeight;i++)</span><br><span class="line">             matrix[<span class="number">1</span>][i]=value[<span class="number">1</span>];</span><br><span class="line">         </span><br><span class="line">		 <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;matrix.length;i++)&#123;</span><br><span class="line">             ceiling=Math.min(weight[i],ceilingWeight);</span><br><span class="line"></span><br><span class="line">             <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;ceiling;j++)</span><br><span class="line">                 matrix[i][j]=matrix[i-<span class="number">1</span>][j];</span><br><span class="line"></span><br><span class="line">             <span class="keyword">for</span>(<span class="keyword">int</span> j=weight[i];j&lt;=ceilingWeight;j++)&#123;</span><br><span class="line">                 <span class="keyword">if</span>(matrix[i-<span class="number">1</span>][j]&gt;matrix[i-<span class="number">1</span>][j-weight[i]]+value[i])</span><br><span class="line">                     matrix[i][j]=matrix[i-<span class="number">1</span>][j];</span><br><span class="line">                 <span class="keyword">else</span></span><br><span class="line">                     matrix[i][j]=matrix[i-<span class="number">1</span>][j-weight[i]]+value[i];</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，DP问题的求解，就是找它的状态转移方程，有时候灵感来了，一眼就看出答案了！！！</p>
+<p>当然，本文只讲了简单的dp基础，但是对于入门，却是够用了。dp题是很多公司的面试笔试题爱出的，很有必要掌握。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
