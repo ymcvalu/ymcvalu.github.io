@@ -145,7 +145,7 @@
 <p>可以看到，<code>S.E</code>的offset是32，并且size确实是0，但是S实例的size却是40。说明S.E后面还有一个隐藏的8byte的padding。</p>
 <p>首先，因为S是8byte对齐的，因此原来32byte，padding只能是8byte。</p>
 <p>那为什么需要这个padding呢？</p>
-<p>我鼓起勇气在github上面提了个<a href="https://github.com/golang/go/issues/38194" target="_blank" rel="noopener">issue</a>，很快就得到了大神的回复：</p>
+<p>带着疑问，我在github上面提了个<a href="https://github.com/golang/go/issues/38194" target="_blank" rel="noopener">issue</a>，很快就得到了大神的回复：</p>
 <blockquote>
 <p><strong>Trailing zero-sized struct fields are padded because if they weren’t, &amp;C.E would point to an invalid memory location.</strong></p>
 </blockquote>
