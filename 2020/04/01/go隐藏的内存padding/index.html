@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go隐藏的内存padding - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        go隐藏的内存padding
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-01 18:27:10</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>今天面试，被问到一个题目：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> S <span class="keyword">struct</span> &#123;</span><br><span class="line">	A <span class="keyword">uint32</span></span><br><span class="line">	B <span class="keyword">uint64</span></span><br><span class="line">	C <span class="keyword">uint64</span></span><br><span class="line">	D <span class="keyword">uint64</span></span><br><span class="line">	E <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的<code>struct S</code>，占用多大的内存。<br>首先，我们先明确<code>S</code>的是8字节对齐的，因此我给出的答案是32。</p>
+<p>但是很明显，答案并不是32，否则就没有这篇文章了。</p>
+<p>我们先来看下正确的答案：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(unsafe.Offsetof(S&#123;&#125;.E))</span><br><span class="line">	fmt.Println(unsafe.Sizeof(S&#123;&#125;.E))</span><br><span class="line">	fmt.Println(unsafe.Sizeof(S&#123;&#125;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">32</span><br><span class="line">0</span><br><span class="line">40</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，<code>S.E</code>的offset是32，并且size确实是0，但是S实例的size却是40。说明S.E后面还有一个隐藏的8byte的padding。</p>
+<p>首先，因为S是8byte对齐的，因此原来32byte，padding只能是8byte。</p>
+<p>那为什么需要这个padding呢？</p>
+<p>我鼓起勇气在github上面提了个<a href="https://github.com/golang/go/issues/38194" target="_blank" rel="noopener">issue</a>，很快就得到了大神的回复：</p>
+<blockquote>
+<p><strong>Trailing zero-sized struct fields are padded because if they weren’t, &amp;C.E would point to an invalid memory location.</strong></p>
+</blockquote>
+<p>并且还给了个相关的<a href="https://github.com/golang/go/issues/9401" target="_blank" rel="noopener">issue</a>地址：</p>
+<blockquote>
+<p>If a non-zero-size struct contains a final zero-size field f, the address &amp;x.f may point beyond the allocation for the struct. This could cause a memory leak or a crash in the garbage collector (invalid pointer found). </p>
+</blockquote>
+<p>go的内存分配，首先是按照<code>sizeclass</code>划分span，然后每个span又分成一个个小格子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">|-------------</span><br><span class="line">|obj1|obj2|...</span><br><span class="line">|-------------</span><br></pre></td></tr></table></figure></p>
+<p>比如上面的，如果一个结构体是以<code>struct{}</code>结尾，并且其末尾本身没有额外的padding，就像上面的<code>S</code>，假如obj1是一个S的实例，那么<code>&amp;S.E</code>就会指向obj2。这会产生内存泄漏或者gc crash，因此编译器会在后面自动添加一个隐藏的padding，来规避这个问题。</p>
+<p>但是，如果S本身末尾已经有额外的padding了，就不需要额外添加这个隐藏的padding了，比如<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SS <span class="keyword">struct</span> &#123;</span><br><span class="line">	A <span class="keyword">uint32</span></span><br><span class="line">	B <span class="keyword">uint64</span></span><br><span class="line">	C <span class="keyword">uint64</span></span><br><span class="line">	D <span class="keyword">uint32</span></span><br><span class="line">	E <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面的<code>SS</code>本身末尾已经有4byte的padding了，其size就是32byte。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
