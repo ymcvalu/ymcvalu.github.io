@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        分布式限流实践 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        分布式限流实践
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-10 22:40:57</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#分布式" title="分布式">分布式</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>如果我们的系统没有限流，那么过大的流量将会击垮我们的系统。</p>
+<p>限流指对应用服务的请求进行限制，例如某一接口的请求限制为 100 个每秒, 对超过限制的请求则进行快速失败或丢弃。</p>
+<p>而对于分布式系统，可能多个实例共同依赖一个服务，比如一个接口服务的多个部署实例依赖同一个数据库实例，这个时候，我们需要限制所有接口服务的实例在单位时间内的总请求量。这时候就需要分布式限流了。</p>
+<p>最常用的限流算法是令牌桶算法，该算法具体如下：</p>
+<ul>
+<li>以一定速率往桶里面放入令牌，如果桶满了则丢弃令牌</li>
+<li>可以以任意速度从桶里面获取令牌。请求到达时，需要先从桶里面获取到令牌才能被执行</li>
+<li>通过桶空了，请求直接被丢弃</li>
+</ul>
+<p>可以看到，要实现一个令牌桶算法，我们需要指定桶的容量<code>capacity</code>，令牌的生成速率<code>rate</code>。我们并不需要起一个定时任务，按照一定速率定时往桶里面放入令牌。我们只需要记录当前距离上次生成令牌的时间差，然后乘以生成速率<code>rate</code>即可。</p>
+<p>可以看到，整个令牌桶的实现逻辑是比较简单的。因为redis支持lua脚本，我们可以借助redis来实现分布式限流算法。</p>
+<p>我们通过lua脚本实现令牌桶算法：<br><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">redis.replicate_commands()</span><br><span class="line"><span class="keyword">local</span> ratelimit_info = redis.<span class="built_in">pcall</span>(<span class="string">'HMGET'</span>,KEYS[<span class="number">1</span>],<span class="string">'last_time'</span>,<span class="string">'current_token'</span>)</span><br><span class="line"><span class="keyword">local</span> last_time = ratelimit_info[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">local</span> current_token = <span class="built_in">tonumber</span>(ratelimit_info[<span class="number">2</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 通过redis获取当前时间，否则服务器时钟可能不同步</span></span><br><span class="line"><span class="keyword">local</span> now = redis.call(<span class="string">'time'</span>)</span><br><span class="line"><span class="keyword">local</span> now_ms = now[<span class="number">1</span>]*<span class="number">1000</span> + now[<span class="number">2</span>]/<span class="number">1000</span></span><br><span class="line"><span class="keyword">local</span> max_token = <span class="built_in">tonumber</span>(ARGV[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">local</span> token_rate = <span class="built_in">tonumber</span>(ARGV[<span class="number">2</span>])</span><br><span class="line"><span class="keyword">local</span> token_rate_ms = token_rate/<span class="number">1000</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 初始令牌桶是满的</span></span><br><span class="line"><span class="keyword">if</span> current_token == <span class="literal">nil</span> <span class="keyword">then</span></span><br><span class="line">  current_token = max_token</span><br><span class="line">  last_time = now_ms</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 令牌桶空了，更新令牌桶</span></span><br><span class="line"><span class="keyword">if</span> current_token == <span class="number">0</span> <span class="keyword">then</span> </span><br><span class="line">    <span class="keyword">local</span> pass = now_ms - last_time</span><br><span class="line">    <span class="keyword">local</span> to_add = <span class="built_in">math</span>.<span class="built_in">floor</span>(pass * token_rate_ms)</span><br><span class="line">    current_token = current_token + to_add</span><br><span class="line">    last_time = to_add / token_rate_ms + last_time</span><br><span class="line">    <span class="keyword">if</span> current_token &gt; max_token <span class="keyword">then</span> </span><br><span class="line">        current_token = max_token</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> result = <span class="number">0</span></span><br><span class="line"><span class="keyword">if</span> current_token &gt; <span class="number">0</span> <span class="keyword">then</span> </span><br><span class="line">    current_token = current_token - <span class="number">1</span></span><br><span class="line">    result = <span class="number">1</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">redis.call(<span class="string">'HMSET'</span>,KEYS[<span class="number">1</span>],<span class="string">'last_time'</span>,last_time,<span class="string">'current_token'</span>,current_token)</span><br><span class="line">redis.call(<span class="string">'pexpire'</span>, KEYS[<span class="number">1</span>], <span class="number">1000</span>)</span><br><span class="line"><span class="keyword">return</span> result</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，我们并不是每次获取令牌时都去计算要放入多少个令牌到桶里面。我们只需要在桶空了的时候，才去生成令牌放入桶里面。</p>
+<p>有了这一段lua脚本，我们就很容易实现分布式限流了，<a href="git@github.com:ymcvalu/ratelimiter.git">完整代码</a></p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
