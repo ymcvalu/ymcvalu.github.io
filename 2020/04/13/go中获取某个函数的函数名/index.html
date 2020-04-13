@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go中获取某个函数的函数名 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        go中获取某个函数的函数名
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-13 16:33:01</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>在<code>go</code> 中，有时候出于某些特殊目的，我们想要获取某个函数的函数名。</p>
+<p>首先，如果我们知道了函数的<code>PC</code>值，那么就可以通过<code>runtime.FuncForPC</code>来获取函数名：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fnName := runtime.FuncForPC(pc).Name()</span><br></pre></td></tr></table></figure></p>
+<p>所谓<code>PC</code>值就是函数的地址。现在的关键是，我们如何获取函数的<code>PC</code>值呢？</p>
+<p>我们首先要知道，我们代码中的用于保存一个函数的变量，实际是什么：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fn1 = <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> fn2 = foo</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foo</span><span class="params">()</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们可以在<code>runtime/runtime2</code>中找到：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> funcval <span class="keyword">struct</span> &#123;</span><br><span class="line">	fn <span class="keyword">uintptr</span></span><br><span class="line">	<span class="comment">// variable-size, fn-specific data here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们代码中的<code>fn1</code>和<code>fn2</code>，实际上是<code>*funcval</code>。而<code>funcval</code>是一个”动态”的类型。它的第一个字段固定是函数的<code>PC</code>地址，而后面可变数量的字段，用于保存闭包捕获的外部变量，或者方法的<code>reciver</code>等。</p>
+<p>现在，我们就可以很容易的通过一个函数值拿到它的<code>PC</code>地址了，比如获取<code>fn1</code>的<code>PC</code>地址：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pc := **((**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;fn1)))</span><br></pre></td></tr></table></figure></p>
+<p>将其封装成一个函数：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">funcPC</span><span class="params">(fn <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">uintptr</span></span> &#123;</span><br><span class="line">	ptr := (*[<span class="number">2</span>]<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;fn))[<span class="number">1</span>]</span><br><span class="line">	<span class="keyword">return</span> **((**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;ptr)))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pc1 := funcPC(fn1)</span><br><span class="line">pc2 := funcPC(fn2)</span><br></pre></td></tr></table></figure></p>
+<p>结合<code>runtime.FuncForPC</code>，我们就得到获取指定函数名的方法了：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">funcName</span><span class="params">(fn <span class="keyword">interface</span>&#123;&#125;)</span><span class="title">string</span></span>&#123;</span><br><span class="line">    pc := funcPC(fn)</span><br><span class="line">    <span class="keyword">return</span> runtime.FuncForPC(pc).Name()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实际上，<code>reflect</code>包已经提供了获取函数的<code>PC</code>地址了：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestFnPC</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	fn := TestFnPC</span><br><span class="line">    pc1 := **((**<span class="keyword">uintptr</span>)(unsafe.Pointer(&amp;fn)))</span><br><span class="line">	pc2 := reflect.ValueOf(fn).Pointer()</span><br><span class="line">	<span class="keyword">if</span> pc1!=pc2&#123;</span><br><span class="line">		t.Error(<span class="string">"failed to get pc by reflect"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当<code>reflect.Value</code>表示的是一个函数值时，其<code>Pointer</code>返回的就是该函数的<code>PC</code>地址。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

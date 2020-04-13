@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go中的物理内存释放 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        go中的物理内存释放
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-13 22:59:58</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>go 使用 madvise 系统调用来释放物理内存给操作系统，该方法主要有两种归还类型可选：</p>
+<ul>
+<li><code>MADV_DONTNEED</code>：立即归还物理内存给操作系统，如果下次访问到该范围的内存，则会触发 page fault 异常，需要重新分配物理页，使用该类型可以减少程序的RSS占用</li>
+<li><code>MADV_FREE</code>：告诉操作系统这块内存已经不需要使用了，可以回收了，如果内存紧张，操作系统就会将其回收。这实际是一个lazily的释放过程。如果再次访问这块内存的时候，操作系统还没有将其回收，是不会触发 page fault 的。使用该类型，可能程序的RSS不会减少。</li>
+</ul>
+<p>当前实现，首先尝试使用 <code>MADV_FREE</code>，如果失败了，再尝试使用 <code>MADV_DONTNEED</code>。<code>MADV_FREE</code>需要linux内核4.5及以上：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> adviseUnused = <span class="keyword">uint32</span>(_MADV_FREE)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sysUnused</span><span class="params">(v unsafe.Pointer, n <span class="keyword">uintptr</span>)</span></span> &#123;</span><br><span class="line">    </span><br><span class="line">    ......</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> advise <span class="keyword">uint32</span></span><br><span class="line">    <span class="comment">// 如果设置了`GODEBUG=madvdontneed=1`，强制使用MADV_DONTNEED</span></span><br><span class="line">    <span class="keyword">if</span> debug.madvdontneed != <span class="number">0</span> &#123;</span><br><span class="line">        advise = _MADV_DONTNEED</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        advise = atomic.Load(&amp;adviseUnused)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 首先尝试使用`MADV_FREE`</span></span><br><span class="line">    <span class="keyword">if</span> errno := madvise(v, n, <span class="keyword">int32</span>(advise)); advise == _MADV_FREE &amp;&amp; errno != <span class="number">0</span> &#123;</span><br><span class="line">        <span class="comment">// MADV_FREE was added in Linux 4.5. Fall back to MADV_DONTNEED if it is</span></span><br><span class="line">        <span class="comment">// not supported.</span></span><br><span class="line">        atomic.Store(&amp;adviseUnused, _MADV_DONTNEED)</span><br><span class="line">        madvise(v, n, _MADV_DONTNEED)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">MADV_FREE 的</span><br></pre></td></tr></table></figure></p>
+<p><code>MADV_FREE</code>的性能会好一点，但是会让程序的<code>RSS</code>占用不会减少，可以通过<code>GODEBUG=madvdontneed=1</code>强制使用<code>MADV_DONTNEED</code>。</p>
+<p>go中堆内存主要使用<code>mmap</code>来申请的。首先，使用<code>mmap</code>来<code>reserve</code>一段内存：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sysReserve</span><span class="params">(v unsafe.Pointer, n <span class="keyword">uintptr</span>)</span> <span class="title">unsafe</span>.<span class="title">Pointer</span></span> &#123;</span><br><span class="line">	p, err := mmap(v, n, _PROT_NONE, _MAP_ANON|_MAP_PRIVATE, <span class="number">-1</span>, <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> p</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，使用匿名映射一块内存，并且指定了 PROT_NONE ，即这块内存是不可以被访问的，因此就不会分配物理内存了。当需要真正分配内存的时候，在这块保留的内存中分配：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sysMap</span><span class="params">(v unsafe.Pointer, n <span class="keyword">uintptr</span>, sysStat *<span class="keyword">uint64</span>)</span></span> &#123;</span><br><span class="line">	mSysStatInc(sysStat, n) <span class="comment">// 内存统计</span></span><br><span class="line">	<span class="comment">// 修改前面保留的内存的指定区域为可读写</span></span><br><span class="line">	p, err := mmap(v, n, _PROT_READ|_PROT_WRITE, _MAP_ANON|_MAP_FIXED|_MAP_PRIVATE, <span class="number">-1</span>, <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">if</span> err == _ENOMEM &#123;</span><br><span class="line">		throw(<span class="string">"runtime: out of memory"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> p != v || err != <span class="number">0</span> &#123;</span><br><span class="line">		throw(<span class="string">"runtime: cannot map pages in arena address space"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当我们查看进程的内存占用时，主要关注的是<code>RSS</code>，而<code>reserve</code>的内存是不能被访问的，不会分配物理内存页，并不会影响<code>RSS</code>的值。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://github.com/golang/go/issues/23687" target="_blank" rel="noopener">https://github.com/golang/go/issues/23687</a></li>
+<li><a href="https://github.com/golang/go/issues/28466" target="_blank" rel="noopener">https://github.com/golang/go/issues/28466</a></li>
+<li><a href="https://github.com/golang/go/issues/29844" target="_blank" rel="noopener">https://github.com/golang/go/issues/29844</a></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

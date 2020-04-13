@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        sync.map - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义"><span class="toc-text">定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Store实现"><span class="toc-text">Store实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Load实现"><span class="toc-text">Load实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Delete实现"><span class="toc-text">Delete实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        sync.map
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-13 23:07:53</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go    - sync" title="go    - sync">go    - sync</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>go的<code>map</code>并不是并发安全的，因此在需要并发访问时，需要额外加锁，或者使用<code>sync.Map</code>。</p>
+<blockquote>
+<p>应该尽量使用原生的map+锁，因为有编译时的类型安全检查</p>
+</blockquote>
+<p>因为go语言本身的特性，因此大家都比较关心并发安全，最近面试有被问到<code>sync.Map</code>的实现，讲道理，之前是有看过源码的，但是时间比较久了，记忆比较模糊了，因此只能卑微的说不了解。。。</p>
+<p>今天就来简单过一下<code>sync.Map</code>的实现。</p>
+<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Map <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 互斥锁，用于保护dirty</span></span><br><span class="line">    mu Mutex</span><br><span class="line">	<span class="comment">// readonly，这里的readonly是指map的key不会更新，但是val是可以更新的</span></span><br><span class="line">	read atomic.Value <span class="comment">// readOnly</span></span><br><span class="line">	<span class="comment">// 更新会写到dirty</span></span><br><span class="line">	dirty <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry</span><br><span class="line">	<span class="comment">// 记录read的时候miss的次数，达到阈值则将dirty提升为read</span></span><br><span class="line">	misses <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> readOnly <span class="keyword">struct</span> &#123;</span><br><span class="line">    m       <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry</span><br><span class="line">    <span class="comment">// 如果dirty中有不存在于read中的key，则设置为true</span></span><br><span class="line">	amended <span class="keyword">bool</span> <span class="comment">// true if the dirty map contains some key not in m.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// marks entries which have been deleted from the dirty map.</span></span><br><span class="line"><span class="comment">// 当read中的val是expunged，表示已经从dirty中删除了</span></span><br><span class="line"><span class="keyword">var</span> expunged = unsafe.Pointer(<span class="built_in">new</span>(<span class="keyword">interface</span>&#123;&#125;))</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> entry <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// unsafe.Pointer可以使用原子操作</span></span><br><span class="line">	p unsafe.Pointer <span class="comment">// *interface&#123;&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，<code>sync.Map</code>内部是有两个map的，一个是<code>readonly</code>的read，和一个使用<code>mutex</code>保护的<code>dirty</code>。这里的<code>readonly</code>并不是指这个<code>map</code>只是只读的，而是指这个<code>map</code>不会添加<code>key</code>，或者删除<code>key</code>，但是<code>key</code>对应的<code>val</code>是可以修改的。并且<code>sync.Map</code>大量用到了<code>sync/atomic</code>包中的原子操作。</p>
+<h3 id="Store实现"><a href="#Store实现" class="headerlink" title="Store实现"></a>Store实现</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Store</span><span class="params">(key, value <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	read, _ := m.read.Load().(readOnly)</span><br><span class="line">    <span class="comment">// 首先尝试直接cas修改，如果该key存在于dirty中，则可以成功设置</span></span><br><span class="line">	<span class="keyword">if</span> e, ok := read.m[key]; ok &amp;&amp; e.tryStore(&amp;value) &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	m.mu.Lock()</span><br><span class="line">    <span class="comment">// 双重锁检查</span></span><br><span class="line">	read, _ = m.read.Load().(readOnly)</span><br><span class="line">	<span class="keyword">if</span> e, ok := read.m[key]; ok &#123;</span><br><span class="line">		<span class="keyword">if</span> e.unexpungeLocked() &#123;</span><br><span class="line">            <span class="comment">// key存在于read中，但是不在dirty中，加入dirty</span></span><br><span class="line">			m.dirty[key] = e</span><br><span class="line">		&#125;</span><br><span class="line">        <span class="comment">// 直接atomic set</span></span><br><span class="line">		e.storeLocked(&amp;value)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> e, ok := m.dirty[key]; ok &#123;</span><br><span class="line">        <span class="comment">// 存在dirty中，但是不在readonly中</span></span><br><span class="line">		e.storeLocked(&amp;value)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// key还不存在</span></span><br><span class="line">		<span class="keyword">if</span> !read.amended &#123;</span><br><span class="line">			<span class="comment">// lazy init dirty</span></span><br><span class="line">			m.dirtyLocked()</span><br><span class="line">			m.read.Store(readOnly&#123;m: read.m, amended: <span class="literal">true</span>&#125;)</span><br><span class="line">		&#125;</span><br><span class="line">        <span class="comment">// 添加到dirty中</span></span><br><span class="line">		m.dirty[key] = newEntry(value)</span><br><span class="line">	&#125;</span><br><span class="line">	m.mu.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">unexpungeLocked</span><span class="params">()</span> <span class="params">(wasExpunged <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> atomic.CompareAndSwapPointer(&amp;e.p, expunged, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化dirty，并把read中未删除的key添加到dirty中</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">dirtyLocked</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> m.dirty != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	read, _ := m.read.Load().(readOnly)</span><br><span class="line">	m.dirty = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]*entry, <span class="built_in">len</span>(read.m))</span><br><span class="line">	<span class="keyword">for</span> k, e := <span class="keyword">range</span> read.m &#123;</span><br><span class="line">		<span class="keyword">if</span> !e.tryExpungeLocked() &#123;</span><br><span class="line">            <span class="comment">// 如果key未删除，将其加入dirty</span></span><br><span class="line">			m.dirty[k] = e</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果key的值为nil，则认为已经删除了，将其设置为expunged</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">tryExpungeLocked</span><span class="params">()</span> <span class="params">(isExpunged <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">	<span class="keyword">for</span> p == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, <span class="literal">nil</span>, expunged) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">		p = atomic.LoadPointer(&amp;e.p)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> p == expunged</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// cas操作</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">tryStore</span><span class="params">(i *<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">        p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">        <span class="comment">// dirty中不存在该key，需要竞争锁添加到dirty中</span></span><br><span class="line">		<span class="keyword">if</span> p == expunged &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, p, unsafe.Pointer(i)) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Store</code>的逻辑，首先是，如果<code>read</code>里面已经有这个<code>key</code>存在了，会尝试直接修改它的<code>val</code>。否则需要竞争锁。</p>
+<h3 id="Load实现"><a href="#Load实现" class="headerlink" title="Load实现"></a>Load实现</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Load</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 首先尝试从read中读取</span></span><br><span class="line">    read, _ := m.read.Load().(readOnly)</span><br><span class="line">	e, ok := read.m[key]</span><br><span class="line">    <span class="comment">// 如果read中没有，并且dirty存在额外的key</span></span><br><span class="line">	<span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">        <span class="comment">// 尝试从dirty中读取</span></span><br><span class="line">		m.mu.Lock()</span><br><span class="line">		<span class="comment">// 双重锁检查</span></span><br><span class="line">		read, _ = m.read.Load().(readOnly)</span><br><span class="line">		e, ok = read.m[key]</span><br><span class="line">		<span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">            <span class="comment">// 从dirty中读取</span></span><br><span class="line">            e, ok = m.dirty[key]</span><br><span class="line">     		<span class="comment">// 更新miss</span></span><br><span class="line">			m.missLocked()</span><br><span class="line">		&#125;</span><br><span class="line">		m.mu.Unlock()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> e.load()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">missLocked</span><span class="params">()</span></span> &#123;</span><br><span class="line">	m.misses++</span><br><span class="line">	<span class="keyword">if</span> m.misses &lt; <span class="built_in">len</span>(m.dirty) &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 将dirty提升为readOnly</span></span><br><span class="line">	m.read.Store(readOnly&#123;m: m.dirty&#125;)</span><br><span class="line">	m.dirty = <span class="literal">nil</span></span><br><span class="line">	m.misses = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">load</span><span class="params">()</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">    <span class="comment">// 如果标记删除了</span></span><br><span class="line">	<span class="keyword">if</span> p == <span class="literal">nil</span> || p == expunged &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> *(*<span class="keyword">interface</span>&#123;&#125;)(p), <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，尝试直接读取<code>read</code>，如果读取失败，并且<code>read.amended == true</code>，则需要加锁，尝试到<code>dirty</code>中读取。</p>
+<h3 id="Delete实现"><a href="#Delete实现" class="headerlink" title="Delete实现"></a>Delete实现</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Delete deletes the value for a key.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Map)</span> <span class="title">Delete</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 首先从read中查找要删除的entry</span></span><br><span class="line">	read, _ := m.read.Load().(readOnly)</span><br><span class="line">	e, ok := read.m[key]</span><br><span class="line">	<span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">		m.mu.Lock()</span><br><span class="line">        <span class="comment">// 双重锁检查</span></span><br><span class="line">		read, _ = m.read.Load().(readOnly)</span><br><span class="line">		e, ok = read.m[key]</span><br><span class="line">		<span class="keyword">if</span> !ok &amp;&amp; read.amended &#123;</span><br><span class="line">            <span class="comment">// 直接从dirty中删除</span></span><br><span class="line">			<span class="built_in">delete</span>(m.dirty, key)</span><br><span class="line">		&#125;</span><br><span class="line">		m.mu.Unlock()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		e.<span class="built_in">delete</span>()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *entry)</span> <span class="title">delete</span><span class="params">()</span> <span class="params">(hadValue <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// cas标记删除</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		p := atomic.LoadPointer(&amp;e.p)</span><br><span class="line">		<span class="keyword">if</span> p == <span class="literal">nil</span> || p == expunged &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> atomic.CompareAndSwapPointer(&amp;e.p, p, <span class="literal">nil</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>现在再来看源码注释：</p>
+<blockquote>
+<p>The Map type is optimized for two common use cases: (1) when the entry for a given key is only ever written once but read many times, as in caches that only grow, or (2) when multiple goroutines read, write, and overwrite entries for disjoint sets of keys. In these two cases, use of a Map may significantly reduce lock contention compared to a Go map paired with a separate Mutex or RWMutex.</p>
+</blockquote>
+<p>简单来说，就是<code>sync.Map</code>的适用场景主要有：</p>
+<ol>
+<li>一个给定的<code>key</code>读多写少的场景，根据上面的源码，如果写少，读的时候可以直接命中<code>read</code>中的数据并返回</li>
+<li>当多个goroutine读、写或者修改不相交的key集合时。根据源码，<code>Map</code>只有在插入不存在的key或者不存在于dirty的key时才需要拿锁。而读取和修改、删除都可以直接在<code>read</code>中通过原子操作完成，如果多个协程操作不相交的key集合，竞争情况会比较少</li>
+</ol>
+<p>而且，<strong>根据<code>sync.Map</code>的定义，是不允许进行值拷贝的，应该使用指针。</strong></p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

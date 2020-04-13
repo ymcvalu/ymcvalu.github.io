@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go中连接的Deadline - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        go中连接的Deadline
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-13 23:32:25</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>conn可以通过 Deadline 方法来设置<code>Deadline</code>。调用<code>SetDeadline</code>设置之后，不会自动取消，会一直存在，除非手动取消掉。当达到<code>SetDeadline</code>设置的时间到达之后，所有的IO操作都会失败。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// A deadline is an absolute time after which I/O operations</span><br><span class="line">// fail with a timeout (see type Error) instead of</span><br><span class="line">// blocking. The deadline applies to all future and pending</span><br><span class="line">// I/O, not just the immediately following call to Read or</span><br><span class="line">// Write. After a deadline has been exceeded, the connection</span><br><span class="line">// can be refreshed by setting a deadline in the future.</span><br><span class="line">//</span><br><span class="line">// An idle timeout can be implemented by repeatedly extending</span><br><span class="line">// the deadline after successful Read or Write calls.</span><br><span class="line">//</span><br><span class="line">// A zero value for t means I/O operations will not time out.</span><br></pre></td></tr></table></figure></p>
+<p><code>SetDeadline</code>设置之后，对后面所有的IO都生效，而不是一次IO之后就取消或者重置。当Set的Deadline到达之后，可以重新设置来刷新连接。<br>如果要实现 idle timeout，可以在每次成功执行一次读或者写之后，设置一下<code>Deadline</code>。<br>如果要实现timeout操作，可以通过重复设置<code>Deadline</code>来实现。</p>
+<p><code>conn</code>可以单独为<code>Read</code>或者<code>Write</code>设置<code>Deadline</code>，或者同时为<code>Read</code>和<code>Write</code>设置<code>Deadline</code>：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SetDeadline implements the Conn SetDeadline method.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *conn)</span> <span class="title">SetDeadline</span><span class="params">(t time.Time)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !c.ok() &#123;</span><br><span class="line">		<span class="keyword">return</span> syscall.EINVAL</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := c.fd.SetDeadline(t); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;OpError&#123;Op: <span class="string">"set"</span>, Net: c.fd.net, Source: <span class="literal">nil</span>, Addr: c.fd.laddr, Err: err&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SetReadDeadline implements the Conn SetReadDeadline method.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *conn)</span> <span class="title">SetReadDeadline</span><span class="params">(t time.Time)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !c.ok() &#123;</span><br><span class="line">		<span class="keyword">return</span> syscall.EINVAL</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := c.fd.SetReadDeadline(t); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;OpError&#123;Op: <span class="string">"set"</span>, Net: c.fd.net, Source: <span class="literal">nil</span>, Addr: c.fd.laddr, Err: err&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// SetWriteDeadline implements the Conn SetWriteDeadline method.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *conn)</span> <span class="title">SetWriteDeadline</span><span class="params">(t time.Time)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !c.ok() &#123;</span><br><span class="line">		<span class="keyword">return</span> syscall.EINVAL</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := c.fd.SetWriteDeadline(t); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;OpError&#123;Op: <span class="string">"set"</span>, Net: c.fd.net, Source: <span class="literal">nil</span>, Addr: c.fd.laddr, Err: err&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这些方法最终，都是调用：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mode: 'r', 'w', 'r'+'w'</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setDeadlineImpl</span><span class="params">(fd *FD, t time.Time, mode <span class="keyword">int</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> d <span class="keyword">int64</span></span><br><span class="line">	<span class="keyword">if</span> !t.IsZero() &#123;</span><br><span class="line">		d = <span class="keyword">int64</span>(time.Until(t))</span><br><span class="line">		<span class="keyword">if</span> d == <span class="number">0</span> &#123;</span><br><span class="line">			d = <span class="number">-1</span> <span class="comment">// don't confuse deadline right now with no deadline</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 引用计数加1，防止被close掉</span></span><br><span class="line">	<span class="keyword">if</span> err := fd.incref(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> fd.decref()</span><br><span class="line">    <span class="comment">// runtimeCtx是runtime包中的pollDesc</span></span><br><span class="line">    <span class="comment">// 如果fd不支持poll，无法设置Deadline</span></span><br><span class="line">	<span class="keyword">if</span> fd.pd.runtimeCtx == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ErrNoDeadline</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 调用runtime.pollSetDeadline方法</span></span><br><span class="line">	runtime_pollSetDeadline(fd.pd.runtimeCtx, d, mode)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在runtime包中对应的实现：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//go:linkname poll_runtime_pollSetDeadline internal/poll.runtime_pollSetDeadline</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">poll_runtime_pollSetDeadline</span><span class="params">(pd *pollDesc, d <span class="keyword">int64</span>, mode <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	lock(&amp;pd.lock)</span><br><span class="line">    <span class="comment">// 如果正在close</span></span><br><span class="line">	<span class="keyword">if</span> pd.closing &#123;</span><br><span class="line">		unlock(&amp;pd.lock)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 原来的deadline</span></span><br><span class="line">	rd0, wd0 := pd.rd, pd.wd</span><br><span class="line">	combo0 := rd0 &gt; <span class="number">0</span> &amp;&amp; rd0 == wd0</span><br><span class="line">	<span class="keyword">if</span> d &gt; <span class="number">0</span> &#123;</span><br><span class="line">		d += nanotime()</span><br><span class="line">		<span class="keyword">if</span> d &lt;= <span class="number">0</span> &#123;</span><br><span class="line">			<span class="comment">// overflow</span></span><br><span class="line">			d = <span class="number">1</span>&lt;&lt;<span class="number">63</span> - <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 更新新的deadline</span></span><br><span class="line">	<span class="keyword">if</span> mode == <span class="string">'r'</span> || mode == <span class="string">'r'</span>+<span class="string">'w'</span> &#123;</span><br><span class="line">		pd.rd = d</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> mode == <span class="string">'w'</span> || mode == <span class="string">'r'</span>+<span class="string">'w'</span> &#123;</span><br><span class="line">		pd.wd = d</span><br><span class="line">	&#125;</span><br><span class="line">	combo := pd.rd &gt; <span class="number">0</span> &amp;&amp; pd.rd == pd.wd</span><br><span class="line">	rtf := netpollReadDeadline</span><br><span class="line">	<span class="keyword">if</span> combo &#123;</span><br><span class="line">		rtf = netpollDeadline</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> pd.rt.f == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> pd.rd &gt; <span class="number">0</span> &#123;</span><br><span class="line">			pd.rt.f = rtf</span><br><span class="line">			<span class="comment">// Copy current seq into the timer arg.</span></span><br><span class="line">			<span class="comment">// Timer func will check the seq against current descriptor seq,</span></span><br><span class="line">			<span class="comment">// if they differ the descriptor was reused or timers were reset.</span></span><br><span class="line">			pd.rt.arg = pd</span><br><span class="line">			pd.rt.seq = pd.rseq</span><br><span class="line">			resettimer(&amp;pd.rt, pd.rd)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> pd.rd != rd0 || combo != combo0 &#123;</span><br><span class="line">		pd.rseq++ <span class="comment">// invalidate current timers</span></span><br><span class="line">		<span class="keyword">if</span> pd.rd &gt; <span class="number">0</span> &#123;</span><br><span class="line">			modtimer(&amp;pd.rt, pd.rd, <span class="number">0</span>, rtf, pd, pd.rseq)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			deltimer(&amp;pd.rt)</span><br><span class="line">			pd.rt.f = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> pd.wt.f == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> pd.wd &gt; <span class="number">0</span> &amp;&amp; !combo &#123;</span><br><span class="line">			pd.wt.f = netpollWriteDeadline</span><br><span class="line">			pd.wt.arg = pd</span><br><span class="line">			pd.wt.seq = pd.wseq</span><br><span class="line">			resettimer(&amp;pd.wt, pd.wd)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> pd.wd != wd0 || combo != combo0 &#123;</span><br><span class="line">		pd.wseq++ <span class="comment">// invalidate current timers</span></span><br><span class="line">		<span class="keyword">if</span> pd.wd &gt; <span class="number">0</span> &amp;&amp; !combo &#123;</span><br><span class="line">			modtimer(&amp;pd.wt, pd.wd, <span class="number">0</span>, netpollWriteDeadline, pd, pd.wseq)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			deltimer(&amp;pd.wt)</span><br><span class="line">			pd.wt.f = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// If we set the new deadline in the past, unblock currently pending IO if any.</span></span><br><span class="line">	<span class="keyword">var</span> rg, wg *g</span><br><span class="line">    <span class="comment">// 如果设置的deadline是过去的时间，立即唤醒阻塞的连接</span></span><br><span class="line">	<span class="keyword">if</span> pd.rd &lt; <span class="number">0</span> || pd.wd &lt; <span class="number">0</span> &#123;</span><br><span class="line">		atomic.StorepNoWB(noescape(unsafe.Pointer(&amp;wg)), <span class="literal">nil</span>) <span class="comment">// full memory barrier between stores to rd/wd and load of rg/wg in netpollunblock</span></span><br><span class="line">		<span class="keyword">if</span> pd.rd &lt; <span class="number">0</span> &#123;</span><br><span class="line">			rg = netpollunblock(pd, <span class="string">'r'</span>, <span class="literal">false</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> pd.wd &lt; <span class="number">0</span> &#123;</span><br><span class="line">			wg = netpollunblock(pd, <span class="string">'w'</span>, <span class="literal">false</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	unlock(&amp;pd.lock)</span><br><span class="line">	<span class="keyword">if</span> rg != <span class="literal">nil</span> &#123;</span><br><span class="line">		netpollgoready(rg, <span class="number">3</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> wg != <span class="literal">nil</span> &#123;</span><br><span class="line">		netpollgoready(wg, <span class="number">3</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>会给连接设置定时器，定时器过期的时候，会ready对应的协程，并把pollDesc中的rd或者wd设置为-1；</p>
+<p>g被唤醒的时候，检查rd或者wd字段，就知道已经deadline了。</p>
+<p>go中的Deadline是在runtime层面实现的。</p>
+<p>http.Server中有三个字段：</p>
+<ul>
+<li>ReadHeaderTimeout：读取完header的Deadline</li>
+<li>ReadTimeout：读取整个请求的Deadline</li>
+<li>WriteOuter：写响应的Deadline</li>
+</ul>
+<p>健壮的服务，应该合理设置这三个值，默认是没有设置的！！！</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/" target="_blank" rel="noopener">https://colobu.com/2016/07/01/the-complete-guide-to-golang-net-http-timeouts/</a></li>
+</ul>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

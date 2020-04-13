@@ -148,7 +148,7 @@
 <li>b = CBABAC</li>
 </ul>
 <p>假设我们对文本<code>a</code>进行一系列编辑操作之后，得到了文本<code>b</code>，而<code>diff</code>操作就是要计算出这些编辑操作。</p>
-<p>一种可能的编辑序列是先把原来的内容全部删除，然后插入新的内容，使用通用的<code>diff</code>表示符号如下：</p>
+<p>一种可能的编辑序列是先把原来的内容全部删除，然后插入新的内容：</p>
 <figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">- A</span></span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line"><span class="deletion">- C</span></span><br><span class="line"><span class="deletion">- A</span></span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line"><span class="deletion">- B</span></span><br><span class="line"><span class="deletion">- A</span></span><br><span class="line"><span class="addition">+ C</span></span><br><span class="line"><span class="addition">+ B</span></span><br><span class="line"><span class="addition">+ A</span></span><br><span class="line"><span class="addition">+ B</span></span><br><span class="line"><span class="addition">+ A</span></span><br><span class="line"><span class="addition">+ C</span></span><br></pre></td></tr></table></figure>
 <p>然而，上面的信息无法有效展示<code>a</code>是如何一步步变更到<code>b</code>的，因此上面的<code>diff</code>并没有什么实际意义。通常源代码的变更，会保留原来的大部分内容，而只对其中部分内容做删除和添加，我们通过<code>diff</code>操作是希望看到其中被删除或者插入的代码段，而不是像上面这样，全部删除然后替换成新的内容。</p>
 <p>我们更希望看到是<code>diff</code>是下面这种：</p>
@@ -186,7 +186,7 @@
 <p>我们可以看到，每一次的编辑都是基于上次的编辑结果进行的，我们在每次编辑中，都基于上次的结果选择向右或者向下走一步，然后再执行<code>0</code>次或者多次<code>mov</code>操作，从而达到当前编辑结果。</p>
 <p>为了更直观的发现算法的规律，我们把上图逆时针旋装45°：</p>
 <p><img src="/img/ses_graph_d.jpg" alt=""></p>
-<p>在上图中，横坐标<code>d</code>表示编辑次数，也就是目前为止已经执行了多少次<code>del</code>或者<code>ins</code>编辑操作，也即图的搜索深度；而纵坐标<code>k = x - y</code>，当我们向由移动时，<code>k</code>值会加1，当向下移动时，<code>k</code>值会减1，而当沿着虚线移动时，<code>k</code>值并不会变化。我们需要记录指定<code>d</code>时，每个<code>k</code>值可以达到的最远记录，只需要记录当前给定<code>d</code>和<code>k</code>时，对应的<code>x</code>就行了，因为<code>y = x - k</code>。</p>
+<p>在上图中，横坐标<code>d</code>表示编辑次数，也就是目前为止已经执行了多少次<code>del</code>或者<code>ins</code>编辑操作，也即图的搜索深度；而纵坐标<code>k = x - y</code>，当我们向右移动时，<code>k</code>值会加1，当向下移动时，<code>k</code>值会减1，而当沿着虚线移动时，<code>k</code>值并不会变化。我们需要记录指定<code>d</code>时，每个<code>k</code>值可以达到的最远记录，只需要记录当前给定<code>d</code>和<code>k</code>时，对应的<code>x</code>就行了，因为<code>y = x - k</code>。</p>
 <p>现在我们可以来看一下<code>myers</code>算法的执行过程：</p>
 <ol>
 <li>我们首先从<code>0</code>到<code>(len(a)+len(b))</code>遍历<code>d</code></li>

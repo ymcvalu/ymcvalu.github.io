@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        搞定二分查找 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#leetcode-704：二分查找"><span class="toc-text">leetcode 704：二分查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#leetcode-1095-山脉数组中查找目标值"><span class="toc-text">leetcode 1095: 山脉数组中查找目标值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#旋转数组的最小值"><span class="toc-text">旋转数组的最小值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#面试题-排序矩阵查找"><span class="toc-text">面试题 排序矩阵查找</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        搞定二分查找
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-13 14:32:02</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#leetcode - 二分查找" title="leetcode - 二分查找">leetcode - 二分查找</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>二分查找是分治法的一个典型应用，通过二分查找，可以在O(logN)时间复杂度中从一个有序的数组中找出指定的元素。这也是面试中经常遇到的题目，今天就来看一下二分查找的一些变形题。</p>
+<h3 id="leetcode-704：二分查找"><a href="#leetcode-704：二分查找" class="headerlink" title="leetcode 704：二分查找"></a><a href="https://leetcode-cn.com/problems/binary-search/" target="_blank" rel="noopener">leetcode 704：二分查找</a></h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(arr []<span class="keyword">int</span>, v <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(arr) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p := <span class="number">0</span></span><br><span class="line">	q := <span class="built_in">len</span>(arr) - <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> p &lt;= q &#123;</span><br><span class="line">		mid := (p + q) &gt;&gt;<span class="number">1</span></span><br><span class="line">		<span class="keyword">if</span> arr[mid] == v &#123;</span><br><span class="line">			<span class="keyword">return</span> mid</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> arr[mid] &lt; v &#123;</span><br><span class="line">			p = mid + <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			q = mid - <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="leetcode-1095-山脉数组中查找目标值"><a href="#leetcode-1095-山脉数组中查找目标值" class="headerlink" title="leetcode 1095: 山脉数组中查找目标值"></a><a href="https://leetcode-cn.com/problems/find-in-mountain-array/" target="_blank" rel="noopener">leetcode 1095: 山脉数组中查找目标值</a></h3><p>山脉数组就是先递增，后递减的一个数组，比如：<code>[1,2,3,4,5,3,1]</code></p>
+<p>要在山脉数组中查找指定数字，我们可以先通过二分查找，找出最大的那个数，将数组分成两部分，然后分别对这两部分进行二分查找。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">findNum</span><span class="params">(arr []<span class="keyword">int</span>, num <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(arr) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="built_in">len</span>(arr) == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> arr[<span class="number">0</span>] == num</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 首先，找出数组中最大值的下标</span></span><br><span class="line">    maxIdx := findMax(arr, <span class="number">0</span>)</span><br><span class="line">    <span class="comment">// 将数组分割成两部分，分别执行二分查找</span></span><br><span class="line">	<span class="keyword">return</span> binSearch(arr[:maxIdx], num, <span class="literal">true</span>) || binSearch(arr[maxIdx:], num, <span class="literal">false</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 二分查找，查找山脉数组的最大值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">findMax</span><span class="params">(arr []<span class="keyword">int</span>, i <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(arr) == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> i</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	mid := (<span class="built_in">len</span>(arr) - <span class="number">1</span>) / <span class="number">2</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> mid+<span class="number">1</span> &lt; <span class="built_in">len</span>(arr) &amp;&amp; arr[mid+<span class="number">1</span>] &gt; arr[mid] &#123;</span><br><span class="line">		<span class="keyword">return</span> findMax(arr[mid+<span class="number">1</span>:], i+mid+<span class="number">1</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> findMax(arr[:mid+<span class="number">1</span>], i)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">binSearch</span><span class="params">(arr []<span class="keyword">int</span>, num <span class="keyword">int</span>, asc <span class="keyword">bool</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(arr) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	l, r := <span class="number">0</span>, <span class="built_in">len</span>(arr)<span class="number">-1</span></span><br><span class="line">	<span class="keyword">for</span> l &lt; r &#123;</span><br><span class="line">		mid := (l + r) &gt;&gt; <span class="number">1</span></span><br><span class="line">		<span class="keyword">if</span> arr[mid] == num &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> arr[mid] &gt; num &#123;</span><br><span class="line">			<span class="keyword">if</span> asc &#123;</span><br><span class="line">				r = mid - <span class="number">1</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				l = mid + <span class="number">1</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> asc &#123;</span><br><span class="line">				l = mid + <span class="number">1</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				r = mid - <span class="number">1</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> arr[l] == num</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="旋转数组的最小值"><a href="#旋转数组的最小值" class="headerlink" title="旋转数组的最小值"></a>旋转数组的最小值</h3><p>这是剑指offer里面的一道原题。把一个升序数列在某个位置进行旋转，导致前面若干个元素被移动到数组末尾，输出数组的最小值。</p>
+<p>比如数组<code>[1,2,3,4,5,6]</code>在<code>index=3</code>的地方发生rotate，变成<code>[4,5,6,1,2,3]</code>，在旋转后的数组中找出最小值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MinOfRotateArr</span><span class="params">(arr []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(arr) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"invalid array"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">    l, r := <span class="number">0</span>, <span class="built_in">len</span>(arr)<span class="number">-1</span></span><br><span class="line">    <span class="comment">// 只有一个元素或者旋转后还是自身</span></span><br><span class="line">	<span class="keyword">if</span> l == r || arr[l] &lt; arr[r] &#123;</span><br><span class="line">		<span class="keyword">return</span> arr[l]</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> l+<span class="number">1</span> &lt; r &#123;</span><br><span class="line">		mid := (l + r) / <span class="number">2</span></span><br><span class="line">		<span class="keyword">if</span> arr[l] &lt;= arr[mid] &#123;</span><br><span class="line">			l = mid</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			r = mid</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> arr[r]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="面试题-排序矩阵查找"><a href="#面试题-排序矩阵查找" class="headerlink" title="面试题 排序矩阵查找"></a><a href="https://leetcode-cn.com/problems/sorted-matrix-search-lcci/" target="_blank" rel="noopener">面试题 排序矩阵查找</a></h3><p>这是剑指offer里面的一道原题。给定M×N矩阵，每一行、每一列都按升序排列，请编写代码找出某元素。<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">searchMatrix</span><span class="params">(matrix [][]<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(matrix)==<span class="number">0</span>||<span class="built_in">len</span>(matrix[<span class="number">0</span>])==<span class="number">0</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span> </span><br><span class="line">    &#125;</span><br><span class="line">    rows:=<span class="built_in">len</span>(matrix)</span><br><span class="line">    cols :=<span class="built_in">len</span>(matrix[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">    r := <span class="number">0</span></span><br><span class="line">	c := cols - <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> r &lt; rows &amp;&amp; c &gt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> n := matrix[r][c]; n == target &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> n &gt; target &#123;</span><br><span class="line">			c--</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			r++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>二分查找，主要是利用数组的性质，应用分治法进行求解。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
