@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go的协程上下文切换 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#上下文"><span class="toc-text">上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#上下文保存"><span class="toc-text">上下文保存</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#由协作式抢占触发"><span class="toc-text">由协作式抢占触发</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#由阻塞操作触发"><span class="toc-text">由阻塞操作触发</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#上下文恢复"><span class="toc-text">上下文恢复</span></a></li>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        go的协程上下文切换
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-14 13:44:03</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>都说<code>go</code>的协程是轻量级的，上下文切换只需要切换少数寄存器即可。今天我们来看一下，协程上下文切换时需要做哪些操作。</p>
+<blockquote>
+<p>本文基于go1.14.2，不涉及非协作式抢占相关的上下文切换，这块的具体实现还不太了解，但是应该不太一样。</p>
+</blockquote>
+<p>首先，我们需要知道几种比较常见的触发协程上下文切换的场景：</p>
+<ul>
+<li><a href="https://mcll.top/2019/05/25/%E5%8D%8F%E7%A8%8B%E6%8A%A2%E5%8D%A0/" target="_blank" rel="noopener">协作式抢占</a>的时候，检查抢占标志位，从而触发上下文切换</li>
+<li>锁阻塞/channel阻塞/io阻塞等等，这类最后都会调用<code>runtime.gopark</code>将当前协程挂起，然后调度新的协程</li>
+</ul>
+<p>协程的上下文切换，涉及到挂起协程的上下文保存，和调度协程的上下文恢复。</p>
+<h3 id="上下文"><a href="#上下文" class="headerlink" title="上下文"></a>上下文</h3><p>首先，<code>g</code>的上下文是保存在哪里的呢？答案是<code>g.sched</code>：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> g <span class="keyword">struct</span> &#123;</span><br><span class="line">    ...</span><br><span class="line">	sched        gobuf</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> gobuf <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// The offsets of sp, pc, and g are known to (hard-coded in) libmach.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// ctxt is unusual with respect to GC: it may be a</span></span><br><span class="line">	<span class="comment">// heap-allocated funcval, so GC needs to track it, but it</span></span><br><span class="line">	<span class="comment">// needs to be set and cleared from assembly, where it's</span></span><br><span class="line">	<span class="comment">// difficult to have write barriers. However, ctxt is really a</span></span><br><span class="line">	<span class="comment">// saved, live register, and we only ever exchange it between</span></span><br><span class="line">	<span class="comment">// the real register and the gobuf. Hence, we treat it as a</span></span><br><span class="line">	<span class="comment">// root during stack scanning, which means assembly that saves</span></span><br><span class="line">	<span class="comment">// and restores it doesn't need write barriers. It's still</span></span><br><span class="line">	<span class="comment">// typed as a pointer so that any other writes from Go get</span></span><br><span class="line">	<span class="comment">// write barriers.</span></span><br><span class="line">	sp   <span class="keyword">uintptr</span>            <span class="comment">// 栈顶指针</span></span><br><span class="line">	pc   <span class="keyword">uintptr</span>            <span class="comment">// PC地址</span></span><br><span class="line">	g    guintptr           <span class="comment">// 关联的g</span></span><br><span class="line">	ctxt unsafe.Pointer     <span class="comment">// func的上下文，与闭包实现有关</span></span><br><span class="line">	ret  sys.Uintreg</span><br><span class="line">	lr   <span class="keyword">uintptr</span></span><br><span class="line">	bp   <span class="keyword">uintptr</span>            <span class="comment">// 栈底指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，需要保存的有：</p>
+<ul>
+<li>与栈相关的<code>SP</code>和<code>BP</code>寄存器</li>
+<li><code>PC</code>寄存器</li>
+<li>用于保存函数闭包的上下文信息，也就是<code>DX</code>寄存器</li>
+</ul>
+<p>而对于其他通用寄存器，因为<code>go</code>的函数调用规约，参数和返回值是通过栈进行传递的，并且总是在函数调用的时候触发协程切换，并不需要保存</p>
+<h3 id="上下文保存"><a href="#上下文保存" class="headerlink" title="上下文保存"></a>上下文保存</h3><p>上下文保存的逻辑，可以分为两种情况，下面分别来看一下。</p>
+<h5 id="由协作式抢占触发"><a href="#由协作式抢占触发" class="headerlink" title="由协作式抢占触发"></a>由协作式抢占触发</h5><p>这种情况，是在<code>runtime·morestack</code>方法中保存上下文，代码在<code>runtime/asm_amd64.s</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">TEXT runtime·morestack(SB),NOSPLIT,$0-0</span><br><span class="line">	// Cannot grow scheduler stack (m-&gt;g0).</span><br><span class="line">	get_tls(CX)          ; m.tls</span><br><span class="line">	MOVQ	g(CX), BX    ; 保存当前g到BX</span><br><span class="line">	MOVQ	g_m(BX), BX  ; 保存当前m到BX</span><br><span class="line">	MOVQ	m_g0(BX), SI ; 保存g0到SI</span><br><span class="line">	CMPQ	g(CX), SI    ; g0上不允许触发morestack</span><br><span class="line">	JNE	3(PC)</span><br><span class="line">	CALL	runtime·badmorestackg0(SB)</span><br><span class="line">	CALL	runtime·abort(SB)</span><br><span class="line"></span><br><span class="line">	// Cannot grow signal stack (m-&gt;gsignal).</span><br><span class="line">	MOVQ	m_gsignal(BX), SI</span><br><span class="line">	CMPQ	g(CX), SI</span><br><span class="line">	JNE	3(PC)</span><br><span class="line">	CALL	runtime·badmorestackgsignal(SB)</span><br><span class="line">	CALL	runtime·abort(SB)</span><br><span class="line"></span><br><span class="line">	// Called from f.</span><br><span class="line">	// Set m-&gt;morebuf to f&apos;s caller.</span><br><span class="line">	NOP	SP	// tell vet SP changed - stop checking offsets</span><br><span class="line">	MOVQ	8(SP), AX	// f&apos;s caller&apos;s PC</span><br><span class="line">	MOVQ	AX, (m_morebuf+gobuf_pc)(BX)</span><br><span class="line">	LEAQ	16(SP), AX	// f&apos;s caller&apos;s SP</span><br><span class="line">	MOVQ	AX, (m_morebuf+gobuf_sp)(BX)</span><br><span class="line">	get_tls(CX)</span><br><span class="line">	MOVQ	g(CX), SI</span><br><span class="line">	MOVQ	SI, (m_morebuf+gobuf_g)(BX)</span><br><span class="line"></span><br><span class="line">	// Set g-&gt;sched to context in f.</span><br><span class="line">    // 下面是保存g的上下文到g.sched中</span><br><span class="line">	MOVQ	0(SP), AX                    ; morestack是nosplit的，返回地址就是要保存的PC</span><br><span class="line">	MOVQ	AX, (g_sched+gobuf_pc)(SI)   ; 保存PC</span><br><span class="line">	MOVQ	SI, (g_sched+gobuf_g)(SI)    ; 保存当前g</span><br><span class="line">	LEAQ	8(SP), AX                    ; SP寄存器，这里扣掉PC占用的8字节</span><br><span class="line">	MOVQ	AX, (g_sched+gobuf_sp)(SI)   ; 保存SP寄存器</span><br><span class="line">	MOVQ	BP, (g_sched+gobuf_bp)(SI)   ; 保存BP寄存器</span><br><span class="line">	MOVQ	DX, (g_sched+gobuf_ctxt)(SI) ; DX保存函数的闭包上下文</span><br><span class="line"></span><br><span class="line">	// Call newstack on m-&gt;g0&apos;s stack.</span><br><span class="line">	MOVQ	m_g0(BX), BX</span><br><span class="line">	MOVQ	BX, g(CX)</span><br><span class="line">	MOVQ	(g_sched+gobuf_sp)(BX), SP</span><br><span class="line">	CALL	runtime·newstack(SB)</span><br><span class="line">	CALL	runtime·abort(SB)	// crash if newstack returns</span><br><span class="line">	RET</span><br></pre></td></tr></table></figure></p>
+<h5 id="由阻塞操作触发"><a href="#由阻塞操作触发" class="headerlink" title="由阻塞操作触发"></a>由阻塞操作触发</h5><p><code>go</code>中的锁/channel/io操作等的阻塞，最终是由<code>runtime.gopark</code>实现的：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">gopark</span><span class="params">(unlockf <span class="keyword">func</span>(*g, unsafe.Pointer)</span> <span class="title">bool</span>, <span class="title">lock</span> <span class="title">unsafe</span>.<span class="title">Pointer</span>, <span class="title">reason</span> <span class="title">waitReason</span>, <span class="title">traceEv</span> <span class="title">byte</span>, <span class="title">traceskip</span> <span class="title">int</span>)</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> reason != waitReasonSleep &#123;</span><br><span class="line">		checkTimeouts() <span class="comment">// timeouts may expire while two goroutines keep the scheduler busy</span></span><br><span class="line">	&#125;</span><br><span class="line">	mp := acquirem()</span><br><span class="line">	gp := mp.curg</span><br><span class="line">	status := readgstatus(gp)</span><br><span class="line">	<span class="keyword">if</span> status != _Grunning &amp;&amp; status != _Gscanrunning &#123;</span><br><span class="line">		throw(<span class="string">"gopark: bad g status"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	mp.waitlock = lock</span><br><span class="line">	mp.waitunlockf = unlockf</span><br><span class="line">	gp.waitreason = reason</span><br><span class="line">	mp.waittraceev = traceEv</span><br><span class="line">	mp.waittraceskip = traceskip</span><br><span class="line">	releasem(mp)</span><br><span class="line">	<span class="comment">// can't do anything that might move the G between Ms here.</span></span><br><span class="line">	mcall(park_m)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>gopark</code>中，会通过<code>mcall</code>切换到<code>g0</code>栈上执行<code>park_m</code>，而<code>mcall</code>方法本身就会保存上下文：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">TEXT runtime·mcall(SB), NOSPLIT, $0-8</span><br><span class="line">	MOVQ	fn+0(FP), DI        ; mcall的参数是一个函数</span><br><span class="line"></span><br><span class="line">	get_tls(CX)                 ; m.tls</span><br><span class="line">	MOVQ	g(CX), AX	        ; 保存当前g到AX</span><br><span class="line">	MOVQ	0(SP), BX	        ; 保存PC到BX</span><br><span class="line">	MOVQ	BX, (g_sched+gobuf_pc)(AX)  ; 设置g.sched.pc</span><br><span class="line">	LEAQ	fn+0(FP), BX	            ; SP寄存器</span><br><span class="line">	MOVQ	BX, (g_sched+gobuf_sp)(AX)  ; 设置g.sched.sp</span><br><span class="line">	MOVQ	AX, (g_sched+gobuf_g)(AX)   ; 设置g.sched.g</span><br><span class="line">	MOVQ	BP, (g_sched+gobuf_bp)(AX)  ; BP寄存器</span><br><span class="line"></span><br><span class="line">	// switch to m-&gt;g0 &amp; its stack, call fn</span><br><span class="line">	MOVQ	g(CX), BX</span><br><span class="line">	MOVQ	g_m(BX), BX     ; 获取当前m</span><br><span class="line">	MOVQ	m_g0(BX), SI    ; m.g0</span><br><span class="line">	CMPQ	SI, AX	        ; 禁止在g0调用mcall</span><br><span class="line">	JNE	3(PC)</span><br><span class="line">	MOVQ	$runtime·badmcall(SB), AX</span><br><span class="line">	JMP	AX</span><br><span class="line">	MOVQ	SI, g(CX)	    ; 设置当前g为g0</span><br><span class="line">	MOVQ	(g_sched+gobuf_sp)(SI), SP	; 恢复g0的SP</span><br><span class="line">	PUSHQ	AX</span><br><span class="line">	MOVQ	DI, DX</span><br><span class="line">	MOVQ	0(DI), DI</span><br><span class="line">	CALL	DI  ; 调用传入mcall的方法</span><br><span class="line">	POPQ	AX</span><br><span class="line">	MOVQ	$runtime·badmcall2(SB), AX</span><br><span class="line">	JMP	AX</span><br><span class="line">	RET</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，<code>mcall</code>中就会保存当前<code>g</code>的上下文，然后切换到<code>g0</code>栈执行。</p>
+<h3 id="上下文恢复"><a href="#上下文恢复" class="headerlink" title="上下文恢复"></a>上下文恢复</h3><p>当<code>runtime</code>通过调度逻辑确定下一个要运行的<code>g</code>之后，通过<code>runtime.execute</code>方法来开始运行这个<code>g</code>：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">execute</span><span class="params">(gp *g, inheritTime <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	_g_ := getg()</span><br><span class="line"></span><br><span class="line">	_g_.m.curg = gp</span><br><span class="line">	gp.m = _g_.m</span><br><span class="line">	casgstatus(gp, _Grunnable, _Grunning)</span><br><span class="line">	gp.waitsince = <span class="number">0</span></span><br><span class="line">	gp.preempt = <span class="literal">false</span></span><br><span class="line">	gp.stackguard0 = gp.stack.lo + _StackGuard</span><br><span class="line">	<span class="keyword">if</span> !inheritTime &#123;</span><br><span class="line">		_g_.m.p.ptr().schedtick++</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Check whether the profiler needs to be turned on or off.</span></span><br><span class="line">	hz := sched.profilehz</span><br><span class="line">	<span class="keyword">if</span> _g_.m.profilehz != hz &#123;</span><br><span class="line">		setThreadCPUProfiler(hz)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> trace.enabled &#123;</span><br><span class="line">		<span class="comment">// GoSysExit has to happen when we have a P, but before GoStart.</span></span><br><span class="line">		<span class="comment">// So we emit it here.</span></span><br><span class="line">		<span class="keyword">if</span> gp.syscallsp != <span class="number">0</span> &amp;&amp; gp.sysblocktraced &#123;</span><br><span class="line">			traceGoSysExit(gp.sysexitticks)</span><br><span class="line">		&#125;</span><br><span class="line">		traceGoStart()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	gogo(&amp;gp.sched)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，<code>execute</code>在绑定了<code>g</code>和<code>m</code>，更新<code>g</code>的状态之后，通过<code>gogo</code>方法开始运行<code>g</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">TEXT runtime·gogo(SB), NOSPLIT, $16-8</span><br><span class="line">	MOVQ	buf+0(FP), BX		; g.sched</span><br><span class="line">	MOVQ	gobuf_g(BX), DX</span><br><span class="line">	MOVQ	0(DX), CX		    ; make sure g != nil</span><br><span class="line">	get_tls(CX)</span><br><span class="line">	MOVQ	DX, g(CX)</span><br><span class="line">	MOVQ	gobuf_sp(BX), SP	; restore SP</span><br><span class="line">	MOVQ	gobuf_ret(BX), AX   </span><br><span class="line">	MOVQ	gobuf_ctxt(BX), DX  ; restore DX</span><br><span class="line">	MOVQ	gobuf_bp(BX), BP    ; restore BP</span><br><span class="line">	MOVQ	$0, gobuf_sp(BX)	; clear to help garbage collector</span><br><span class="line">	MOVQ	$0, gobuf_ret(BX)</span><br><span class="line">	MOVQ	$0, gobuf_ctxt(BX)</span><br><span class="line">	MOVQ	$0, gobuf_bp(BX)</span><br><span class="line">	MOVQ	gobuf_pc(BX), BX    ; PC</span><br><span class="line">	JMP	BX                      ; JMP PC</span><br></pre></td></tr></table></figure></p>
+<p><code>gogo</code>的实现很简单，就是恢复上下文，然后通过<code>JMP</code>指令跳转到指定的<code>PC</code>开始执行。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>

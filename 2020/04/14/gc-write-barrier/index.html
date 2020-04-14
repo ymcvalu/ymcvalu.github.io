@@ -140,7 +140,7 @@
 
     </div>
     <div class="post-content ">
-        <p>go的gc实现是三色标记+并发扫描，gc协程和用户的工作协程并发运行。<br><img src="img/../../img/tricolor-marking.gif" alt="三色标记"></p>
+        <p>go的gc实现是三色标记+并发扫描，gc协程和用户的工作协程并发运行。<br><img src="/img/tricolor-marking.gif" alt="三色标记"></p>
 <p>在gc开始阶段，会先执行<code>STW</code>，在<code>STW</code>中会开启写屏障。最开始go使用的是Dijkstra写屏障。</p>
 <p>Dijkstra写屏障的伪代码逻辑为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr):   </span><br><span class="line">    shade(ptr)    // 新的对象标记为gray</span><br><span class="line">    *slot = ptr   // 实际赋值</span><br></pre></td></tr></table></figure></p>
 <p>对象指针赋值时，比如<code>a.x=&amp;b</code>，保守认为a已经被标记为黑色了，因此在赋值前，先将b标记为灰色的，确保对象b不会被丢失。</p>
