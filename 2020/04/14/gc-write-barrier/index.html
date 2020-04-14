@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="fDu2EbXziVRK-QATAvl0GYkq0mLojeEfo2tAFJVbtek">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="gopher">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        go中的gc写屏障 - undefined
+        
+    </title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/aircloud.css">
+    <link rel="stylesheet" href="/css/gitment.css">
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_pl6z7sid89qkt9.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+<body>
+
+    <div class="site-nav-toggle" id="site-nav-toggle">
+        <button>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+            <span class="btn-bar"></span>
+        </button>
+    </div>
+
+    <div class="index-about">
+        <i> blog </i>
+    </div>
+
+    <div class="index-container">
+        
+        <div class="index-left">
+            
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar">
+            <img src="/img/avatar.jpg">
+        </div>
+        <div class="name">
+            <i>can</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li>
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input">
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+            <div class="index-about-mobile">
+                <i> blog </i>
+            </div>
+        </div>
+        
+        <div class="index-middle">
+            <!-- Main Content -->
+            
+
+
+<div class="post-container">
+    <div class="post-title">
+        go中的gc写屏障
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2020-04-14 10:15:36</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#go" title="go">go</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#gc" title="gc">gc</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+
+    </div>
+    <div class="post-content ">
+        <p>go的gc实现是三色标记+并发扫描，gc协程和用户的工作协程并发运行。<br><img src="img/../../img/tricolor-marking.gif" alt="三色标记"></p>
+<p>在gc开始阶段，会先执行<code>STW</code>，在<code>STW</code>中会开启写屏障。最开始go使用的是Dijkstra写屏障。</p>
+<p>Dijkstra写屏障的伪代码逻辑为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr):   </span><br><span class="line">    shade(ptr)    // 新的对象标记为gray</span><br><span class="line">    *slot = ptr   // 实际赋值</span><br></pre></td></tr></table></figure></p>
+<p>对象指针赋值时，比如<code>a.x=&amp;b</code>，保守认为a已经被标记为黑色了，因此在赋值前，先将b标记为灰色的，确保对象b不会被丢失。</p>
+<p>可以看到，只有当指针赋值的时候才需要写屏障，读取是不需要的。</p>
+<p><strong>trade-off：</strong></p>
+<blockquote>
+<p>如果目标指针是在栈上，比如p=&amp;b，p是栈上的指针值，如果也开启写屏障，代价会非常昂贵，因此go选择了让栈保持灰色（permagrey），也就是gc阶段栈保持灰色的，并在标记终止阶段对栈执行rescan，这需要在stw时执行，会延长stw时间。</p>
+</blockquote>
+<p>比如，我们现在来看这么一个例子：<br><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Node <span class="keyword">struct</span> &#123;</span><br><span class="line">	Val  <span class="keyword">int</span></span><br><span class="line">	Next *Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	n1 := NewNode(<span class="number">10</span>).Next</span><br><span class="line">	_ = n1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//go:noinline</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewNode</span><span class="params">(v <span class="keyword">int</span>)</span> *<span class="title">Node</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Node&#123;</span><br><span class="line">		Val:  v,</span><br><span class="line">		Next: &amp;Node&#123;Val: v&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上面的代码中，我们把一个堆中的指针赋值给栈上的指针变量。</p>
+<p>运行命令：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ go tool compile -N -S wb.go &gt; wb.s</span><br></pre></td></tr></table></figure></p>
+<p>查看<code>wb.s</code>中的汇编代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">   0x0024 00036 (wb.go:22)	MOVQ	$10, (SP)</span><br><span class="line">0x002c 00044 (wb.go:22)	CALL	&quot;&quot;.NewNode(SB)</span><br><span class="line">0x0031 00049 (wb.go:22)	MOVQ	8(SP), AX</span><br><span class="line">0x0036 00054 (wb.go:22)	MOVQ	AX, &quot;&quot;..autotmp_1+24(SP)</span><br><span class="line">0x003d 00061 (wb.go:22)	MOVQ	8(AX), AX</span><br><span class="line">0x0041 00065 (wb.go:22)	MOVQ	AX, &quot;&quot;.n1+16(SP)</span><br></pre></td></tr></table></figure></p>
+<p>可以看到生成的汇编中并没有使用写屏障。</p>
+<p>我们就<code>Node</code>来分析一下，为什么只使用<code>Dijkstra</code>，需要<code>rescan</code>栈。</p>
+<ol>
+<li>n1 := NewNode(10)</li>
+<li>n2 := NewNode(11)</li>
+<li>n1.Next=n2</li>
+<li>假如p是栈上的指针，执行：p := n1.Next，这时候不需要写屏障</li>
+<li>假设这时候n1还没有被扫描，执行：n1.Next=n3</li>
+<li>这时候扫描n1，因为n1和n2已经没有关联了，n2不会被扫描到，但是n2还被栈上的p引用</li>
+<li>如果没有stack rescan，那么n2就会被回收，导致栈上的指针引用了未分配内存</li>
+</ol>
+<p>gc的stack rescan是在<code>STW</code>期间执行的，这无疑会延长<code>STW</code>的时间。</p>
+<p>为了进一步提高gc性能，减少stw的时间，同时减少gc实现的复杂性，go1.8引入了混合写屏障，结合了<code>yuasa-style deletion write barrier</code>和<code>Dijkstra-style insertion write barrier</code>。</p>
+<p>我们来看一下<code>yuasa-style write barrier</code>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr): </span><br><span class="line">  shade(*slot) </span><br><span class="line">  *slot = ptr</span><br></pre></td></tr></table></figure></p>
+<p>写入时，先将原来的对象标灰，这是一种快照技术，确保原来的对象引用关系不会丢失。</p>
+<p>混合写屏障混合这两种之后：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr): </span><br><span class="line">    shade(*slot)</span><br><span class="line">    if current stack is grey: </span><br><span class="line">      shade(ptr)</span><br><span class="line">    *slot = ptr</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p> 如果栈已经被扫描了，那么这个对象不需要标记了（要么在栈标记的时候被标记，要么从堆移到栈，由yuasa写屏障保证，因此栈是gray才shade *ptr），因此在混合写屏障中，当栈为灰色才需要标记ptr。</p>
+</blockquote>
+<p>接下来，我们分析一下，混合写屏障为什么可以解决只使用Dijkstra写屏障的问题，从而消除stack rescan。</p>
+<ol>
+<li>假如对象a在堆中，还没有被扫描</li>
+<li>p是栈上指针，执行 p:=a.b，不需要写屏障</li>
+<li>执行：a.b=&amp;c</li>
+<li>这时候a被扫描</li>
+</ol>
+<p>当采用混合写屏障的时候，当执行上面步骤3的时候，通过<code>yuasa-style</code>写屏障，会标记b指向的对象，确保对象b不会被丢失。</p>
+<p>可以看到，<code>yuasa-style</code>写屏障，实际上是一种<strong>快照技术</strong>，保存原来对象引用图的边。采用<code>yuasa-style</code>有一点缺点，可能对象b真的已经不再被引用了，但是需要等到下一轮gc才会被回收，但是相比stack rescan来说这点开销微乎其微。</p>
+<p>写屏障实现：编译器在执行指针赋值时，会判断是否开启了写屏障，如果开启了写屏障，调用写屏障方法来进行指针赋值，该方法由汇编实现，并且标记nosplit，执行过程不会被抢占。因为写屏障的开启和关闭是在<code>STW</code>中执行的，因此判断是否开启写屏障时，是可以直接读取全局变量。</p>
+<p>新分配的对象需要是黑色的，因为可能被赋值给已经标黑的对象，而新分配的对象又没有引用其他对象，不需要标记灰色。</p>
+
+        
+        <div id="comment-container">
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+
+    
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+
+        
+
+    </ul>
+    
+   <!-- <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a href="https://hexo.io/">Hexo</a>  Theme <a href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p> -->
+</footer>
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":false},"react":{"opacity":0.6}});</script></body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = 
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/index.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</html>
