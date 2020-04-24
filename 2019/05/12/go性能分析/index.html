@@ -89,7 +89,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#go-tool-pprof"><span class="toc-text">go tool pprof</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#go-tool-trace"><span class="toc-text">go tool trace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GODEBUG"><span class="toc-text">GODEBUG</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考文档"><span class="toc-text">参考文档</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#参考文档"><span class="toc-text">参考文档</span></a></li></ol>
 </div>
     
 </div>
@@ -140,8 +140,29 @@
 
     </div>
     <div class="post-content ">
-        <p>本文总结一下go中用来进行性能调试的方法，先占个坑，后面慢慢完善~~~</p>
-<h3 id="go-tool-pprof"><a href="#go-tool-pprof" class="headerlink" title="go tool pprof"></a>go tool pprof</h3><h3 id="go-tool-trace"><a href="#go-tool-trace" class="headerlink" title="go tool trace"></a>go tool trace</h3><h3 id="GODEBUG"><a href="#GODEBUG" class="headerlink" title="GODEBUG"></a>GODEBUG</h3><h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><ul>
+        <p>CPU问题：</p>
+<p>使用<code>pprof</code>定位<code>cpu</code>瓶颈：</p>
+<ul>
+<li>代码逻辑问题，优化算法</li>
+<li>gc问题，使用pprof定位<strong>频繁对象分配</strong>的代码，使用<code>sync.Pool</code>优化</li>
+</ul>
+<p>内存问题：</p>
+<p>使用<code>pprof</code>定位<strong>大量内存分配</strong>的代码</p>
+<ul>
+<li>是否内存泄露</li>
+<li>是否<code>slice</code>一直扩容</li>
+<li>…</li>
+</ul>
+<ol>
+<li>影响<code>gc</code>的因素是分配的对象数量，而不是内存分配的大小，因此<code>[]Bean</code>更优于<code>[]*Bean</code></li>
+<li>对于频繁分配的对象，应该使用对象池进行复用</li>
+<li>对于<code>slice</code>和<code>map</code>，尽量进行预分配，防止重复扩容</li>
+<li>注意<code>goroutine</code>的泄露问题</li>
+<li>避免创建大量<code>goroutine</code>，<code>g</code>结束后并不会被释放，而是加入空闲队列中等待复用</li>
+<li>注意全局的指针引用</li>
+</ol>
+<p>[TODO]</p>
+<h3 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h3><ul>
 <li><a href="https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html" target="_blank" rel="noopener">high-performance-go-workshop</a></li>
 </ul>
 
